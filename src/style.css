@@ -1,25 +1,30 @@
+/* General body styling */
 body {
     margin: auto;
-    width: 600px;
-
-    a,
-    a:hover,
-    a:visited {
-        color: #0077B5;
-        text-decoration: none;
-    }
-}
-
-/* Match LinkedIn's styling */
-#editor-container {
-    font-size: 16px;
+    width: 696px;
     font-family: "Source Sans Pro", Arial, sans-serif;
     line-height: 1.5;
-    width: 600px;
-    height: 500px;
-    overflow: scroll;
 }
 
+a,
+a:hover,
+a:visited {
+    color: #0077B5;
+    text-decoration: none;
+}
+
+/* Editor container styling */
+#editor-container {
+    font-size: 16px;
+    width: 696px;
+    height: 500px;
+    overflow: auto; /* Changed from 'scroll' to 'auto' for better UX */
+    border: 1px solid #ccc; /* Added a border for better visual separation */
+    padding: 10px; /* Added padding for better text readability */
+    box-sizing: border-box; /* Ensures padding doesn't affect width/height */
+}
+
+/* Emoji picker container styling */
 .emoji-picker-container {
     display: none;
     position: absolute;
@@ -27,13 +32,18 @@ body {
     background: white;
     border: 1px solid #ccc;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 4px; /* Added rounded corners for a modern look */
 }
 
+/* Emoji button styling */
 .ql-emoji::before {
     content: "🙂"; /* Use an emoji as the button icon */
     font-size: 18px;
+    display: inline-block;
+    text-align: center;
 }
 
+/* Font-specific styling for Quill editor */
 .ql-font-source-sans-pro .ql-editor {
     font-family: 'Source Sans Pro', Arial, sans-serif;
 }
@@ -46,13 +56,15 @@ body {
     font-family: sans-serif;
 }
 
+/* Saved snippets section styling */
 #saved-snippets {
     margin-top: 20px;
 }
 
 #saved-snippets ul {
-    list-style-type: none;
+    list-style: none; /* Removed 'type' for cleaner styling */
     padding: 0;
+    margin: 0; /* Added margin reset for consistency */
 }
 
 #saved-snippets li {
@@ -60,16 +72,30 @@ body {
     cursor: pointer;
     color: #0077B5;
     text-decoration: underline;
+    transition: color 0.2s ease-in-out; /* Smooth hover effect */
 }
 
 #saved-snippets li:hover {
     text-decoration: none;
+    color: #005582; /* Slightly darker color on hover */
 }
 
+/* Save and load buttons styling */
 .save-load-buttons {
     margin-top: 10px;
 }
 
 .save-load-buttons button {
     margin-right: 10px;
+    padding: 8px 12px; /* Added padding for better clickability */
+    border: 1px solid #ccc; /* Added border for better visibility */
+    border-radius: 4px; /* Rounded corners for a modern look */
+    background-color: #f9f9f9; /* Subtle background color */
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.save-load-buttons button:hover {
+    background-color: #e6e6e6; /* Slightly darker background on hover */
+    border-color: #aaa; /* Darker border on hover */
 }
