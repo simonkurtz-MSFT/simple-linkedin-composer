@@ -19,6 +19,38 @@ a:hover {
     text-decoration: underline; /* Add underline on hover for better visibility */
 }
 
+/* Header styling */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc; /* Add a subtle separator */
+}
+
+/* GitHub link styling */
+.github-link {
+    display: flex;
+    align-items: center;
+    color: #0077B5;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    transition: color 0.2s ease-in-out;
+}
+
+.github-link:hover {
+    color: #005582; /* Slightly darker color on hover */
+    text-decoration: underline;
+}
+
+.github-logo {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px; /* Add spacing between the logo and the text */
+}
+
 /* Editor container styling */
 #editor-container {
     font-size: 16px;
