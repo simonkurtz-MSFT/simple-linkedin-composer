@@ -4,6 +4,8 @@ body {
     width: 696px;
     font-family: "Source Sans Pro", Arial, sans-serif;
     line-height: 1.5;
+    color: #333; /* Ensure sufficient contrast for text */
+    background-color: #fff; /* Set a background color for better readability */
 }
 
 a,
@@ -11,6 +13,10 @@ a:hover,
 a:visited {
     color: #0077B5;
     text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline; /* Add underline on hover for better visibility */
 }
 
 /* Editor container styling */
@@ -22,6 +28,8 @@ a:visited {
     border: 1px solid #ccc; /* Added a border for better visual separation */
     padding: 10px; /* Added padding for better text readability */
     box-sizing: border-box; /* Ensures padding doesn't affect width/height */
+    background-color: #fff; /* Ensure a readable background */
+    color: #333; /* Ensure sufficient contrast for text */
 }
 
 /* Emoji picker container styling */
@@ -93,9 +101,18 @@ a:visited {
     background-color: #f9f9f9; /* Subtle background color */
     cursor: pointer;
     transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    color: #333; /* Ensure sufficient contrast for button text */
 }
 
 .save-load-buttons button:hover {
     background-color: #e6e6e6; /* Slightly darker background on hover */
     border-color: #aaa; /* Darker border on hover */
+}
+
+/* Focus styles for accessibility */
+button:focus,
+a:focus,
+#saved-snippets li:focus {
+    outline: 2px solid #005582; /* Add a visible focus outline */
+    outline-offset: 2px;
 }
