@@ -81,10 +81,26 @@ function updateSnippetsList() {
     Object.keys(localStorage).forEach((key) => {
         const snippet = JSON.parse(localStorage.getItem(key));
         const date = new Date(snippet.timestamp).toLocaleString();
-        $('<li></li>')
+
+        // Create list item
+        const $li = $('<li></li>')
             .text(`${key} (Saved on: ${date})`)
-            .on('click', () => loadSnippet(key))
-            .appendTo($snippetsList);
+            .on('click', () => loadSnippet(key)); // Attach loadSnippet to the list item
+
+        // Create delete button
+        const $deleteButton = $('<button></button>')
+            .text('Delete')
+            .addClass('delete-button')
+            .on('click', (e) => {
+                e.stopPropagation(); // Prevent triggering the loadSnippet event
+                deleteSnippet(key);
+            });
+
+        // Append the delete button to the list item
+        $li.append($deleteButton);
+
+        // Append the list item to the snippets list
+        $snippetsList.append($li);
     });
 }
 
@@ -96,6 +112,14 @@ function loadSnippet(key) {
         quill.setContents(delta);
     } else {
         alert('Snippet not found.');
+    }
+}
+
+// Delete a specific snippet from local storage
+function deleteSnippet(key) {
+    if (confirm(`Are you sure you want to delete the snippet "${key}"? This action cannot be undone.`)) {
+        localStorage.removeItem(key); // Remove the snippet from local storage
+        updateSnippetsList(); // Refresh the snippets list
     }
 }
 
