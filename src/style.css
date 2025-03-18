@@ -45,3 +45,31 @@ body {
 .ql-font-sans-serif .ql-editor {
     font-family: sans-serif;
 }
+
+#saved-snippets {
+    margin-top: 20px;
+}
+
+#saved-snippets ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#saved-snippets li {
+    margin: 5px 0;
+    cursor: pointer;
+    color: #0077B5;
+    text-decoration: underline;
+}
+
+#saved-snippets li:hover {
+    text-decoration: none;
+}
+
+.save-load-buttons {
+    margin-top: 10px;
+}
+
+.save-load-buttons button {
+    margin-right: 10px;
+}

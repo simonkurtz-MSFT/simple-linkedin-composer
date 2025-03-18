@@ -69,4 +69,74 @@ document.addEventListener('click', (event) => {
     }
 });
 
+const saveButton = document.getElementById('save-button');
+const snippetsList = document.getElementById('snippets-list');
+
+// Function to sanitize and generate a key from the first 50 alphanumeric characters
+function generateKey(content) {
+    const sanitizedContent = content.replace(/[^a-zA-Z0-9 ]/g, '').substring(0, 50).trim(); // Keep spaces for now
+    const key = sanitizedContent.replace(/\s+/g, '-'); // Replace spaces with hyphens
+    return key || 'Untitled';
+}
+
+// Save the content to local storage
+saveButton.addEventListener('click', () => {
+    const content = quill.getText().trim(); // Get plain text from the editor
+    if (!content) {
+        alert('The editor is empty. Please write something to save.');
+        return;
+    }
+
+    const key = generateKey(content);
+    const delta = quill.getContents(); // Get Quill's Delta format for saving
+    const timestamp = new Date().toISOString(); // Get the current timestamp
+
+    // Save the snippet as an object with content and timestamp
+    const snippet = {
+        delta,
+        timestamp,
+    };
+    localStorage.setItem(key, JSON.stringify(snippet));
+
+    updateSnippetsList();
+});
+
+// Load saved snippets into the list
+function updateSnippetsList() {
+    snippetsList.innerHTML = ''; // Clear the list
+    Object.keys(localStorage).forEach((key) => {
+        const snippet = JSON.parse(localStorage.getItem(key));
+        const li = document.createElement('li');
+        const date = new Date(snippet.timestamp).toLocaleString(); // Format the timestamp
+        li.textContent = `${key} (Saved on: ${date})`;
+        li.addEventListener('click', () => loadSnippet(key));
+        snippetsList.appendChild(li);
+    });
+}
+
+// Load a snippet into the editor
+function loadSnippet(key) {
+    const savedSnippet = localStorage.getItem(key);
+    if (savedSnippet) {
+        const { delta } = JSON.parse(savedSnippet); // Extract the Delta format
+        quill.setContents(delta); // Load the Delta format into the editor
+    } else {
+        alert('Snippet not found.');
+    }
+}
+
+const clearButton = document.getElementById('clear-button');
+
+// Clear all saved snippets from local storage
+clearButton.addEventListener('click', () => {
+    const confirmation = confirm('Are you sure you want to clear all saved snippets? This action cannot be undone.');
+    if (confirmation) {
+        localStorage.clear(); // Clear all items from local storage
+        updateSnippetsList(); // Update the snippets list to reflect the changes
+    }
+});
+
+// Initialize the snippets list on page load
+updateSnippetsList();
+
 quill.focus();
