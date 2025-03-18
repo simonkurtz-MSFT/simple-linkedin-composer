@@ -6,97 +6,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple LinkedIn Composer</title>
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
-    <style>
-        body {
-            margin: auto;
-            width: 600px;
-
-            a,
-            a:hover,
-            a:visited {
-                color: #0077B5;
-                text-decoration: none;
-            }
-        }
-
-        /* Match LinkedIn's styling */
-        #editor-container {
-            font-size: 16px;
-            font-family: "Source Sans Pro", Arial, sans-serif;
-            line-height: 1.5;
-            width: 600px;
-            height: 500px;
-            overflow: scroll;
-        }
-
-        .ql-font-source-sans-pro .ql-editor {
-            font-family: 'Source Sans Pro', Arial, sans-serif;
-        }
-        .ql-font-arial .ql-editor {
-            font-family: Arial, sans-serif;
-        }
-        .ql-font-sans-serif .ql-editor {
-            font-family: sans-serif;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/quill-emoji/dist/quill-emoji.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
 </head>
 
 <body>
     <h1>Simple LinkedIn Composer</h1>
 
-    <p>This is extremely basic. Don't expect much. Format your post, copy it into LinkedIn.</p>
+    <p>Format your post, copy it into LinkedIn.</p>
+
+    <!-- Emoji Picker Container -->
+    <div class="emoji-picker-container">
+        <emoji-picker></emoji-picker>
+    </div>
 
     <!-- Create the Quill editor container -->
     <div id="editor-container"></div>
 
     <h2>Helpful Links</h2>
     <ul>
-        <li><a href="https://www.linkedin.com/pulse/emojis-linkedin-full-list-including-special-george-oliveira/"
-                target="_blank">LinkedIn Emojis</a></li>
+        <li><a href="https://quilljs.com" target="_blank">Quill Editor</a></li>
+        <li><a href="https://www.linkedin.com/pulse/emojis-linkedin-full-list-including-special-george-oliveira" target="_blank">LinkedIn Emojis</a></li>
     </ul>
 
     <!-- Load scripts -->
-    <!-- Include the Quill library -->
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
-
-    <!-- Initialize Quill editor -->
-    <script>
-        // // Add fonts to whitelist
-        const Font = Quill.import('formats/font');
-
-        // // We do not add Aref Ruqaa since it is the default
-        Font.whitelist = ['Source Sans Pro', 'Arial', 'sans-serif'];
-        Quill.register(Font, true);
-
-        const toolbarOptions = [
-            ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-            [{ 'font': Font.whitelist }],
-            [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-            [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-            [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-
-            ['blockquote', 'code-block'],
-            ['link', 'image', 'video'],
-
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'list': 'check' }],
-            [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
-            [{ 'align': [] }],
-
-            ['clean']                                         // remove formatting button
-        ];
-
-        const quill = new Quill('#editor-container', {
-            modules: {
-                toolbar: toolbarOptions,
-            },
-            placeholder: 'Compose your LinkedIn post...',
-            theme: 'snow'
-        });
-
-        quill.focus();
-    </script>
-
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,47 @@
+body {
+    margin: auto;
+    width: 600px;
+
+    a,
+    a:hover,
+    a:visited {
+        color: #0077B5;
+        text-decoration: none;
+    }
+}
+
+/* Match LinkedIn's styling */
+#editor-container {
+    font-size: 16px;
+    font-family: "Source Sans Pro", Arial, sans-serif;
+    line-height: 1.5;
+    width: 600px;
+    height: 500px;
+    overflow: scroll;
+}
+
+.emoji-picker-container {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ql-emoji::before {
+    content: "🙂"; /* Use an emoji as the button icon */
+    font-size: 18px;
+}
+
+.ql-font-source-sans-pro .ql-editor {
+    font-family: 'Source Sans Pro', Arial, sans-serif;
+}
+
+.ql-font-arial .ql-editor {
+    font-family: Arial, sans-serif;
+}
+
+.ql-font-sans-serif .ql-editor {
+    font-family: sans-serif;
+}
