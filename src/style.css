@@ -51,6 +51,11 @@ header {
     margin-right: 8px; /* Add spacing between the logo and the text */
 }
 
+/* Footer styling */
+footer {
+    margin-top: 50px;
+}
+
 /* Editor container styling */
 #editor-container {
     font-size: 16px;
