@@ -15,18 +15,34 @@
     <header>
         <h1>Simple LinkedIn Composer</h1>
         <a href="https://github.com/simonkurtz-MSFT/simple-linkedin-composer" target="_blank" class="github-link">
-            <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo" class="github-logo">
+            <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo"
+                class="github-logo">
             View on GitHub
         </a>
     </header>
+
+    <!-- LinkedIn User ID Input -->
+    <div class="linkedin-user-id">
+        <label for="linkedin-user-id">LinkedIn user id:</label>
+        <input type="text" id="linkedin-user-id" placeholder="Enter your LinkedIn user id">
+        <!-- LinkedIn Post Link -->
+        <a id="linkedin-link" href="#" target="_blank" style="display: none;">Create a new LinkedIn post</a>
+    </div>
+
+    <!-- Create the Quill editor container -->
+    <div id="editor-container"></div>
 
     <!-- Emoji Picker Container -->
     <div class="emoji-picker-container">
         <emoji-picker></emoji-picker>
     </div>
 
+<<<<<<< Updated upstream
     <!-- Create the Quill editor container -->
     <div id="editor-container"></div>
+=======
+    <button id="copy-button">Copy HMTL to Clipboard (plain/text)</button>
+>>>>>>> Stashed changes
 
     <!-- Saved Snippets -->
     <div id="saved-snippets">
@@ -38,18 +54,38 @@
             <button id="clear-button">Clear list</button>
         </div>
 
-        <ul id="snippets-list"></ul>
+        <!-- Snippets Table -->
+        <table id="snippets-table">
+            <thead>
+                <tr>
+                    <th>Snippet</th>
+                    <th>Timestamp</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Snippets will be dynamically added here -->
+            </tbody>
+        </table>
     </div>
 
-    <h2>Helpful Links</h2>
+    <h2>Instructions</h2>
     <ul>
-        <li><a href="https://quilljs.com" target="_blank">Quill Editor</a></li>
-        <li><a href="https://www.linkedin.com/pulse/emojis-linkedin-full-list-including-special-george-oliveira" target="_blank">LinkedIn Emojis</a></li>
+        <li>Enter your LinkedIn user id (stored in local storage).</li>
+        <li>Compose your post and save it (stored in local storage).</li>
+        <li>Click the "Copy HTML to Clipboard" button to copy the post content.</li>
+        <li>Click the "Create a new LinkedIn post" link to open the LinkedIn post page.</li>
+        <li>Open the Developer tools (F12) and put the following in the console:
+            <ul>
+            <li>var html = `<b>[pasted from clipboard]</b>`</li>
+            <li>$('.ql-editor').innerHTML = html</li>
+            </ul>
+        </li>
     </ul>
 
     <!-- Footer -->
     <footer>
-        <p>Created by <a href="https://github.com/simonkurtz-MSFT" target="_blank">Simon Kurtz</a> for free use. Enjoy! =)</p>
+        <p>Created by <a href="https://github.com/simonkurtz-MSFT" target="_blank">Simon Kurtz</a> for free use.</p>
     </footer>
 
     <!-- Load scripts -->

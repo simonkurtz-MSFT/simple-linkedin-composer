@@ -4,19 +4,19 @@ body {
     width: 696px;
     font-family: "Source Sans Pro", Arial, sans-serif;
     line-height: 1.5;
-    color: #333; /* Ensure sufficient contrast for text */
-    background-color: #fff; /* Set a background color for better readability */
+    color: #333;
+    background-color: #fff;
 }
 
+/* Links styling */
 a,
-a:hover,
 a:visited {
     color: #0077B5;
     text-decoration: none;
 }
 
 a:hover {
-    text-decoration: underline; /* Add underline on hover for better visibility */
+    text-decoration: underline;
 }
 
 /* Header styling */
@@ -26,10 +26,8 @@ header {
     align-items: center;
     margin-bottom: 20px;
     padding: 10px 0;
-    border-bottom: 1px solid #ccc; /* Add a subtle separator */
 }
 
-/* GitHub link styling */
 .github-link {
     display: flex;
     align-items: center;
@@ -41,14 +39,14 @@ header {
 }
 
 .github-link:hover {
-    color: #005582; /* Slightly darker color on hover */
+    color: #005582;
     text-decoration: underline;
 }
 
 .github-logo {
     width: 24px;
     height: 24px;
-    margin-right: 8px; /* Add spacing between the logo and the text */
+    margin-right: 8px;
 }
 
 /* Footer styling */
@@ -60,13 +58,13 @@ footer {
 #editor-container {
     font-size: 16px;
     width: 696px;
-    height: 500px;
-    overflow: auto; /* Changed from 'scroll' to 'auto' for better UX */
-    border: 1px solid #ccc; /* Added a border for better visual separation */
-    padding: 10px; /* Added padding for better text readability */
-    box-sizing: border-box; /* Ensures padding doesn't affect width/height */
-    background-color: #fff; /* Ensure a readable background */
-    color: #333; /* Ensure sufficient contrast for text */
+    height: 600px;
+    overflow: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #fff;
+    color: #333;
 }
 
 /* Emoji picker container styling */
@@ -77,12 +75,12 @@ footer {
     background: white;
     border: 1px solid #ccc;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border-radius: 4px; /* Added rounded corners for a modern look */
+    border-radius: 4px;
 }
 
 /* Emoji button styling */
 .ql-emoji::before {
-    content: "🙂"; /* Use an emoji as the button icon */
+    content: "🙂";
     font-size: 18px;
     display: inline-block;
     text-align: center;
@@ -107,9 +105,9 @@ footer {
 }
 
 #saved-snippets ul {
-    list-style: none; /* Removed 'type' for cleaner styling */
+    list-style: none;
     padding: 0;
-    margin: 0; /* Added margin reset for consistency */
+    margin: 0;
 }
 
 #saved-snippets li {
@@ -117,58 +115,101 @@ footer {
     cursor: pointer;
     color: #0077B5;
     text-decoration: underline;
-    transition: color 0.2s ease-in-out; /* Smooth hover effect */
+    transition: color 0.2s ease-in-out;
 }
 
 #saved-snippets li:hover {
     text-decoration: none;
-    color: #005582; /* Slightly darker color on hover */
+    color: #005582;
 }
 
-/* Save and load buttons styling */
-.save-load-buttons {
-    margin-top: 10px;
-}
-
-.save-load-buttons button {
+/* Buttons styling */
+button {
     margin-right: 10px;
-    padding: 8px 12px; /* Added padding for better clickability */
-    border: 1px solid #ccc; /* Added border for better visibility */
-    border-radius: 4px; /* Rounded corners for a modern look */
-    background-color: #f9f9f9; /* Subtle background color */
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-    color: #333; /* Ensure sufficient contrast for button text */
+    color: #333;
 }
 
-.save-load-buttons button:hover {
-    background-color: #e6e6e6; /* Slightly darker background on hover */
-    border-color: #aaa; /* Darker border on hover */
+button:hover {
+    background-color: #e6e6e6;
+    border-color: #aaa;
 }
 
 /* Focus styles for accessibility */
 button:focus,
 a:focus,
 #saved-snippets li:focus {
-    outline: 2px solid #005582; /* Add a visible focus outline */
+    outline: 2px solid #005582;
     outline-offset: 2px;
 }
 
 /* Delete button styling */
 .delete-button {
-    margin-left: 10px;
     padding: 4px 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #f9f9f9;
-    color: #333;
-    cursor: pointer;
     font-size: 12px;
-    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 }
 
-.delete-button:hover {
-    background-color: #e6e6e6;
-    border-color: #aaa;
-    color: #000;
+/* Style the snippets table */
+#snippets-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+#snippets-table th,
+#snippets-table td {
+    text-align: left;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+}
+
+#snippets-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+#snippets-table td {
+    vertical-align: top;
+}
+
+/* Add margin between columns */
+#snippets-table td + td,
+#snippets-table th + th {
+    padding-left: 15px;
+}
+
+/* Make the Snippet column clickable with a pointer cursor */
+#snippets-table td:first-child {
+    cursor: pointer; /* Change cursor to pointer */
+    color: #0077B5; /* Optional: Add a link-like color */
+    text-decoration: underline; /* Optional: Add underline for emphasis */
+}
+
+#snippets-table td:first-child:hover {
+    color: #005582; /* Optional: Change color on hover */
+    text-decoration: none; /* Optional: Remove underline on hover */
+}
+
+/* Center the delete button in the column */
+#snippets-table td:last-child {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#editor-container {
+    margin-bottom: 15px;
+}
+
+.linkedin-user-id {
+    margin: 15px 0; /* 15px margin above and below */
+}
+
+.ql-editor.ql-blank::before {
+    left: 30px;
 }
