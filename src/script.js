@@ -41,11 +41,11 @@ const quill = new Quill('#editor-container', {
             container: [
                 ['bold', 'italic', 'underline', 'strike'], // toggled buttons
                 [{ 'font': ['Source Sans Pro', 'Arial', 'sans-serif'] }],
-                [{ 'header': 1 }, { 'header': 2 }], // custom button values
+                [{ 'header': 1 }, { 'header': 2 }, { 'header': 3 }], // custom button values
                 [{ 'size': ['small', false, 'large', 'huge'] }], // custom dropdown
                 [{ 'color': [] }, { 'background': [] }], // dropdown with defaults from theme
-                ['blockquote', 'code-block'],
-                ['link', 'image', 'video'],
+                ['blockquote'],
+                ['link'],
                 [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'list': 'check' }],
                 [{ 'indent': '-1' }, { 'indent': '+1' }], // outdent/indent
                 [{ 'align': [] }],
@@ -55,6 +55,9 @@ const quill = new Quill('#editor-container', {
             handlers: {
                 emoji: toggleEmojiPicker,
             },
+        },
+        clipboard: {
+            matchers: [], // Allow all content by default
         },
     },
     placeholder: 'Compose your post, then follow instructions below...',
@@ -183,8 +186,6 @@ $('#clear-button').on('click', () => {
     }
 });
 
-<<<<<<< Updated upstream
-=======
 $('#copy-button').on('click', async () => {
     const semanticHtml = quill.getSemanticHTML();
     // console.log(semanticHtml);
@@ -210,7 +211,6 @@ $('#copy-button').on('click', async () => {
     }
 });
 
->>>>>>> Stashed changes
 // Initialize the snippets list on page load
 updateSnippetsList();
 quill.focus();
