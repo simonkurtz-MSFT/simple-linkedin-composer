@@ -73,7 +73,7 @@
         <li>Open the Developer tools (F12) and put the following in the console:
             <ul>
             <li>var html = `<b>[pasted from clipboard]</b>`</li>
-            <li>$('.ql-editor').innerHTML = html</li>
+            <li>$('.ql-editor').setHTMLUnsafe(html)<br><b>Might have to do this twice.</b></li>
             </ul>
         </li>
     </ul>
