@@ -1,46 +1,39 @@
-/* General body styling */
+/* General Styles */
 body {
-    margin: auto;
-    width: 696px;
-    font-family: "Source Sans Pro", Arial, sans-serif;
+    font-family: 'Source Sans Pro', Arial, sans-serif;
     line-height: 1.5;
     color: #333;
-    background-color: #fff;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
 }
 
-/* Links styling */
-a,
-a:visited {
-    color: #0077B5;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-/* Header styling */
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    padding: 10px 0;
+    padding: 10px 20px;
+    background-color: #0077B5;
+    color: white;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.5rem;
 }
 
 .github-link {
     display: flex;
     align-items: center;
-    color: #0077B5;
+    color: white;
     text-decoration: none;
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: bold;
     transition: color 0.2s ease-in-out;
 }
 
 .github-link:hover {
-    color: #005582;
-    text-decoration: underline;
+    color: #d0e6f7;
 }
 
 .github-logo {
@@ -49,25 +42,37 @@ header {
     margin-right: 8px;
 }
 
-/* Footer styling */
-footer {
-    margin-top: 50px;
-}
-
-/* Editor container styling */
-#editor-container {
-    font-size: 16px;
-    width: 696px;
-    min-height: 650px;
-    overflow: auto;
+/* Input Fields */
+input[type="text"] {
+    width: 100%;
+    max-width: 400px;
+    padding: 8px;
     border: 1px solid #ccc;
-    padding: 10px;
-    box-sizing: border-box;
-    background-color: #fff;
-    color: #333;
+    border-radius: 4px;
+    font-size: 1rem;
+    margin-top: 5px;
 }
 
-/* Emoji picker container styling */
+.linkedin-user-id,
+.snippet-title {
+    margin: 15px 0;
+}
+
+input#linkedin-user-id {
+    max-width: 200px;
+}
+
+/* Editor Container */
+#editor-container {
+    margin: 15px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+    padding: 10px;
+    min-height: 200px;
+}
+
+/* Emoji Picker */
 .emoji-picker-container {
     display: none;
     position: absolute;
@@ -78,83 +83,29 @@ footer {
     border-radius: 4px;
 }
 
-/* Emoji button styling */
-.ql-emoji::before {
-    content: "🙂";
-    font-size: 18px;
-    display: inline-block;
-    text-align: center;
-}
-
-/* Font-specific styling for Quill editor */
-.ql-font-source-sans-pro .ql-editor {
-    font-family: 'Source Sans Pro', Arial, sans-serif;
-}
-
-.ql-font-arial .ql-editor {
-    font-family: Arial, sans-serif;
-}
-
-.ql-font-sans-serif .ql-editor {
-    font-family: sans-serif;
-}
-
-/* Saved snippets section styling */
-#saved-snippets {
-    margin-top: 20px;
-}
-
-#saved-snippets ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-#saved-snippets li {
-    margin: 5px 0;
-    cursor: pointer;
-    color: #0077B5;
-    text-decoration: underline;
-    transition: color 0.2s ease-in-out;
-}
-
-#saved-snippets li:hover {
-    text-decoration: none;
-    color: #005582;
-}
-
-/* Buttons styling */
+/* Buttons */
 button {
-    margin-right: 10px;
     padding: 8px 12px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    background-color: #f9f9f9;
+    background-color: #0077B5;
+    color: white;
+    font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-    color: #333;
 }
 
 button:hover {
-    background-color: #e6e6e6;
-    border-color: #aaa;
+    background-color: #005582;
+    border-color: #004466;
 }
 
-/* Focus styles for accessibility */
-button:focus,
-a:focus,
-#saved-snippets li:focus {
-    outline: 2px solid #005582;
-    outline-offset: 2px;
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 
-/* Delete button styling */
-.delete-button {
-    padding: 4px 8px;
-    font-size: 12px;
-}
-
-/* Style the snippets table */
+/* Snippets Table */
 #snippets-table {
     width: 100%;
     border-collapse: collapse;
@@ -183,16 +134,16 @@ a:focus,
     padding-left: 15px;
 }
 
-/* Make the Snippet column clickable with a pointer cursor */
+/* Make the Snippet column clickable */
 #snippets-table td:first-child {
-    cursor: pointer; /* Change cursor to pointer */
-    color: #0077B5; /* Optional: Add a link-like color */
-    text-decoration: underline; /* Optional: Add underline for emphasis */
+    cursor: pointer;
+    color: #0077B5;
+    text-decoration: underline;
 }
 
 #snippets-table td:first-child:hover {
-    color: #005582; /* Optional: Change color on hover */
-    text-decoration: none; /* Optional: Remove underline on hover */
+    color: #005582;
+    text-decoration: none;
 }
 
 /* Center the delete button in the column */
@@ -202,14 +153,18 @@ a:focus,
     align-items: center;
 }
 
-#editor-container {
-    margin-bottom: 15px;
+/* Accessibility Focus Styles */
+button:focus,
+a:focus,
+input:focus {
+    outline: 2px solid #005582;
+    outline-offset: 2px;
 }
 
-.linkedin-user-id {
-    margin: 15px 0; /* 15px margin above and below */
-}
-
-.ql-editor.ql-blank::before {
-    left: 30px;
+/* Footer */
+footer {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #666;
 }

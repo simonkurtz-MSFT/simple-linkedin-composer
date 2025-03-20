@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple LinkedIn Composer</title>
+    <!-- Fonts and Styles -->
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/quill-emoji/dist/quill-emoji.css" rel="stylesheet">
@@ -22,34 +23,36 @@
     </header>
 
     <!-- LinkedIn User ID Input -->
-    <div class="linkedin-user-id">
+    <section class="linkedin-user-id">
         <label for="linkedin-user-id">LinkedIn user id:</label>
         <input type="text" id="linkedin-user-id" placeholder="Enter your LinkedIn user id">
-        <!-- LinkedIn Post Link -->
         <a id="linkedin-link" href="#" target="_blank" style="display: none;">Create a new LinkedIn post</a>
-    </div>
+    </section>
 
-    <!-- Create the Quill editor container -->
-    <div id="editor-container"></div>
+    <!-- Custom Snippet Title Input -->
+    <section class="snippet-title">
+        <label for="snippet-title">Snippet Title (max 50 characters):</label>
+        <input type="text" id="snippet-title" placeholder="Enter a custom snippet title">
+    </section>
 
-    <!-- Emoji Picker Container -->
+    <!-- Quill Editor -->
+    <section id="editor-container"></section>
+
+    <!-- Emoji Picker -->
     <div class="emoji-picker-container">
         <emoji-picker></emoji-picker>
     </div>
 
-    <button id="copy-button">Copy HMTL to Clipboard (plain/text)</button>
+    <!-- Copy Button -->
+    <button id="copy-button">Copy HTML to Clipboard (plain/text)</button>
 
     <!-- Saved Snippets -->
-    <div id="saved-snippets">
+    <section id="saved-snippets">
         <h2>Saved Snippets</h2>
-
-        <!-- Save and Clear Buttons -->
         <div class="save-load-buttons">
             <button id="save-button">Save post</button>
             <button id="clear-button">Clear list</button>
         </div>
-
-        <!-- Snippets Table -->
         <table id="snippets-table">
             <thead>
                 <tr>
@@ -62,28 +65,32 @@
                 <!-- Snippets will be dynamically added here -->
             </tbody>
         </table>
-    </div>
+    </section>
 
-    <h2>Instructions</h2>
-    <ul>
-        <li>Enter your LinkedIn user id (stored in local storage).</li>
-        <li>Compose your post and save it (stored in local storage).</li>
-        <li>Click the "Copy HTML to Clipboard" button to copy the post content.</li>
-        <li>Click the "Create a new LinkedIn post" link to open the LinkedIn post page.</li>
-        <li>Open the Developer tools (F12) and put the following in the console:
-            <ul>
-            <li>var html = `<b>[pasted from clipboard]</b>`</li>
-            <li>$('.ql-editor').setHTMLUnsafe(html)<br><b>Might have to do this twice.</b></li>
-            </ul>
-        </li>
-    </ul>
+    <!-- Instructions -->
+    <section>
+        <h2>Instructions</h2>
+        <ul>
+            <li>Enter your LinkedIn user id (stored in local storage).</li>
+            <li>Compose your post and save it (stored in local storage).</li>
+            <li>Click the "Copy HTML to Clipboard" button to copy the post content.</li>
+            <li>Click the "Create a new LinkedIn post" link to open the LinkedIn post page.</li>
+            <li>
+                Open the Developer tools (F12), and run the following commands in the console:
+                <ul>
+                    <li><b>html = `[paste from clipboard]`</b></li>
+                    <li><b>$('.ql-editor').setHTMLUnsafe(html)</b></li>
+                </ul>
+            </li>
+        </ul>
+    </section>
 
     <!-- Footer -->
     <footer>
         <p>Created by <a href="https://github.com/simonkurtz-MSFT" target="_blank">Simon Kurtz</a> for free use.</p>
     </footer>
 
-    <!-- Load scripts -->
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>

@@ -39,21 +39,14 @@ const quill = new Quill('#editor-container', {
     modules: {
         toolbar: {
             container: [
-                ['bold', 'italic', 'underline', 'strike'], // toggled buttons
-                [{ 'font': ['Source Sans Pro', 'Arial', 'sans-serif'] }],
-                [{ 'header': 1 }, { 'header': 2 }, { 'header': 3 }], // custom button values
-                [{ 'size': ['small', false, 'large', 'huge'] }], // custom dropdown
-                [{ 'color': [] }, { 'background': [] }], // dropdown with defaults from theme
-                ['blockquote'],
-                ['link'],
-                [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'list': 'check' }],
-                [{ 'indent': '-1' }, { 'indent': '+1' }], // outdent/indent
-                [{ 'align': [] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                 ['emoji'], // Custom emoji button
-                ['clean'], // remove formatting button
+                ['clean', 'clear']
             ],
             handlers: {
                 emoji: toggleEmojiPicker,
+                clear: clearEditor
             },
         },
         clipboard: {
@@ -66,7 +59,19 @@ const quill = new Quill('#editor-container', {
 
 // Toggle the emoji picker visibility
 function toggleEmojiPicker() {
-    $('.emoji-picker-container').toggle();
+    const $emojiPicker = $('.emoji-picker-container');
+    const editorOffset = $('#editor-container').offset();
+
+    // Position the emoji picker above the editor
+    $emojiPicker.css({
+        top: editorOffset.top + 10,
+        left: editorOffset.left + 10,
+    });
+
+    $emojiPicker.toggle(); // Toggle visibility
+}
+function clearEditor() {
+    quill.setText('');
 }
 
 // Listen for emoji selection
@@ -102,7 +107,19 @@ $('#save-button').on('click', () => {
         return;
     }
 
-    const key = generateKey(content);
+    // Get the custom snippet title
+    let title = $('#snippet-title').val().trim();
+    if (!title) {
+        alert('Snippet title cannot be empty.');
+        return;
+    }
+
+    // Limit the title to 50 characters
+    title = title.substring(0, 50);
+
+    // Generate a key for the snippet
+    const key = `snippet-${title.replace(/[^a-zA-Z0-9 ]/g, '').replace(/\s+/g, '-')}`;
+
     const snippet = {
         delta: quill.getContents(),
         timestamp: new Date().toISOString(),
@@ -110,6 +127,9 @@ $('#save-button').on('click', () => {
 
     localStorage.setItem(key, JSON.stringify(snippet));
     updateSnippetsList();
+
+    // Clear the snippet title input after saving
+    $('#snippet-title').val('');
 });
 
 function updateSnippetsList() {
@@ -162,6 +182,10 @@ function loadSnippet(key) {
     if (savedSnippet) {
         const { delta } = JSON.parse(savedSnippet);
         quill.setContents(delta);
+
+        // Populate the snippet title textbox with the snippet name
+        const snippetTitle = key.replace('snippet-', ''); // Remove the "snippet-" prefix
+        $('#snippet-title').val(snippetTitle); // Set the snippet title in the textbox
     } else {
         alert('Snippet not found.');
     }
@@ -170,8 +194,8 @@ function loadSnippet(key) {
 // Delete a specific snippet from local storage
 function deleteSnippet(key) {
     if (confirm(`Are you sure you want to delete the snippet "${key}"? This action cannot be undone.`)) {
-        localStorage.removeItem(key); // Remove the snippet from local storage
-        updateSnippetsList(); // Refresh the snippets list
+        localStorage.removeItem(key);
+        updateSnippetsList();
     }
 }
 
@@ -187,16 +211,45 @@ $('#clear-button').on('click', () => {
 });
 
 $('#copy-button').on('click', async () => {
-    const semanticHtml = quill.getSemanticHTML();
-    // console.log(semanticHtml);
+    const semanticHtml = quill.getSemanticHTML().trim();
+    console.log(`\nSemantic HTML:\n\n${semanticHtml}`);
 
     // Replaces spaces, apostrophes, and quotes.
-    const modifiedHtml = semanticHtml
+    var modifiedHtml = semanticHtml
         .replaceAll('&nbsp;', ' ')
         .replaceAll('&#39;', "'")
         .replaceAll('&quot;', '"');
 
-    console.log(modifiedHtml);
+    // Transform unordered lists (<ul>) into plain text with bullet points
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(modifiedHtml, 'text/html');
+
+    // Process unordered lists (<ul>) into plain text with bullet points
+    const unorderedLists = doc.querySelectorAll('ul');
+    unorderedLists.forEach((ul) => {
+        const listItems = Array.from(ul.querySelectorAll('li')).map((li) => {
+            const paragraph = document.createElement('p');
+            paragraph.textContent = `   • ${li.textContent.trim()}`;
+            return paragraph;
+        });
+        ul.replaceWith(...listItems); // Replace the <ul> with individual <p> elements
+    });
+
+    // Process ordered lists (<ol>) into individual paragraphs
+    const orderedLists = doc.querySelectorAll('ol');
+    orderedLists.forEach((ol) => {
+        const listItems = Array.from(ol.querySelectorAll('li')).map((li, index) => {
+            const paragraph = document.createElement('p');
+            paragraph.textContent = `   ${index + 1}. ${li.textContent.trim()}`;
+            return paragraph;
+        });
+        ol.replaceWith(...listItems); // Replace the <ol> with individual <p> elements
+    });
+
+    // Serialize the modified DOM back to a string
+    modifiedHtml = doc.body.innerHTML.trim();
+
+    console.log(`\nModified HTML:\n\n${modifiedHtml}`);
 
     try {
         const clipboardItem = new ClipboardItem({
