@@ -63,6 +63,9 @@ const latinToMathBoldItalic = {
     'y': '\u{1D49A}', 'z': '\u{1D49B}'
 };
 
+// Sample text to load into the editor
+const samplePostJson = `{"ops":[{"insert":"🎉 "},{"attributes":{"bold":true},"insert":"Simple LinkedIn Composer "},{"insert":"🎉\\n \\nStyle eludes me. Any tool that can help make these posts a little better for you to read is helpful. I haven't found any good, "},{"attributes":{"italic":true,"bold":true},"insert":"completely free"},{"insert":" LinkedIn post composers, so I'm rolling my own. Say hello to this low-budget, no-frills, single-purpose composer that you can use, if you like.\\n \\n"},{"attributes":{"bold":true},"insert":"⚙️ Some features"},{"insert":"\\n\\nI'm using Jason Chen's free rich-text editor, "},{"attributes":{"italic":true},"insert":"Quill"},{"insert":". Thank you for creating an awesome product, Jason!"},{"attributes":{"list":"bullet"},"insert":"\\n"},{"insert":"Emojis are supported via through Nolan Lawson's "},{"attributes":{"italic":true},"insert":"emoji-picker"},{"insert":" which even supports emoji search! Thank you for this cool module, Nolan!"},{"attributes":{"list":"bullet"},"insert":"\\n"},{"insert":"You can use local storage to save and load composed posts with full formatting. You can easily clear the list, too. This makes reusing snippets simpler."},{"attributes":{"list":"bullet"},"insert":"\\n"},{"attributes":{"bold":true},"insert":"No data leaves your device. There are no trackers, etc. "},{"attributes":{"list":"bullet"},"insert":"\\n"},{"insert":"Pressing Enter does "},{"attributes":{"italic":true},"insert":"not"},{"insert":" save the post and make it live on LinkedIn. 🤣"},{"attributes":{"list":"bullet"},"insert":"\\n"},{"insert":" \\nTry it out on the GitHub page: \\nhttps://simonkurtz-msft.github.io/simple-linkedin-composer\\n \\n🐛 "},{"attributes":{"bold":true},"insert":"Bugs"},{"insert":"\\n \\nI'm sure there are bugs and improvements to be made. If you can, please submit an issue on GitHub, and if you have it in you, I would be grateful for a PR. Thank you!\\n\\n#linkedin\\n"}]}`;
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -397,6 +400,11 @@ const quill = new Quill('#editor-container', {
     },
     placeholder: 'Compose your post, then follow instructions below...',
     theme: 'snow',
+});
+
+$('#load-sample-button').on('click', () => {
+    console.log(JSON.parse(samplePostJson))
+    quill.setContents(JSON.parse(samplePostJson)); // Populate the editor with the sample text
 });
 
 
