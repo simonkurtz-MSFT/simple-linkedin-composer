@@ -287,6 +287,16 @@ function processNode(node) {
     if (node.nodeType === Node.TEXT_NODE) {
         // For text nodes, determine the formatting of the parent element
         const parent = node.parentElement;
+
+        // Skip processing if the parent is an anchor tag (<a>) or if the text contains a URL. Otherwise, URLs will be
+        // converted to Unicode characters and not be interpreted correctly as links.
+        if (parent && parent.tagName === 'A') {
+            return; // Skip processing links
+        }
+        if (node.textContent.match(/https?:\/\/[^\s]+/)) {
+            return; // Skip processing text nodes containing URLs
+        }
+
         const isBold = parent && (parent.tagName === 'B' || parent.tagName === 'STRONG');
         const isItalic = parent && (parent.tagName === 'I' || parent.tagName === 'EM');
 
