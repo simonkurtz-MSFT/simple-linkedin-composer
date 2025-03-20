@@ -3,9 +3,10 @@ body {
     font-family: 'Source Sans Pro', Arial, sans-serif;
     line-height: 1.5;
     color: #333;
-    margin: 0;
-    padding: 0;
+    margin: auto;
+    padding-top: 20px;
     background-color: #f9f9f9;
+    width: 700px;
 }
 
 header {
@@ -163,7 +164,7 @@ input:focus {
 
 /* Footer */
 footer {
-    margin-top: 20px;
+    margin-top: 35px;
     text-align: center;
     font-size: 0.9rem;
     color: #666;
