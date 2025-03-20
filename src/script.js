@@ -39,7 +39,7 @@ const quill = new Quill('#editor-container', {
     modules: {
         toolbar: {
             container: [
-                ['bold', 'italic', 'underline', 'strike'],
+                ['bold', 'italic'/*, 'underline', 'strike'*/],
                 [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                 ['emoji'], // Custom emoji button
                 ['clean', 'clear']

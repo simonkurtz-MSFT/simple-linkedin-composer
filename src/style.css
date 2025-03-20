@@ -65,12 +65,17 @@ input#linkedin-user-id {
 
 /* Editor Container */
 #editor-container {
-    margin: 15px 0;
+    margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: white;
     padding: 10px;
-    min-height: 200px;
+    width: 700px;
+    min-height: 500px;
+}
+
+.ql-editor.ql-blank::before {
+    left: 30px;
 }
 
 /* Emoji Picker */
@@ -82,6 +87,22 @@ input#linkedin-user-id {
     border: 1px solid #ccc;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 4px;
+}
+
+/* Emoji button styling */
+.ql-emoji::before {
+    content: "🙂";
+    font-size: 18px;
+    display: inline-block;
+    text-align: center;
+}
+
+/* Emoji button styling */
+.ql-clear::before {
+    content: "🧹";
+    font-size: 18px;
+    display: inline-block;
+    text-align: center;
 }
 
 /* Buttons */
