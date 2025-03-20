@@ -1,4 +1,10 @@
-/* General Styles */
+/* Common Link Styles */
+.link {
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s ease-in-out;
+}
+
 body {
     font-family: 'Source Sans Pro', Arial, sans-serif;
     line-height: 1.5;
@@ -23,18 +29,26 @@ header h1 {
     font-size: 1.5rem;
 }
 
+/* Specific Styles for GitHub Link */
 .github-link {
     display: flex;
     align-items: center;
-    color: white;
-    text-decoration: none;
     font-size: 1rem;
-    font-weight: bold;
-    transition: color 0.2s ease-in-out;
+    color: white;
 }
 
 .github-link:hover {
-    color: #d0e6f7;
+    color: #d0e6f7; /* Hover color */
+}
+
+.github-link:visited {
+    color: white; /* Ensure visited links remain the same color as unvisited links */
+}
+
+.github-logo {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
 }
 
 .github-logo {
@@ -52,6 +66,14 @@ input[type="text"] {
     border-radius: 4px;
     font-size: 1rem;
     margin-top: 5px;
+}
+
+/* Specific Styles for LinkedIn Link */
+#linkedin-link {
+    font-size: 1rem;
+    margin-top: 10px;
+    display: inline-block;
+    color: #0077B5
 }
 
 .linkedin-user-id,
@@ -190,4 +212,18 @@ footer {
     text-align: center;
     font-size: 0.9rem;
     color: #666;
+}
+
+/* Footer Link */
+footer a {
+    font-size: 0.9rem;
+    color: #0077B5; /* Blue color for footer links */
+}
+
+footer a:hover {
+    color: #005582; /* Darker blue on hover */
+}
+
+footer a:visited {
+    color: #0077B5; /* Ensure visited links remain the same as unvisited links */
 }
