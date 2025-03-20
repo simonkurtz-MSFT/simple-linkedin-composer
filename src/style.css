@@ -60,7 +60,8 @@ input[type="text"] {
 }
 
 input#linkedin-user-id {
-    max-width: 200px;
+    margin-right: 10px;
+    width: 175px;
 }
 
 /* Editor Container */
