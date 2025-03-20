@@ -226,7 +226,7 @@ $('#save-button').on('click', () => {
 
 $('#copy-button').on('click', async () => {
     const semanticHtml = quill.getSemanticHTML().trim();
-    console.log(`\nSemantic HTML:\n\n${semanticHtml}`);
+    console.log(`\nSemantic HTML input:\n\n${semanticHtml}`);
 
     // 1) String-replace spaces, apostrophes, and quotes.
     var modifiedHtml = semanticHtml
@@ -268,7 +268,12 @@ $('#copy-button').on('click', async () => {
     // 6) Remove <strong>, <b>, <em>, and <i> tags using regex
     modifiedHtml = modifiedHtml.replace(/<\/?(strong|b|em|i)>/g, '');
 
-    console.log(`\nModified HTML:\n\n${modifiedHtml}`);
+    // 7) Replace <p> and </p> with Unicode paragraphBreak and newLine
+    const paragraphBreak = '\u2029'; // Unicode Paragraph Separator
+    const newLine = '\n'; // Newline character
+    modifiedHtml = modifiedHtml.replace(/<p>/g, paragraphBreak).replace(/<\/p>/g, newLine);
+
+    console.log(`\nModified output:\n\n${modifiedHtml}`);
 
     try {
         const clipboardItem = new ClipboardItem({
@@ -300,24 +305,6 @@ function processNode(node) {
         const isBold = parent && (parent.tagName === 'B' || parent.tagName === 'STRONG');
         const isItalic = parent && (parent.tagName === 'I' || parent.tagName === 'EM');
 
-        // Function to get styled Unicode character
-        function getStyledUnicode(char, isBold, isItalic) {
-            // Check if the character is a Latin letter (A-Z or a-z)
-            if ((char >= 'A' && char <= 'Z') || (char >= 'a' && char <= 'z')) {
-                if (isBold && isItalic) {
-                    return latinToMathBoldItalic[char] || char; // Bold Italic
-                } else if (isBold) {
-                    return latinToMathBold[char] || char; // Bold
-                } else if (isItalic) {
-                    return latinToMathItalic[char] || char; // Italic
-                } else {
-                    return latinToMathSansSerif[char] || char; // Sans-Serif
-                }
-            }
-            // Return the original character if it's not a Latin letter
-            return char;
-        }
-
         // Transform the text content based on the formatting
         node.textContent = Array.from(node.textContent)
             .map((char) => getStyledUnicode(char, isBold, isItalic))
@@ -326,6 +313,24 @@ function processNode(node) {
         // Recursively process child nodes
         Array.from(node.childNodes).forEach(processNode);
     }
+}
+
+// Function to get styled Unicode character
+function getStyledUnicode(char, isBold, isItalic) {
+    // Check if the character is a Latin letter (A-Z or a-z)
+    if ((char >= 'A' && char <= 'Z') || (char >= 'a' && char <= 'z')) {
+        if (isBold && isItalic) {
+            return latinToMathBoldItalic[char] || char; // Bold Italic
+        } else if (isBold) {
+            return latinToMathBold[char] || char; // Bold
+        } else if (isItalic) {
+            return latinToMathItalic[char] || char; // Italic
+        } else {
+            return latinToMathSansSerif[char] || char; // Sans-Serif
+        }
+    }
+    // Return the original character if it's not a Latin letter
+    return char;
 }
 
 
