@@ -207,7 +207,7 @@ $('#save-button').on('click', () => {
     title = title.substring(0, 50);
 
     // Generate a key for the snippet
-    const key = `snippet-${title.replace(/[^a-zA-Z0-9 ]/g, '').replace(/\s+/g, '-')}`;
+    const key = `snippet-${title.replace(/[^a-zA-Z0-9 -]/g, '').replace(/\s+/g, '-')}`;
 
     const snippet = {
         delta: quill.getContents(),
@@ -216,9 +216,6 @@ $('#save-button').on('click', () => {
 
     localStorage.setItem(key, JSON.stringify(snippet));
     updateSnippetsList();
-
-    // Clear the snippet title input after saving
-    $('#snippet-title').val('');
 });
 
 

@@ -162,6 +162,7 @@ button:disabled {
     text-align: left;
     padding: 0.5rem;
     border: 1px solid #ccc;
+    vertical-align: middle; /* Ensure vertical alignment is middle */
 }
 
 #snippets-table th {
@@ -169,14 +170,22 @@ button:disabled {
     font-weight: bold;
 }
 
-#snippets-table td {
-    vertical-align: top;
+#snippets-table th.center {
+    text-align: center;
 }
 
 /* Add margin between columns */
 #snippets-table td + td,
 #snippets-table th + th {
     padding-left: 15px;
+}
+
+#snippets-table th:nth-child(2) {
+    width: 150px;
+}
+
+#snippets-table th:nth-child(3) {
+    width: 75px;
 }
 
 /* Make the Snippet column clickable */
