@@ -403,7 +403,6 @@ const quill = new Quill('#editor-container', {
 });
 
 $('#load-sample-button').on('click', () => {
-    console.log(JSON.parse(samplePostJson))
     quill.setContents(JSON.parse(samplePostJson)); // Populate the editor with the sample text
 });
 
