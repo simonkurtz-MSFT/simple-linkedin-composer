@@ -1,6 +1,8 @@
 # Simple LinkedIn Composer
 
-An extremely simple LinkedIn composer for the sole purpose of crafting posts. Try it out at [linkedin-composer.simondoescloud.com](https://linkedin-composer.simondoescloud.com/)!
+An extremely simple LinkedIn composer for the sole purpose of crafting posts.
+
+Try it out at [linkedin-composer.simondoescloud.com](https://linkedin-composer.simondoescloud.com/)!
 
 ## Background
 
