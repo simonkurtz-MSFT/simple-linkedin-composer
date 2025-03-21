@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple LinkedIn Composer</title>
 
-    <!-- Who doesn't like Octocat?! -->
+    <!-- Favicon -->
     <link rel="mask-icon" href="https://github.githubassets.com/assets/pinned-octocat-093da3e6fa40.svg" color="#000000">
     <link rel="alternate icon" class="js-site-favicon" type="image/png" href="https://github.githubassets.com/favicons/favicon.png">
     <link rel="icon" class="js-site-favicon" type="image/svg+xml" href="https://github.githubassets.com/favicons/favicon.svg" data-base-href="https://github.githubassets.com/favicons/favicon">
@@ -27,84 +27,86 @@
         </a>
     </header>
 
-    <!-- LinkedIn User ID Input -->
-    <section class="linkedin-user-id">
-        <label for="linkedin-user-id">LinkedIn user id:</label>
-        <input type="text" id="linkedin-user-id" placeholder="Enter your LinkedIn user id">
-        <a id="linkedin-link" class="link" href="#" target="_blank" style="display: none;">Create a new LinkedIn post</a>
-    </section>
-
-    <!-- Quill Editor -->
-    <section id="editor-container"></section>
-
-    <!-- Emoji Picker -->
-    <div class="emoji-picker-container">
-        <emoji-picker></emoji-picker>
-    </div>
-
-    <!-- Copy Button -->
-    <button id="copy-button">Copy to Clipboard</button>
-
-    <!-- Load Sample Button -->
-    <button id="load-sample-button">Load a Sample</button>
-
-    <!-- Saved Snippets -->
-    <section id="saved-snippets">
-        <h2>Snippets</h2>
-        <!-- Custom Snippet Title Input -->
-        <section class="snippet-title">
-            <label for="snippet-title">Snippet Title (max 50 characters):</label>
-            <input type="text" id="snippet-title" placeholder="Enter a custom snippet title">
+    <main>
+        <!-- LinkedIn User ID Input -->
+        <section class="linkedin-user-id">
+            <label for="linkedin-user-id">LinkedIn user id:</label>
+            <input type="text" id="linkedin-user-id" placeholder="Enter your LinkedIn user id">
+            <a id="linkedin-link" class="link" href="#" target="_blank" style="display: none;">Create a new LinkedIn post</a>
         </section>
-        <div class="save-load-buttons">
-            <button id="save-button">Save post</button>
-            <button id="clear-button">Clear list</button>
+
+        <!-- Quill Editor -->
+        <section id="editor-container"></section>
+
+        <!-- Emoji Picker -->
+        <div class="emoji-picker-container">
+            <emoji-picker></emoji-picker>
         </div>
-        <table id="snippets-table">
-            <thead>
-                <tr>
-                    <th>Snippet</th>
-                    <th>Timestamp</th>
-                    <th class="center">Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Snippets will be dynamically added here -->
-            </tbody>
-        </table>
-    </section>
 
-    <!-- Instructions -->
-    <section>
-        <h2>Instructions</h2>
-        <ol>
-            <li>Enter your LinkedIn user id (stored in local storage).</li>
-            <li>Compose your post and save it (stored in local storage).</li>
-            <li>Click the "Copy to Clipboard" button to copy the post content.</li>
-            <li>Click the "Create a new LinkedIn post" link to open the LinkedIn post page.</li>
-            <li>Paste into the textbox, check for accuracy, then post it.</li>
-        </ol>
-    </section>
+        <!-- Buttons -->
+        <div class="action-buttons">
+            <button id="copy-button">Copy to Clipboard</button>
+            <button id="load-sample-button">Load a Sample</button>
+        </div>
 
-    <!-- Background -->
-    <section>
-        <h2>Background</h2>
-        <p>
-            LinkedIn's post composer doesn't natively allow for rich text formatting, so this tool provides a simple way to compose posts with rich text and emojis.
-            Tools that address custom formatting on LinkedIn are either not free or, if free, not feature-rich. This tool is completely free and open source.
-        </p>
-        <p>
-            No data leaves your browser. Everything is stored in your browser's local storage.
-        </p>
-        <p>
-            <b>🎉 Check out this tool's first announcement on <a href="https://www.linkedin.com/posts/simonkurtz_linkedin-activity-7308537167436238848-mmOi/" target="_blank">LinkedIn</a>! 🎉</b>
-        </p>
-    </section>
+        <!-- Saved Snippets -->
+        <section id="saved-snippets">
+            <h2>Snippets</h2>
+            <!-- Custom Snippet Title Input -->
+            <section class="snippet-title">
+                <label for="snippet-title">Snippet Title (max 50 characters):</label>
+                <input type="text" id="snippet-title" placeholder="Enter a custom snippet title">
+            </section>
+            <div class="save-load-buttons">
+                <button id="save-button">Save post</button>
+                <button id="clear-button">Clear list</button>
+            </div>
+            <table id="snippets-table">
+                <thead>
+                    <tr>
+                        <th>Snippet</th>
+                        <th>Timestamp</th>
+                        <th class="center">Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Snippets will be dynamically added here -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Instructions -->
+        <section>
+            <h2>Instructions</h2>
+            <ol>
+                <li>Enter your LinkedIn user id (stored in local storage).</li>
+                <li>Compose your post and save it (stored in local storage).</li>
+                <li>Click the "Copy to Clipboard" button to copy the post content.</li>
+                <li>Click the "Create a new LinkedIn post" link to open the LinkedIn post page.</li>
+                <li>Paste into the textbox, check for accuracy, then post it.</li>
+            </ol>
+        </section>
+
+        <!-- Background -->
+        <section>
+            <h2>Background</h2>
+            <p>
+                LinkedIn's post composer doesn't natively allow for rich text formatting, so this tool provides a simple way to compose posts with rich text and emojis.
+                Tools that address custom formatting on LinkedIn are either not free or, if free, not feature-rich. This tool is completely free and open source.
+            </p>
+            <p>
+                No data leaves your browser. Everything is stored in your browser's local storage.
+            </p>
+            <p>
+                <b>🎉 Check out this tool's first announcement on <a href="https://www.linkedin.com/posts/simonkurtz_linkedin-activity-7308537167436238848-mmOi/" target="_blank">LinkedIn</a>! 🎉</b>
+            </p>
+        </section>
+    </main>
 
     <!-- Footer -->
     <footer>
         <p>
-            Created by <a href="https://github.com/simonkurtz-MSFT" target="_blank" class="link">Simon Kurtz</a> for free use. Enjoy!<br/>
+            Created by <a href="https://github.com/simonkurtz-MSFT" target="_blank" class="link">Simon Kurtz</a> for free use. Enjoy!<br />
             <a href="https://github.com/simonkurtz-MSFT/simple-linkedin-composer/releases/tag/1.0.0" target="_blank" class="link">V1.0.0</a> - 03/20/2025
         </p>
     </footer>

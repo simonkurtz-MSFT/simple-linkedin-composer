@@ -5,6 +5,14 @@
     transition: color 0.2s ease-in-out;
 }
 
+.link:hover {
+    color: #005582; /* Hover color for all links */
+}
+
+.link:visited {
+    color: inherit; /* Ensure visited links match unvisited links */
+}
+
 body {
     font-family: 'Source Sans Pro', Arial, sans-serif;
     line-height: 1.5;
@@ -29,26 +37,10 @@ header h1 {
     font-size: 1.5rem;
 }
 
-/* Specific Styles for GitHub Link */
 .github-link {
     display: flex;
     align-items: center;
     font-size: 1rem;
-    color: white;
-}
-
-.github-link:hover {
-    color: #d0e6f7; /* Hover color */
-}
-
-.github-link:visited {
-    color: white; /* Ensure visited links remain the same color as unvisited links */
-}
-
-.github-logo {
-    width: 24px;
-    height: 24px;
-    margin-right: 8px;
 }
 
 .github-logo {
@@ -66,19 +58,6 @@ input[type="text"] {
     border-radius: 4px;
     font-size: 1rem;
     margin-top: 5px;
-}
-
-/* Specific Styles for LinkedIn Link */
-#linkedin-link {
-    font-size: 1rem;
-    margin-top: 10px;
-    display: inline-block;
-    color: #0077B5
-}
-
-.linkedin-user-id,
-.snippet-title {
-    margin: 15px 0;
 }
 
 input#linkedin-user-id {
@@ -112,20 +91,19 @@ input#linkedin-user-id {
     border-radius: 4px;
 }
 
-/* Emoji button styling */
-.ql-emoji::before {
-    content: "🙂";
+.ql-emoji::before,
+.ql-clear::before {
     font-size: 18px;
     display: inline-block;
     text-align: center;
 }
 
-/* Emoji button styling */
+.ql-emoji::before {
+    content: "🙂";
+}
+
 .ql-clear::before {
     content: "🧹";
-    font-size: 18px;
-    display: inline-block;
-    text-align: center;
 }
 
 /* Buttons */
@@ -162,22 +140,12 @@ button:disabled {
     text-align: left;
     padding: 0.5rem;
     border: 1px solid #ccc;
-    vertical-align: middle; /* Ensure vertical alignment is middle */
+    vertical-align: middle;
 }
 
 #snippets-table th {
     background-color: #f4f4f4;
     font-weight: bold;
-}
-
-#snippets-table th.center {
-    text-align: center;
-}
-
-/* Add margin between columns */
-#snippets-table td + td,
-#snippets-table th + th {
-    padding-left: 15px;
 }
 
 #snippets-table th:nth-child(2) {
@@ -188,7 +156,6 @@ button:disabled {
     width: 75px;
 }
 
-/* Make the Snippet column clickable */
 #snippets-table td:first-child {
     cursor: pointer;
     color: #0077B5;
@@ -200,7 +167,6 @@ button:disabled {
     text-decoration: none;
 }
 
-/* Center the delete button in the column */
 #snippets-table td:last-child {
     display: flex;
     justify-content: center;
@@ -223,16 +189,11 @@ footer {
     color: #666;
 }
 
-/* Footer Link */
 footer a {
     font-size: 0.9rem;
-    color: #0077B5; /* Blue color for footer links */
 }
 
-footer a:hover {
-    color: #005582; /* Darker blue on hover */
-}
-
-footer a:visited {
-    color: #0077B5; /* Ensure visited links remain the same as unvisited links */
+.linkedin-user-id,
+.snippet-title {
+    margin: 15px 0;
 }
