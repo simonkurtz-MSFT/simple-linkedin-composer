@@ -75,7 +75,7 @@ input#linkedin-user-id {
     background-color: white;
     padding: 10px;
     width: 700px;
-    min-height: 500px;
+    height: 600px;
 }
 
 .ql-editor.ql-blank::before {
