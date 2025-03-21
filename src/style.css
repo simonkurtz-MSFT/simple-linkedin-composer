@@ -43,12 +43,32 @@ header h1 {
     display: flex;
     align-items: center;
     font-size: 1rem;
+    margin-left:100px;
 }
 
 .github-logo {
     width: 24px;
     height: 24px;
     margin-right: 8px;
+}
+
+/* GitHub Stats */
+#github-stats {
+    font-size: 0.9rem;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.octicon-star {
+    fill: white;
+    vertical-align: middle;
+}
+
+.octicon-repo-forked {
+    fill: #ffffff; /* White color for the fork icon */
+    vertical-align: middle;
 }
 
 /* Input Fields */
