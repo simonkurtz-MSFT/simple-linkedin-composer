@@ -6,6 +6,8 @@
 const LINKEDIN_USER_ID_KEY = 'linkedin_id';
 const LINKEDIN_POST_URL_TEMPLATE = `https://www.linkedin.com/in/<user>/overlay/create-post`;
 
+const GITHUB_API_URL = 'https://api.github.com/repos/simonkurtz-MSFT/simple-linkedin-composer';
+
 // Sample text to load into the editor
 const samplePostJson = `{"ops":[{"insert":"🎉 "},{"attributes":{"bold":true},"insert":"Simple LinkedIn Composer "},{"insert":"🎉\\n\\nStyle eludes me. Any tool that can help make these posts a little better for you to read is helpful. I haven't found any good, "},{"attributes":{"italic":true,"bold":true},"insert":"completely free"},{"insert":" LinkedIn post composers, so I'm rolling my own. Say hello to this low-budget, no-frills, single-purpose composer that you can use, if you like.\\n\\n"},{"attributes":{"bold":true},"insert":"⚙️ Some features"},{"insert":"\\n\\nI'm using Jason Chen's free rich-text editor, "},{"attributes":{"italic":true},"insert":"Quill"},{"insert":". Thank you for creating an awesome product, Jason!"},{"attributes":{"list":"bullet"},"insert":"\\n"},{"insert":"Emojis are supported via through Nolan Lawson's "},{"attributes":{"italic":true},"insert":"emoji-picker"},{"insert":" which even supports emoji search! Thank you for this cool module, Nolan!"},{"attributes":{"list":"bullet"},"insert":"\\n"},{"insert":"You can use local storage to save and load composed posts with full formatting. You can easily clear the list, too. This makes reusing snippets simpler."},{"attributes":{"list":"bullet"},"insert":"\\n"},{"attributes":{"bold":true},"insert":"No data leaves your device. There are no trackers, etc. "},{"attributes":{"list":"bullet"},"insert":"\\n"},{"insert":"Pressing Enter does "},{"attributes":{"italic":true},"insert":"not"},{"insert":" save the post and make it live on LinkedIn. 🤣"},{"attributes":{"list":"bullet"},"insert":"\\n"},{"insert":" \\nTry it out on the GitHub page: \\nhttps://simonkurtz-msft.github.io/simple-linkedin-composer\\n \\n🐛 "},{"attributes":{"bold":true},"insert":"Bugs"},{"insert":"\\n \\nI'm sure there are bugs and improvements to be made. If you can, please submit an issue on GitHub, and if you have it in you, I would be grateful for a PR. Thank you!\\n\\n#linkedin\\n\\n\\n✒️ Post written in "},{"attributes":{"italic":true},"insert":"Simple LinkedIn Composer"},{"insert":": https://linkedin-composer.simondoescloud.com\\n"}]}`
 
@@ -17,6 +19,33 @@ const latinToMathBoldItalic = generateUnicodeMap(0x1D468); // Mathematical Bold 
 
 // Add special cases for specific characters (e.g., 'h' in italic)
 latinToMathItalic['h'] = '\u210E';
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// GitHub Stats
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+async function fetchGitHubStats() {
+    try {
+        const response = await fetch(GITHUB_API_URL);
+        if (!response.ok) {
+            throw new Error('Failed to fetch GitHub stats');
+        }
+
+        const data = await response.json();
+        const stars = data.stargazers_count;
+        const forks = data.forks_count;
+
+        // Update the stats in the header
+        document.getElementById('star-count').textContent = stars;
+        document.getElementById('fork-count').textContent = forks;
+    } catch (error) {
+        console.error('Error fetching GitHub stats:', error);
+    }
+}
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -430,6 +459,9 @@ function generateUnicodeMap(baseCodePoint) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 $(function () {
+    // Fetch the stats on page load
+    fetchGitHubStats();
+
     // Call the function to load the LinkedIn user ID on page load
     loadLinkedInUserId();
 
