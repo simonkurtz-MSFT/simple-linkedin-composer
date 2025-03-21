@@ -68,38 +68,10 @@ function updateSnippetsList() {
         if (!key.startsWith('snippet-')) return;
 
         const snippet = JSON.parse(localStorage.getItem(key));
-        const date = new Date(snippet.timestamp).toLocaleString();
+        const displayKey = key.replace('snippet-', ''); // Remove the "snippet-" prefix
 
-        // Remove the "snippet-" prefix for display
-        const displayKey = key.replace('snippet-', '');
-
-        // Create a table row
-        const $row = $('<tr></tr>');
-
-        // Create the "Snippet" cell
-        const $snippetCell = $('<td></td>')
-            .text(displayKey) // Display the key without the "snippet-" prefix
-            .on('click', () => loadSnippet(key)); // Attach loadSnippet to the cell
-
-        // Create the "Timestamp" cell
-        const $timestampCell = $('<td></td>').text(date);
-
-        // Create the "Delete" button cell
-        const $deleteCell = $('<td></td>');
-        const $deleteButton = $('<button></button>')
-            .text('Delete')
-            .addClass('delete-button')
-            .on('click', (e) => {
-                e.stopPropagation(); // Prevent triggering the loadSnippet event
-                deleteSnippet(key);
-            });
-        $deleteCell.append($deleteButton);
-
-        // Append cells to the row
-        $row.append($snippetCell, $timestampCell, $deleteCell);
-
-        // Append the row to the table body
-        $snippetsTableBody.append($row);
+        // Use addSnippetToTable to add the snippet to the table
+        addSnippetToTable(displayKey, snippet.timestamp);
     });
 }
 
@@ -169,8 +141,70 @@ $('#save-button').on('click', () => {
     };
 
     localStorage.setItem(key, JSON.stringify(snippet));
-    updateSnippetsList();
+
+    // Add the snippet to the table
+    addSnippetToTable(title, snippet.timestamp);
 });
+
+function addSnippetToTable(snippet, timestamp) {
+    const $tbody = $('#snippets-table tbody');
+    const isoTimestamp = new Date(timestamp).toISOString(); // ISO format for sorting
+    const displayTimestamp = new Date(timestamp).toLocaleString(); // Human-readable format
+
+    const $row = $(`
+        <tr>
+            <td data-key="snippet">${snippet}</td>
+            <td data-key="timestamp" data-value="${isoTimestamp}">${displayTimestamp}</td>
+            <td class="center">
+                <button class="delete-snippet">Delete</button>
+            </td>
+        </tr>
+    `);
+
+    // Add delete functionality to the button
+    $row.find('.delete-snippet').on('click', function () {
+        if (confirm(`Are you sure you want to delete the snippet "${snippet}"?`)) {
+            const key = `snippet-${snippet}`;
+            localStorage.removeItem(key);
+            $row.remove(); // Remove the row from the table
+        }
+    });
+
+    $tbody.append($row);
+}
+
+function sortTableByColumn(sortKey, isAscending) {
+    const $table = $('#snippets-table');
+    const $tbody = $table.find('tbody');
+    const $rows = $tbody.find('tr').get();
+
+    $rows.sort((rowA, rowB) => {
+        const cellA = $(rowA).find(`td[data-key="${sortKey}"]`).text().trim();
+        const cellB = $(rowB).find(`td[data-key="${sortKey}"]`).text().trim();
+
+        if (sortKey === 'timestamp') {
+            // Parse timestamps for comparison
+            return isAscending
+                ? new Date(cellA) - new Date(cellB)
+                : new Date(cellB) - new Date(cellA);
+        } else {
+            // Compare strings for "Snippet"
+            return isAscending
+                ? cellA.localeCompare(cellB)
+                : cellB.localeCompare(cellA);
+        }
+    });
+
+    // Re-append sorted rows to the table body
+    $.each($rows, function (index, row) {
+        $tbody.append(row);
+    });
+
+    // Update header classes for visual feedback
+    const $header = $table.find(`th[data-sort="${sortKey}"]`);
+    $table.find('th').removeClass('asc desc');
+    $header.addClass(isAscending ? 'asc' : 'desc');
+}
 
 
 
@@ -183,7 +217,7 @@ $('#copy-button').on('click', async () => {
     console.log(`\nSemantic HTML input:\n\n${semanticHtml}`);
 
     // 1) String-replace spaces, apostrophes, and quotes.
-    var modifiedHtml = semanticHtml
+    let modifiedHtml = semanticHtml
         .replaceAll('<p>&nbsp;</p>', '<p></p>')
         .replaceAll('&nbsp;', ' ')
         .replaceAll('&#39;', "'")
@@ -391,7 +425,24 @@ function generateUnicodeMap(baseCodePoint) {
 $(function () {
     // Call the function to load the LinkedIn user ID on page load
     loadLinkedInUserId();
+
     // Initialize the snippets list on page load
     updateSnippetsList();
+
+    // Perform initial sort by "Timestamp" in descending order
+    sortTableByColumn('timestamp', false);
+
     quill.focus();
+
+    const $table = $('#snippets-table');
+
+    // Add click event to sortable headers
+    $table.find('th[data-sort]').on('click', function () {
+        const $header = $(this);
+        const sortKey = $header.data('sort');
+        const isAscending = !$header.hasClass('asc'); // Toggle sort direction
+
+        // Sort the table by the selected column
+        sortTableByColumn(sortKey, isAscending);
+    });
 });

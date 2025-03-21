@@ -151,7 +151,7 @@ button:disabled {
 }
 
 #snippets-table th:nth-child(2) {
-    width: 150px;
+    width: 175px;
 }
 
 #snippets-table th:nth-child(3) {
@@ -173,6 +173,18 @@ button:disabled {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+#snippets-table th[data-sort] {
+    cursor: pointer;
+}
+
+#snippets-table th.asc::after {
+    content: ' ▲'; /* Up arrow for ascending */
+}
+
+#snippets-table th.desc::after {
+    content: ' ▼'; /* Down arrow for descending */
 }
 
 /* Accessibility Focus Styles */
