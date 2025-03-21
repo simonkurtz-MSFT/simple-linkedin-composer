@@ -80,21 +80,13 @@ function loadSnippet(key) {
     const savedSnippet = localStorage.getItem(key);
     if (savedSnippet) {
         const { delta } = JSON.parse(savedSnippet);
-        quill.setContents(delta);
+        quill.setContents(delta); // Load the snippet content into the editor
 
-        // Populate the snippet title textbox with the snippet name
+        // Extract the snippet title from the key
         const snippetTitle = key.replace('snippet-', ''); // Remove the "snippet-" prefix
         $('#snippet-title').val(snippetTitle); // Set the snippet title in the textbox
     } else {
         alert('Snippet not found.');
-    }
-}
-
-// Delete a specific snippet from local storage
-function deleteSnippet(key) {
-    if (confirm(`Are you sure you want to delete the snippet "${key}"? This action cannot be undone.`)) {
-        localStorage.removeItem(key);
-        updateSnippetsList();
     }
 }
 
@@ -135,6 +127,15 @@ $('#save-button').on('click', () => {
     // Generate a key for the snippet
     const key = `snippet-${title.replace(/[^a-zA-Z0-9 -]/g, '').replace(/\s+/g, '-')}`;
 
+    // Check if the snippet already exists in localStorage
+    if (localStorage.getItem(key)) {
+        const confirmOverride = confirm(`A snippet with this title already exists. Do you want to override it?\n\n${title}`);
+        if (!confirmOverride) {
+            return; // Exit if the user does not confirm
+        }
+    }
+
+    // Save the snippet to localStorage
     const snippet = {
         delta: quill.getContents(),
         timestamp: new Date().toISOString(),
@@ -142,7 +143,7 @@ $('#save-button').on('click', () => {
 
     localStorage.setItem(key, JSON.stringify(snippet));
 
-    // Add the snippet to the table
+    // Add or update the snippet in the table
     addSnippetToTable(title, snippet.timestamp);
 });
 
@@ -153,7 +154,7 @@ function addSnippetToTable(snippet, timestamp) {
 
     const $row = $(`
         <tr>
-            <td data-key="snippet">${snippet}</td>
+            <td data-key="snippet" class="snippet-link">${snippet}</td>
             <td data-key="timestamp" data-value="${isoTimestamp}">${displayTimestamp}</td>
             <td class="center">
                 <button class="delete-snippet">Delete</button>
@@ -161,9 +162,15 @@ function addSnippetToTable(snippet, timestamp) {
         </tr>
     `);
 
+    // Add click functionality to load the snippet into the editor
+    $row.find('.snippet-link').on('click', function () {
+        const key = `snippet-${snippet}`;
+        loadSnippet(key); // Call loadSnippet with the correct key
+    });
+
     // Add delete functionality to the button
     $row.find('.delete-snippet').on('click', function () {
-        if (confirm(`Are you sure you want to delete the snippet "${snippet}"?`)) {
+        if (confirm(`Are you sure you want to delete this snippet?\n\n${snippet}`)) {
             const key = `snippet-${snippet}`;
             localStorage.removeItem(key);
             $row.remove(); // Remove the row from the table
