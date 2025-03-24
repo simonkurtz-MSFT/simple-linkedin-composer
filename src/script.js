@@ -11,11 +11,16 @@ const GITHUB_API_URL = 'https://api.github.com/repos/simonkurtz-MSFT/simple-link
 // Sample text to load into the editor
 const samplePostJson = `{"ops":[{"insert":"🎉 "},{"attributes":{"bold":true},"insert":"Simple LinkedIn Composer "},{"insert":"🎉\\n\\nStyle eludes me. Any tool that can help make these posts a little better for you to read is helpful. I haven't found any good, "},{"attributes":{"italic":true,"bold":true},"insert":"completely free"},{"insert":" LinkedIn post composers, so I'm rolling my own. Say hello to this low-budget, no-frills, single-purpose composer that you can use, if you like.\\n\\n"},{"attributes":{"bold":true},"insert":"⚙️ Some features"},{"insert":"\\n\\nI'm using Jason Chen's free rich-text editor, "},{"attributes":{"italic":true},"insert":"Quill"},{"insert":". Thank you for creating an awesome product, Jason!"},{"attributes":{"list":"bullet"},"insert":"\\n"},{"insert":"Emojis are supported via through Nolan Lawson's "},{"attributes":{"italic":true},"insert":"emoji-picker"},{"insert":" which even supports emoji search! Thank you for this cool module, Nolan!"},{"attributes":{"list":"bullet"},"insert":"\\n"},{"insert":"You can use local storage to save and load composed posts with full formatting. You can easily clear the list, too. This makes reusing snippets simpler."},{"attributes":{"list":"bullet"},"insert":"\\n"},{"attributes":{"bold":true},"insert":"No data leaves your device. There are no trackers, etc. "},{"attributes":{"list":"bullet"},"insert":"\\n"},{"insert":"Pressing Enter does "},{"attributes":{"italic":true},"insert":"not"},{"insert":" save the post and make it live on LinkedIn. 🤣"},{"attributes":{"list":"bullet"},"insert":"\\n"},{"insert":" \\nTry it out on the GitHub page: \\nhttps://simonkurtz-msft.github.io/simple-linkedin-composer\\n \\n🐛 "},{"attributes":{"bold":true},"insert":"Bugs"},{"insert":"\\n \\nI'm sure there are bugs and improvements to be made. If you can, please submit an issue on GitHub, and if you have it in you, I would be grateful for a PR. Thank you!\\n\\n#linkedin\\n\\n\\n✒️ Post written in "},{"attributes":{"italic":true},"insert":"Simple LinkedIn Composer"},{"insert":": https://linkedin-composer.simondoescloud.com\\n"}]}`
 
+// The Unicode code points are starting points for the ranges in hexadecimal format in their Mathematical variants (https://www.unicode.org/charts/PDF/U1D400.pdf).
+// Enter the hex code here (without leading `0x`): https://unicodeplus.com
 // Generate specific Unicode maps
-const latinToMathSansSerif = generateUnicodeMap(0x1D5A0); // Mathematical Sans-Serif
-const latinToMathBold = generateUnicodeMap(0x1D400); // Mathematical Bold
-const latinToMathItalic = generateUnicodeMap(0x1D434); // Mathematical Italic
-const latinToMathBoldItalic = generateUnicodeMap(0x1D468); // Mathematical Bold Italic
+const latinToMathSansSerif = generateUnicodeMap(0x1D5A0);           // Mathematical Sans-Serif
+const latinToMathBold = generateUnicodeMap(0x1D400);                // Mathematical Bold
+const latinToMathItalic = generateUnicodeMap(0x1D434);              // Mathematical Italic
+const latinToMathBoldItalic = generateUnicodeMap(0x1D468);          // Mathematical Bold Italic
+// Generate specific Unicode maps for digits
+const digitsToMathSansSerif = generateDigitUnicodeMap(0x1D7E2);     // Mathematical Sans-Serif
+const digitsToMathBold = generateDigitUnicodeMap(0x1D7CE);          // Mathematical Bold
 
 // Add special cases for specific characters (e.g., 'h' in italic)
 latinToMathItalic['h'] = '\u210E';
@@ -353,14 +358,25 @@ function getStyledUnicode(char, isBold, isItalic) {
         if (isBold && isItalic) {
             return latinToMathBoldItalic[char] || char; // Bold Italic
         } else if (isBold) {
-            return latinToMathBold[char] || char; // Bold
+            return latinToMathBold[char] || char;       // Bold
         } else if (isItalic) {
-            return latinToMathItalic[char] || char; // Italic
+            return latinToMathItalic[char] || char;     // Italic
         } else {
-            return latinToMathSansSerif[char] || char; // Sans-Serif
+            return latinToMathSansSerif[char] || char;  // Sans-Serif
         }
     }
-    // Return the original character if it's not a Latin letter
+
+    // Check if the character is a digit (0-9).
+    // There are no italic Mathematical variants, so we only check for bold and sans-serif.
+    if (char >= '0' && char <= '9') {
+        if (isBold) {
+            return digitsToMathBold[char] || char;      // Bold
+        } else {
+            return digitsToMathSansSerif[char] || char; // Sans-Serif
+        }
+    }
+
+    // Return the original character if it's not a Latin letter or digit
     return char;
 }
 
@@ -447,6 +463,16 @@ function generateUnicodeMap(baseCodePoint) {
     for (let i = 0; i < 26; i++) {
         map[String.fromCharCode(65 + i)] = String.fromCodePoint(baseCodePoint + i);         // Uppercase A-Z
         map[String.fromCharCode(97 + i)] = String.fromCodePoint(baseCodePoint + 26 + i);    // Lowercase a-z
+    }
+
+    return map;
+}
+
+function generateDigitUnicodeMap(baseCodePoint) {
+    const map = {};
+
+    for (let i = 0; i < 10; i++) {
+        map[String.fromCharCode(48 + i)] = String.fromCodePoint(baseCodePoint + i);         // Digits 0-9
     }
 
     return map;
