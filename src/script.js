@@ -306,7 +306,7 @@ $('#copy-button').on('click', async () => {
 
     // 8) Append link to Simple LinkedIn Composer
     if (!modifiedHtml.includes("✒️")) {
-        modifiedHtml += `${newLine}${newLine}✒️ Post written in Simple LinkedIn Composer${newLine}https://linkedin-composer.simondoescloud.com`;
+        modifiedHtml += `${newLine}${newLine}✒️ Post written in Simple LinkedIn Composer ✒️${newLine} https://linkedin-composer.simondoescloud.com`;
     }
 
     console.log(`\nModified output:\n\n${modifiedHtml}`);
