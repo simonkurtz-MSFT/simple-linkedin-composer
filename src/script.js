@@ -8,8 +8,30 @@ const LINKEDIN_POST_URL_TEMPLATE = `https://www.linkedin.com/in/<user>/overlay/c
 
 const GITHUB_API_URL = 'https://api.github.com/repos/simonkurtz-MSFT/simple-linkedin-composer';
 
+const KEY_PREFIX = "snippet-";
+
 // Sample text to load into the editor
-const samplePostJson = `{"ops":[{"insert":"🎉 "},{"attributes":{"bold":true},"insert":"Simple LinkedIn Composer "},{"insert":"🎉\\n\\nStyle eludes me. Any tool that can help make these posts a little better for you to read is helpful. I haven't found any good, "},{"attributes":{"italic":true,"bold":true},"insert":"completely free"},{"insert":" LinkedIn post composers, so I'm rolling my own. Say hello to this low-budget, no-frills, single-purpose composer that you can use, if you like.\\n\\n"},{"attributes":{"bold":true},"insert":"⚙️ Some features"},{"insert":"\\n\\nI'm using Jason Chen's free rich-text editor, "},{"attributes":{"italic":true},"insert":"Quill"},{"insert":". Thank you for creating an awesome product, Jason!"},{"attributes":{"list":"bullet"},"insert":"\\n"},{"insert":"Emojis are supported via through Nolan Lawson's "},{"attributes":{"italic":true},"insert":"emoji-picker"},{"insert":" which even supports emoji search! Thank you for this cool module, Nolan!"},{"attributes":{"list":"bullet"},"insert":"\\n"},{"insert":"You can use local storage to save and load composed posts with full formatting. You can easily clear the list, too. This makes reusing snippets simpler."},{"attributes":{"list":"bullet"},"insert":"\\n"},{"attributes":{"bold":true},"insert":"No data leaves your device. There are no trackers, etc. "},{"attributes":{"list":"bullet"},"insert":"\\n"},{"insert":"Pressing Enter does "},{"attributes":{"italic":true},"insert":"not"},{"insert":" save the post and make it live on LinkedIn. 🤣"},{"attributes":{"list":"bullet"},"insert":"\\n"},{"insert":" \\nTry it out on the GitHub page: \\nhttps://simonkurtz-msft.github.io/simple-linkedin-composer\\n \\n🐛 "},{"attributes":{"bold":true},"insert":"Bugs"},{"insert":"\\n \\nI'm sure there are bugs and improvements to be made. If you can, please submit an issue on GitHub, and if you have it in you, I would be grateful for a PR. Thank you!\\n\\n#linkedin"}]}`
+const samplePostJson = `{
+    "ops": [
+        { "insert": "😀 " }, { "attributes": { "bold": true }, "insert": "Hello!" },
+        { "insert": "\\n\\nI hope this very " }, { "attributes": { "bold": true }, "insert": "simple" }, { "insert": " " }, { "attributes": { "italic": true }, "insert": "LinkedIn post composer" }, { "insert": " is useful to you. It supports " }, { "attributes": { "bold": true }, "insert": "bold" }, { "insert": ", " }, { "attributes": { "italic": true }, "insert": "italic" }, { "insert": ", emojis 😁, and lists. The paragraph format and indentations are mostly preserved. You can also use hashtags.\\n\\n" },
+        { "attributes": { "bold": true }, "insert": "📝 " }, { "attributes": { "italic": true, "bold": true }, "insert": "Instructions" },
+        { "insert": "\\n\\nEnter your LinkedIn user id" }, { "attributes": { "list": "ordered" }, "insert": "\\n" },
+        { "insert": "Compose your post" }, { "attributes": { "list": "ordered" }, "insert": "\\n" },
+        { "insert": "Click \\\"Copy to Clipboard\\\"" }, { "attributes": { "list": "ordered" }, "insert": "\\n" },
+        { "insert": "Click \\\"Create a new LinkedIn post\\\"" }, { "attributes": { "list": "ordered" }, "insert": "\\n" },
+        { "insert": "Paste into the textbox, then post it." }, { "attributes": { "list": "ordered" }, "insert": "\\n" }, { "insert": "\\n" },
+        { "attributes": { "bold": true }, "insert": "⚙️ " }, { "attributes": { "italic": true, "bold": true }, "insert": "Features" },
+        { "insert": "\\n\\nI'm using Jason Chen's free rich-text editor, " }, { "attributes": { "italic": true }, "insert": "Quill" }, { "insert": ". Thank you for creating an awesome product, Jason!" }, { "attributes": { "list": "bullet" }, "insert": "\\n" },
+        { "insert": "Emojis are supported via through Nolan Lawson's " }, { "attributes": { "italic": true }, "insert": "emoji-picker" }, { "insert": " which even supports emoji search! Thank you for this cool module, Nolan!" }, { "attributes": { "list": "bullet" }, "insert": "\\n" },
+        { "insert": "You can use local storage to save and load composed posts with full formatting. You can easily clear the list, too. This makes reusing snippets simpler." }, { "attributes": { "list": "bullet" }, "insert": "\\n" },
+        { "attributes": { "bold": true }, "insert": "No data leaves your device. There are no trackers, etc. " }, { "attributes": { "list": "bullet" }, "insert": "\\n" },
+        { "insert": "Pressing Enter does " }, { "attributes": { "italic": true }, "insert": "not" }, { "insert": " save the post and make it live on LinkedIn. 🤣" }, { "attributes": { "list": "bullet" }, "insert": "\\n" },
+        { "insert": " \\nTry it out on the GitHub page: \\nhttps://simonkurtz-msft.github.io/simple-linkedin-composer\\n\\n🐛 " },
+        { "attributes": { "bold": true }, "insert": "Bugs" },
+        { "insert": "\\n\\nI'm sure there are bugs and improvements to be made. If you can, please submit an issue on GitHub, and if you have it in you, I would be grateful for a PR. Thank you!\\n\\n#linkedin\\n" }
+    ]
+}`;
 
 // The Unicode code points are starting points for the ranges in hexadecimal format in their Mathematical variants (https://www.unicode.org/charts/PDF/U1D400.pdf).
 // Enter the hex code here (without leading `0x`): https://unicodeplus.com
@@ -98,11 +120,11 @@ function updateSnippetsList() {
     $snippetsTableBody.empty(); // Clear the table body
 
     Object.keys(localStorage).forEach((key) => {
-        // Only process keys that start with "snippet-"
-        if (!key.startsWith('snippet-')) return;
+        // Only process keys that start with the key prefix
+        if (!key.startsWith(KEY_PREFIX)) return;
 
         const snippet = JSON.parse(localStorage.getItem(key));
-        const title = key.replace('snippet-', ''); // Remove the "snippet-" prefix
+        const title = key.replace(KEY_PREFIX, ''); // Remove the key prefix
 
         addSnippetToTable(title, snippet.isTemplate, snippet.timestamp);
     });
@@ -119,7 +141,7 @@ function loadSnippet(key) {
         $('#is-template').prop('checked', snippet.isTemplate === true);
 
         // Extract the snippet title from the key
-        const snippetTitle = key.replace('snippet-', ''); // Remove the "snippet-" prefix
+        const snippetTitle = key.replace(KEY_PREFIX, ''); // Remove the key prefix
         $('#snippet-title').val(snippetTitle); // Set the snippet title in the textbox
     } else {
         alert('Snippet not found.');
@@ -128,7 +150,7 @@ function loadSnippet(key) {
 
 // Generate a key from the first 50 alphanumeric characters
 function generateKey(content) {
-    return 'snippet-' + content.replace(/[^a-zA-Z0-9 ]/g, '').substring(0, 50).trim().replace(/\s+/g, '-') || 'Untitled';
+    return KEY_PREFIX + content.replace(/[^a-zA-Z0-9 ]/g, '').substring(0, 50).trim().replace(/\s+/g, '-') || 'Untitled';
 }
 
 // Clear all saved snippets from local storage
@@ -161,7 +183,7 @@ $('#save-button').on('click', () => {
     title = title.substring(0, 50);
 
     // Generate a key for the snippet
-    const key = `snippet-${title.replace(/[^a-zA-Z0-9 -]/g, '').replace(/\s+/g, '-')}`;
+    const key = `${KEY_PREFIX}${title.replace(/[^a-zA-Z0-9 -]/g, '').replace(/\s+/g, '-')}`;
 
     // Check if the snippet already exists in localStorage
     if (localStorage.getItem(key)) {
@@ -183,6 +205,81 @@ $('#save-button').on('click', () => {
     updateSnippetsList();
 });
 
+// Export functionality
+$('#export-data').on('click', () => {
+    const data = {};
+
+    // Filter localStorage keys that start with "snippet-"
+    Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith('snippet-')) {
+            data[key] = localStorage.getItem(key);
+        }
+    });
+
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+    const filename = `LinkedIn-Composer-Data-${timestamp}.json`;
+
+    // Log and download the filtered data
+    console.log(JSON.stringify(data, null, 2));
+    downloadFile(filename, JSON.stringify(data, null, 2));
+});
+
+// Import functionality
+$('#import-data').on('click', () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "application/json";
+
+    input.addEventListener("change", async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const content = await file.text();
+        try {
+            const importedData = JSON.parse(content);
+            let i = 0;
+
+            // Import data into localStorage
+            for (let [key, value] of Object.entries(importedData)) {
+                const existingItem = localStorage.getItem(key);
+
+                if (existingItem) {
+                    const existingData = JSON.parse(existingItem);
+                    value = JSON.parse(value);
+                    console.log(existingData.timestamp, value.timestamp, existingData.timestamp === value.timestamp);
+                    if (existingData.timestamp === value.timestamp) {
+                        console.warn(`Duplicate entry with key ${key}. Skipping.`);
+                        continue;
+                    } else if (existingData.timestamp > value.timestamp) {
+                        console.warn(`Older entry with key ${key}. Skipping.`);
+                        continue;
+                    }
+                }
+
+                // Parse nested JSON strings if necessary
+                const parsedValue = typeof value === 'string' && value.startsWith('{')
+                    ? JSON.parse(value)
+                    : value;
+
+                localStorage.setItem(key, JSON.stringify(parsedValue));
+                i++;
+            }
+
+            if (i > 0) {
+                alert(`Successfully imported ${i} snippet(s).`);
+                updateSnippetsList(); // Refresh the snippets list
+            } else {
+                alert('No new snippets were imported. The data may already exist in localStorage.');
+            }
+        } catch (error) {
+            console.error("Error importing data:", error);
+            alert("Failed to import data. Please check the file format.");
+        }
+    });
+
+    input.click();
+});
+
 function addSnippetToTable(title, isTemplate, timestamp) {
     const $tbody = $('#snippets-table tbody');
     const isoTimestamp = new Date(timestamp).toISOString(); // ISO format for sorting
@@ -202,14 +299,14 @@ function addSnippetToTable(title, isTemplate, timestamp) {
 
     // Add click functionality to load the snippet into the editor
     $row.find('.snippet-link').on('click', function () {
-        const key = `snippet-${title}`;
+        const key = `${KEY_PREFIX}${title}`;
         loadSnippet(key); // Call loadSnippet with the correct key
     });
 
     // Add delete functionality to the button
     $row.find('.delete-snippet').on('click', function () {
         if (confirm(`Are you sure you want to delete this snippet?\n\n${title}`)) {
-            const key = `snippet-${title}`;
+            const key = `${KEY_PREFIX}${title}`;
             localStorage.removeItem(key);
             $row.remove(); // Remove the row from the table
         }
@@ -480,6 +577,16 @@ function generateDigitUnicodeMap(baseCodePoint) {
     }
 
     return map;
+}
+
+// Utility function to download a file
+function downloadFile(filename, content) {
+    const blob = new Blob([content], { type: "application/json" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(link.href);
 }
 
 
