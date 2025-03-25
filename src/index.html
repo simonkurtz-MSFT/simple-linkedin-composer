@@ -58,11 +58,19 @@
             <emoji-picker></emoji-picker>
         </div>
 
+        <!-- Checkbox for marking a snippet as a template -->
+        <section class="template-checkbox">
+            <label for="is-template">
+                <input type="checkbox" id="is-template" />
+                Mark as template
+            </label>
+        </section>
+
         <!-- Buttons -->
-        <div class="action-buttons">
+        <section class="action-buttons">
             <button id="copy-button">Copy to Clipboard</button>
             <button id="load-sample-button">Load a Sample</button>
-        </div>
+        </section>
 
         <!-- Saved Snippets -->
         <section id="saved-snippets">
@@ -81,7 +89,8 @@
                     <tr>
                         <th data-sort="snippet">Snippet</th>
                         <th data-sort="timestamp">Timestamp</th>
-                        <th class="center">Delete</th>
+                        <th data-sort="template">Template</th>
+                        <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody>

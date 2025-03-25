@@ -102,19 +102,21 @@ function updateSnippetsList() {
         if (!key.startsWith('snippet-')) return;
 
         const snippet = JSON.parse(localStorage.getItem(key));
-        const displayKey = key.replace('snippet-', ''); // Remove the "snippet-" prefix
+        const title = key.replace('snippet-', ''); // Remove the "snippet-" prefix
 
-        // Use addSnippetToTable to add the snippet to the table
-        addSnippetToTable(displayKey, snippet.timestamp);
+        addSnippetToTable(title, snippet.isTemplate, snippet.timestamp);
     });
 }
 
 // Load a snippet into the editor
 function loadSnippet(key) {
     const savedSnippet = localStorage.getItem(key);
+
     if (savedSnippet) {
-        const { delta } = JSON.parse(savedSnippet);
+        snippet = JSON.parse(savedSnippet);
+        const { delta } = snippet;
         quill.setContents(delta); // Load the snippet content into the editor
+        $('#is-template').prop('checked', snippet.isTemplate === true);
 
         // Extract the snippet title from the key
         const snippetTitle = key.replace('snippet-', ''); // Remove the "snippet-" prefix
@@ -163,7 +165,7 @@ $('#save-button').on('click', () => {
 
     // Check if the snippet already exists in localStorage
     if (localStorage.getItem(key)) {
-        const confirmOverride = confirm(`A snippet with this title already exists. Do you want to override it?\n\n${title}`);
+        const confirmOverride = confirm(`A snippet with this title already exists. Do you want to overwrite it?\n\n${title}`);
         if (!confirmOverride) {
             return; // Exit if the user does not confirm
         }
@@ -173,24 +175,26 @@ $('#save-button').on('click', () => {
     const snippet = {
         delta: quill.getContents(),
         timestamp: new Date().toISOString(),
+        isTemplate: $('#is-template').is(':checked')
     };
 
     localStorage.setItem(key, JSON.stringify(snippet));
 
-    // Add or update the snippet in the table
-    addSnippetToTable(title, snippet.timestamp);
+    updateSnippetsList();
 });
 
-function addSnippetToTable(snippet, timestamp) {
+function addSnippetToTable(title, isTemplate, timestamp) {
     const $tbody = $('#snippets-table tbody');
     const isoTimestamp = new Date(timestamp).toISOString(); // ISO format for sorting
+    const templateCell = isTemplate === true ? '✔' : '';
     const displayTimestamp = new Date(timestamp).toLocaleString(); // Human-readable format
 
     const $row = $(`
         <tr>
-            <td data-key="snippet" class="snippet-link">${snippet}</td>
+            <td data-key="snippet" class="snippet-link">${title}</td>
             <td data-key="timestamp" data-value="${isoTimestamp}">${displayTimestamp}</td>
-            <td class="center">
+            <td data-key="template" data-value="${isTemplate}">${templateCell}</td>
+            <td>
                 <button class="delete-snippet">Delete</button>
             </td>
         </tr>
@@ -198,14 +202,14 @@ function addSnippetToTable(snippet, timestamp) {
 
     // Add click functionality to load the snippet into the editor
     $row.find('.snippet-link').on('click', function () {
-        const key = `snippet-${snippet}`;
+        const key = `snippet-${title}`;
         loadSnippet(key); // Call loadSnippet with the correct key
     });
 
     // Add delete functionality to the button
     $row.find('.delete-snippet').on('click', function () {
-        if (confirm(`Are you sure you want to delete this snippet?\n\n${snippet}`)) {
-            const key = `snippet-${snippet}`;
+        if (confirm(`Are you sure you want to delete this snippet?\n\n${title}`)) {
+            const key = `snippet-${title}`;
             localStorage.removeItem(key);
             $row.remove(); // Remove the row from the table
         }
