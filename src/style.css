@@ -129,6 +129,10 @@ input#linkedin-user-id {
 }
 
 /* Buttons */
+.action-buttons {
+    margin-top: 10px;
+}
+
 button {
     padding: 8px 12px;
     border: 1px solid #ccc;
@@ -170,12 +174,36 @@ button:disabled {
     font-weight: bold;
 }
 
+/* Timestamp */
 #snippets-table th:nth-child(2) {
     width: 175px;
 }
 
+/* Template */
 #snippets-table th:nth-child(3) {
+    width: 85px;
+    justify-content: center;
+    align-items: center;
+}
+
+#snippets-table td:nth-child(3) {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Delete Button */
+#snippets-table th:nth-child(4) {
     width: 75px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+#snippets-table td:nth-child(4) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #snippets-table td:first-child {
@@ -187,12 +215,6 @@ button:disabled {
 #snippets-table td:first-child:hover {
     color: #005582;
     text-decoration: none;
-}
-
-#snippets-table td:last-child {
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 #snippets-table th[data-sort] {
