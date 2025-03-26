@@ -154,6 +154,30 @@ button:disabled {
     cursor: not-allowed;
 }
 
+/* Style for buttons */
+.action-button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff !important;
+    background-color: #0073b1; /* LinkedIn blue */
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none; /* Remove underline for links */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.action-button:hover {
+    background-color: #005582; /* Darker LinkedIn blue for hover */
+    text-decoration: none;
+}
+
+.action-button:active {
+    background-color: #003f5e; /* Even darker blue for active state */
+}
+
 /* Snippets Table */
 #snippets-table {
     width: 100%;
