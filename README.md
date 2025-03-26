@@ -10,3 +10,9 @@ LinkedIn's post composer doesn't natively allow for rich text formatting, so thi
 Tools that address custom formatting on LinkedIn are either not free or, if so, not feature-rich. This tool is completely free and open source. Do with it as you wish.
 
 **No data leaves your browser.** Everything is stored in your browser's local storage.
+
+## Edge Split Screen
+
+This tool is really suitable for Edge's split screen feature to see everything side-by-side.
+
+![Composer and LinkedIn side-by-side](./composer-linkedin-side-by-side.png)
