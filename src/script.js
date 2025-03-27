@@ -705,18 +705,33 @@ function downloadFile(filename, content) {
     URL.revokeObjectURL(link.href);
 }
 
+function accordionSetup() {
+    // Accordion functionality
+    $('.accordion-header').on('click', function () {
+        const $content = $(this).siblings('.accordion-content'); // Find the sibling content
+
+        // Toggle the "open" class on the content
+        $content.toggleClass('open');
+
+        // Optionally, close other accordions (if needed)
+        // $('.accordion-content').not($content).removeClass('open');
+    });
+}
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Startup
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-$(function () {
+$(() => {
     // Fetch the stats on page load
     fetchGitHubStats();
 
     // Call the function to load the LinkedIn user ID on page load
     loadLinkedInUserId();
+
+    accordionSetup();
 
     // Initialize the snippets list on page load
     updateSnippetsList();

@@ -332,3 +332,36 @@ section {
     margin-right: 5px;
     vertical-align: middle;
 }
+
+/* Accordion Styles */
+.accordion {
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.accordion-header {
+    background-color: #0077B5;
+    color: #FFF;
+    padding: 10px 15px;
+    font-size: 1.5em;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    margin: 0;
+}
+
+.accordion-header:hover {
+    background-color: #e0e0e0;
+}
+
+.accordion-content {
+    display: none;
+    padding: 15px;
+    background-color: #fff;
+}
+
+.accordion-content.open {
+    display: block;
+}
