@@ -62,12 +62,8 @@ async function fetchGitHubStats() {
         }
 
         const data = await response.json();
-        const stars = data.stargazers_count;
-        const forks = data.forks_count;
-
-        // Update the stats in the header
-        document.getElementById('star-count').textContent = stars;
-        document.getElementById('fork-count').textContent = forks;
+        $('#star-count').text(data.stargazers_count);
+        $('#fork-count').text(data.forks_count);
     } catch (error) {
         console.error('Error fetching GitHub stats:', error);
     }
@@ -92,8 +88,8 @@ function loadLinkedInUserId() {
 }
 
 // Save LinkedIn user ID to localStorage when it changes
-$('#linkedin-user-id').on('input', (event) => {
-    const userId = event.target.value.trim();
+$('#linkedin-user-id').on('input', () => {
+    const userId = $(this).val().trim();
     localStorage.setItem(LINKEDIN_USER_ID_KEY, userId);
     updateLinkedInLink(userId); // Update the LinkedIn link dynamically
 });
@@ -106,6 +102,119 @@ function updateLinkedInLink(userId) {
         $linkedinLink.attr('href', linkedinUrl).show(); // Update the href and show the link
     } else {
         $linkedinLink.hide(); // Hide the link if no user ID is present
+    }
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Hashtag Functions
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Function to extract hashtags from a string
+function extractHashtags(text) {
+    const hashtagRegex = /#\w+/g;
+    return (text.match(hashtagRegex) || []);
+}
+
+// Function to update hashtag counts in local storage
+function updateHashtagCounts() {
+    const hashtags = JSON.parse(localStorage.getItem("hashtags")) || {};
+    const snippetKeys = Object.keys(localStorage).filter(key => key.startsWith("snippet-"));
+
+    // Reset hashtag counts
+    Object.keys(hashtags).forEach(tag => hashtags[tag] = 0);
+
+    // Count hashtags from all snippets
+    snippetKeys.forEach(key => {
+        const snippet = JSON.parse(localStorage.getItem(key));
+        const delta = snippet.delta || {};
+        const ops = delta.ops || [];
+
+        // Extract hashtags from each insert property in the ops array
+        ops.forEach(op => {
+            if (op.insert && typeof op.insert === "string") {
+                const snippetHashtags = extractHashtags(op.insert);
+                snippetHashtags.forEach(tag => {
+                    hashtags[tag] = (hashtags[tag] || 0) + 1;
+                });
+            }
+        });
+    });
+
+    // Save updated hashtags to local storage
+    localStorage.setItem("hashtags", JSON.stringify(hashtags));
+    renderHashtagList(hashtags);
+}
+
+let sortNameAsc = true; // Toggle state for name sorting
+let sortCountAsc = true; // Toggle state for count sorting
+
+// Function to render the hashtag list in the UI
+function renderHashtagList(hashtags) {
+    const $hashtagList = $('#hashtag-list');
+    $hashtagList.empty(); // Clear existing list
+
+    $.each(hashtags, (tag, count) => {
+        const $hashtagItem = $('<div>').addClass('hashtag-item');
+
+        // Create the clickable ➕️ symbol
+        const $addButton = $('<a>')
+            .text('➕️')
+            .attr('href', '#')
+            .addClass('add-hashtag-button')
+            .attr('title', 'Add this hashtag to the editor')
+            .on('click', (event) => {
+                event.preventDefault();
+                insertHashtagIntoEditor(tag);
+            });
+
+        // Create the LinkedIn icon link
+        const $linkedinLink = $('<a>')
+            .attr('href', `https://www.linkedin.com/feed/hashtag/?keywords=${tag.substring(1)}`)
+            .attr('target', '_blank')
+            .addClass('linkedin-icon-link')
+            .attr('title', 'View this hashtag on LinkedIn')
+            .append($('<img>')
+                .attr('src', 'linkedin-icon.svg')
+                .attr('alt', 'LinkedIn')
+                .addClass('linkedin-icon'));
+
+        // Add the ➕️ symbol, LinkedIn icon, and hashtag text to the item
+        $hashtagItem.append($addButton, $linkedinLink, `${tag} (${count})`);
+        $hashtagList.append($hashtagItem);
+    });
+}
+
+// Event listener for sorting by name
+$('#sort-name').on('click', () => {
+    const hashtags = JSON.parse(localStorage.getItem('hashtags')) || {};
+    const sortedHashtags = Object.entries(hashtags).sort(([tagA], [tagB]) => {
+        return sortNameAsc ? tagA.localeCompare(tagB) : tagB.localeCompare(tagA);
+    });
+    sortNameAsc = !sortNameAsc; // Toggle sorting order
+    renderHashtagList(Object.fromEntries(sortedHashtags));
+});
+
+// Event listener for sorting by count with tie-breaking by name
+$('#sort-count').on('click', () => {
+    const hashtags = JSON.parse(localStorage.getItem('hashtags')) || {};
+    const sortedHashtags = Object.entries(hashtags).sort(([tagA, countA], [tagB, countB]) => {
+        if (countA === countB) {
+            return tagA.localeCompare(tagB); // Tie-breaking: Sort by name ascending
+        }
+        return sortCountAsc ? countA - countB : countB - countA;
+    });
+    sortCountAsc = !sortCountAsc; // Toggle sorting order
+    renderHashtagList(Object.fromEntries(sortedHashtags));
+});
+
+// Function to insert a hashtag into the editor
+function insertHashtagIntoEditor(hashtag) {
+    const range = quill.getSelection(); // Get the current cursor position
+    if (range) {
+        quill.insertText(range.index, `${hashtag} `); // Insert the hashtag followed by a space
+        quill.setSelection(range.index + hashtag.length + 1); // Move the cursor after the inserted text
     }
 }
 
@@ -128,6 +237,8 @@ function updateSnippetsList() {
 
         addSnippetToTable(title, snippet.isTemplate, snippet.timestamp);
     });
+
+    updateHashtagCounts(); // Update hashtag counts after loading snippets
 }
 
 // Load a snippet into the editor
@@ -161,6 +272,9 @@ $('#clear-button').on('click', () => {
     if (confirm('Are you sure you want to clear all saved snippets? This action cannot be undone.')) {
         localStorage.clear();
         updateSnippetsList();
+
+        localStorage.removeItem("hashtags");
+        renderHashtagList({});
     }
 });
 
@@ -309,6 +423,8 @@ function addSnippetToTable(title, isTemplate, timestamp) {
             const key = `${KEY_PREFIX}${title}`;
             localStorage.removeItem(key);
             $row.remove(); // Remove the row from the table
+
+            updateHashtagCounts();
         }
     });
 
@@ -407,7 +523,7 @@ $('#copy-button').on('click', async () => {
 
     // 8) Append link to Simple LinkedIn Composer
     if (!modifiedHtml.includes("✒️")) {
-        modifiedHtml += `${newLine}${newLine}✒️ Post written in Simple LinkedIn Composer ✒️${newLine} https://linkedin-composer.simondoescloud.com`;
+        modifiedHtml += `${newLine}${newLine}✒️ Post written in Simple LinkedIn Composer ✒️${newLine}https://linkedin-composer.simondoescloud.com`;
     }
 
     console.log(`\nModified output:\n\n${modifiedHtml}`);
