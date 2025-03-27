@@ -47,10 +47,10 @@ jobs:
           umbrella-dir: pr-preview
           action: auto
 
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: gh-pages
+      # - name: Checkout
+      #   uses: actions/checkout@v4
+      #   with:
+      #     ref: gh-pages
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
