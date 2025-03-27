@@ -46,6 +46,7 @@ jobs:
           preview-branch: gh-pages
           umbrella-dir: pr-preview
           action: auto
+          comment: true
 
       # - name: Checkout
       #   uses: actions/checkout@v4
