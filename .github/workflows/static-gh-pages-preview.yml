@@ -28,15 +28,18 @@ concurrency:
   group: preview-${{ github.ref }}
   cancel-in-progress: true
 
-jobs:
-  preview-page:
-    runs-on: ubuntu-latest
-    name: Build GitHub Pages preview
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+env:
+  PREVIEW_BRANCH: gh-pages
 
-      - name: Deploy preview
-        uses: rossjrw/pr-preview-action@v1
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm i && npm run build
+
+      - uses: rossjrw/pr-preview-action@v1
+        id: preview-step
         with:
           source-dir: ./src/
+          preview-branch: ${{ env.PREVIEW_BRANCH }}
