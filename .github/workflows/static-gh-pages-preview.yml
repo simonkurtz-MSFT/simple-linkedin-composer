@@ -40,8 +40,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # - uses: rossjrw/pr-preview-action@v1
-      #   id: preview-step
-      #   with:
-      #     source-dir: ./src/
-      #     preview-branch: ${{ env.PREVIEW_BRANCH }}
+      - uses: rossjrw/pr-preview-action@v1
+        id: preview-step
+        with:
+          source-dir: ./src/
+          preview-branch: ${{ env.PREVIEW_BRANCH }}
