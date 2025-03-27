@@ -1,0 +1,54 @@
+# Simple workflow for deploying static content to preview GitHub Pages
+name: Deploy static content to preview Pages
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
+    paths:
+      - 'src/**'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  actions: write          # Required for pr-preview-action
+  contents: write         # Required for the checkout action to know to kick off (read) and pr-preview-action (write)
+  deployments: write      # Required for pr-preview-action
+  id-token: write         # Required for pr-preview-action
+  pages: write            # Required for pr-preview-action
+  pull-requests: write    # Required for pr-preview-action
+
+concurrency:
+  group: preview-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  preview-page:
+    runs-on: ubuntu-latest
+    name: Build
+    steps:
+      - uses: actions/checkout@v4
+      - name: Capture branch and tag
+        id: branch_name
+        run: |
+          echo "SOURCE_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+          echo "SOURCE_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+      - name: Release preview to branch
+        if: "! github.event.pull_request.head.repo.fork "
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: ./src/
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: auto
+  publish-preview-page:
+    if: "! github.event.pull_request.head.repo.fork "
+    name: Preview
+    needs: preview-page
+    uses: actions/deploy-pages@v4
