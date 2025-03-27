@@ -31,24 +31,12 @@ concurrency:
 jobs:
   preview-page:
     runs-on: ubuntu-latest
-    name: Build
+    name: Build GitHub Pages preview
     steps:
-      - uses: actions/checkout@v4
-      - name: Capture branch and tag
-        id: branch_name
-        run: |
-          echo "SOURCE_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-          echo "SOURCE_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-      - name: Release preview to branch
-        if: "! github.event.pull_request.head.repo.fork "
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy preview
         uses: rossjrw/pr-preview-action@v1
         with:
           source-dir: ./src/
-          preview-branch: gh-pages
-          umbrella-dir: pr-preview
-          action: auto
-  publish-preview-page:
-    if: "! github.event.pull_request.head.repo.fork "
-    name: Preview
-    needs: preview-page
-    uses: actions/deploy-pages@v4
