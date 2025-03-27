@@ -2,16 +2,19 @@
 name: Deploy static content to preview Pages
 
 on:
-  pull_request:
-    branches:
-      - main
-    types:
-      - opened
-      - reopened
-      - synchronize
-      - closed
-    paths:
-      - 'src/**'
+  push:
+    branches: ["feature/*"]
+
+  # pull_request:
+  #   branches:
+  #     - main
+  #   types:
+  #     - opened
+  #     - reopened
+  #     - synchronize
+  #     - closed
+  #   paths:
+  #     - 'src/**'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -36,10 +39,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npm i && npm run build
 
-      - uses: rossjrw/pr-preview-action@v1
-        id: preview-step
-        with:
-          source-dir: ./src/
-          preview-branch: ${{ env.PREVIEW_BRANCH }}
+      # - uses: rossjrw/pr-preview-action@v1
+      #   id: preview-step
+      #   with:
+      #     source-dir: ./src/
+      #     preview-branch: ${{ env.PREVIEW_BRANCH }}
