@@ -176,7 +176,7 @@ function renderHashtagList(hashtags) {
             .addClass('linkedin-icon-link')
             .attr('title', 'View this hashtag on LinkedIn')
             .append($('<img>')
-                .attr('src', 'linkedin-icon.svg')
+                .attr('src', 'images/linkedin-icon.svg')
                 .attr('alt', 'LinkedIn')
                 .addClass('linkedin-icon'));
 
