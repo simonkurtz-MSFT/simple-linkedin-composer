@@ -243,6 +243,10 @@ function updateSnippetsList() {
 
 // Load a snippet into the editor
 function loadSnippet(key) {
+    if (!confirmUnsavedChanges()) {
+        return; // Exit if the user cancels
+    }
+
     const savedSnippet = localStorage.getItem(key);
 
     if (savedSnippet) {
@@ -254,6 +258,8 @@ function loadSnippet(key) {
         // Extract the snippet title from the key
         const snippetTitle = key.replace(KEY_PREFIX, ''); // Remove the key prefix
         $('#snippet-title').val(snippetTitle); // Set the snippet title in the textbox
+
+        hasUnsavedChanges = false; // Reset the flag since new content is loaded
     } else {
         alert('Snippet not found.');
     }
@@ -340,6 +346,10 @@ $('#export-data').on('click', () => {
 
 // Import functionality
 $('#import-data').on('click', () => {
+    if (!confirmUnsavedChanges()) {
+        return; // Exit if the user cancels
+    }
+
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "application/json";
@@ -616,8 +626,18 @@ function toggleEmojiPicker() {
 
     $emojiPicker.toggle(); // Toggle visibility
 }
+
 function clearEditor() {
     quill.setText('');
+    hasUnsavedChanges = false; // Reset the flag since the editor is cleared intentionally
+}
+
+// Function to check for unsaved changes and prompt for confirmation
+function confirmUnsavedChanges() {
+    if (hasUnsavedChanges) {
+        return confirm('You have unsaved changes. Do you want to discard them and proceed?');
+    }
+    return true;
 }
 
 // Listen for emoji selection
@@ -663,8 +683,20 @@ const quill = new Quill('#editor-container', {
     theme: 'snow',
 });
 
+// Listen for changes in the editor to set the unsaved changes flag
+quill.on('text-change', () => {
+    hasUnsavedChanges = true;
+});
+
+
+// Update the "load-sample-button" click handler to include the confirmation prompt
 $('#load-sample-button').on('click', () => {
+    if (!confirmUnsavedChanges()) {
+        return; // Exit if the user cancels
+    }
+
     quill.setContents(JSON.parse(samplePostJson)); // Populate the editor with the sample text
+    hasUnsavedChanges = false; // Reset the flag since new content is loaded
 });
 
 
@@ -723,6 +755,8 @@ function accordionSetup() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Startup
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+let hasUnsavedChanges = false; // Flag to track unsaved changes
 
 $(() => {
     // Fetch the stats on page load
