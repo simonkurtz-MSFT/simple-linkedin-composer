@@ -61,6 +61,10 @@ header h1 {
     gap: 5px;
 }
 
+.github-stat {
+    min-width: 20px;    /* reduce the jarring on load */
+}
+
 .octicon-star {
     fill: white;
     vertical-align: middle;
