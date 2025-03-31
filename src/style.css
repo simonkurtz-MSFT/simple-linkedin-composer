@@ -1,4 +1,9 @@
 /* Common Link Styles */
+h1 a, h1 a:visited, h1 a:hover {
+    color: white;
+    text-decoration: none;
+}
+
 .link {
     text-decoration: none;
     font-weight: bold;
@@ -7,7 +12,7 @@
 
 .link:hover {
     text-decoration: underline;
-    color: #005582; /* Hover color for all links */
+    /*color: #005582; /* Hover color for all links */
 }
 
 .link:visited {
@@ -59,19 +64,20 @@ header h1 {
     display: flex;
     align-items: center;
     gap: 5px;
+
+    a {
+        color: white;
+        font-weight: bold;
+        text-decoration: none;
+    }
 }
 
 .github-stat {
-    min-width: 20px;    /* reduce the jarring on load */
+    min-width: 40px;    /* reduce the jarring on load */
 }
 
-.octicon-star {
+.octicon-star, .octicon-repo-forked, .octicon-eye {
     fill: white;
-    vertical-align: middle;
-}
-
-.octicon-repo-forked {
-    fill: #ffffff; /* White color for the fork icon */
     vertical-align: middle;
 }
 
@@ -266,6 +272,7 @@ footer {
 
 footer a {
     font-size: 0.9rem;
+    color: #333;
 }
 
 .linkedin-user-id,

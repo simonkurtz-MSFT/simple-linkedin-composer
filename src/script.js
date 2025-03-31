@@ -57,6 +57,7 @@ latinToMathItalic['h'] = '\u210E';
 async function fetchGitHubStats() {
     try {
         const response = await fetch(GITHUB_API_URL);
+
         if (!response.ok) {
             throw new Error('Failed to fetch GitHub stats');
         }
@@ -64,6 +65,7 @@ async function fetchGitHubStats() {
         const data = await response.json();
         $('#star-count').text(data.stargazers_count);
         $('#fork-count').text(data.forks_count);
+        $('#watcher-count').text(data.subscribers_count); // it's actually subscribers, not watchers/watchers_count
     } catch (error) {
         console.error('Error fetching GitHub stats:', error);
     }
