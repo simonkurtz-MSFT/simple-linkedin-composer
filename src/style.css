@@ -256,14 +256,6 @@ button:disabled {
     content: ' ▼'; /* Down arrow for descending */
 }
 
-/* Accessibility Focus Styles */
-button:focus,
-a:focus,
-input:focus {
-    outline: 2px solid #005582;
-    outline-offset: 2px;
-}
-
 /* Footer */
 footer {
     margin-top: 35px;
