@@ -90,20 +90,19 @@ function loadLinkedInUserId() {
 }
 
 // Save LinkedIn user ID to localStorage when it changes
-$('#linkedin-user-id').on('input', () => {
-    const userId = $(this).val().trim();
+$('#linkedin-user-id').on('input', (event) => {
+    const userId = $(event.target).val().trim();
     localStorage.setItem(LINKEDIN_USER_ID_KEY, userId);
     updateLinkedInLink(userId); // Update the LinkedIn link dynamically
 });
 
 // Update the LinkedIn link dynamically
 function updateLinkedInLink(userId) {
-    const $linkedinLink = $('#linkedin-link');
     if (userId) {
         const linkedinUrl = LINKEDIN_POST_URL_TEMPLATE.replace('<user>', encodeURIComponent(userId));
-        $linkedinLink.attr('href', linkedinUrl).show(); // Update the href and show the link
+        $('#linkedin-link').attr('href', linkedinUrl).show(); // Update the href and show the link
     } else {
-        $linkedinLink.hide(); // Hide the link if no user ID is present
+        $('#linkedin-link').hide(); // Hide the link if no user ID is present
     }
 }
 
