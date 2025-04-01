@@ -463,15 +463,26 @@ function sortTableByColumn(sortKey, isAscending) {
     const $rows = $tbody.find('tr').get();
 
     $rows.sort((rowA, rowB) => {
-        const cellA = $(rowA).find(`td[data-key="${sortKey}"]`).text().trim();
-        const cellB = $(rowB).find(`td[data-key="${sortKey}"]`).text().trim();
-
         if (sortKey === 'timestamp') {
+            const cellA = $(rowA).find(`td[data-key="${sortKey}"]`).text().trim();
+            const cellB = $(rowB).find(`td[data-key="${sortKey}"]`).text().trim();
+
             // Parse timestamps for comparison
             return isAscending
                 ? new Date(cellA) - new Date(cellB)
                 : new Date(cellB) - new Date(cellA);
+        } else if (sortKey === 'template') {
+            const cellA = $(rowA).find(`td[data-key="${sortKey}"]`).data('value');
+            const cellB = $(rowB).find(`td[data-key="${sortKey}"]`).data('value');
+
+            // Sort by isTemplate (true first on the first click)
+            const valueA = cellA === true ? 0 : 1;
+            const valueB = cellB === true ? 0 : 1;
+            return isAscending ? valueA - valueB : valueB - valueA;
         } else {
+            const cellA = $(rowA).find(`td[data-key="${sortKey}"]`).text().trim();
+            const cellB = $(rowB).find(`td[data-key="${sortKey}"]`).text().trim();
+
             // Compare strings for "Snippet"
             return isAscending
                 ? cellA.localeCompare(cellB)
