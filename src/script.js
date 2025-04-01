@@ -47,7 +47,8 @@ const digitsToMathBold = generateDigitUnicodeMap(0x1D7CE);          // Mathemati
 // Add special cases for specific characters (e.g., 'h' in italic)
 latinToMathItalic['h'] = '\u210E';
 
-
+let currentSortKey = 'timestamp';   // Default sort key
+let currentSortOrder = false;       // Default sort order (false = descending, true = ascending)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // GitHub Stats
@@ -226,8 +227,7 @@ function insertHashtagIntoEditor(hashtag) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 function updateSnippetsList() {
-    const $snippetsTableBody = $('#snippets-table tbody');
-    $snippetsTableBody.empty(); // Clear the table body
+    $('#snippets-table tbody').empty(); // Clear the table body
 
     Object.keys(localStorage).forEach((key) => {
         // Only process keys that start with the key prefix
@@ -240,6 +240,9 @@ function updateSnippetsList() {
     });
 
     updateHashtagCounts(); // Update hashtag counts after loading snippets
+
+    // Reapply the current sort order
+    sortTableByColumn(currentSortKey, currentSortOrder);
 }
 
 // Load a snippet into the editor
@@ -442,6 +445,14 @@ function addSnippetToTable(title, isTemplate, timestamp) {
     $tbody.append($row);
 }
 
+function setupSnippetSort() {
+    $('#snippets-table th[data-sort]').on('click', function () {
+        const sortKey = $(this).data('sort');
+        const isAscending = $(this).hasClass('asc');
+        sortTableByColumn(sortKey, !isAscending); // Toggle the sorting order
+    });
+}
+
 function sortTableByColumn(sortKey, isAscending) {
     const $table = $('#snippets-table');
     const $tbody = $table.find('tbody');
@@ -473,6 +484,10 @@ function sortTableByColumn(sortKey, isAscending) {
     const $header = $table.find(`th[data-sort="${sortKey}"]`);
     $table.find('th').removeClass('asc desc');
     $header.addClass(isAscending ? 'asc' : 'desc');
+
+    // Store the current sort key and order
+    currentSortKey = sortKey;
+    currentSortOrder = isAscending;
 }
 
 
@@ -771,20 +786,11 @@ $(() => {
     // Initialize the snippets list on page load
     updateSnippetsList();
 
+    // Set up snippet sort
+    setupSnippetSort();
+
     // Perform initial sort by "Timestamp" in descending order
     sortTableByColumn('timestamp', false);
 
     quill.focus();
-
-    const $table = $('#snippets-table');
-
-    // Add click event to sortable headers
-    $table.find('th[data-sort]').on('click', function () {
-        const $header = $(this);
-        const sortKey = $header.data('sort');
-        const isAscending = !$header.hasClass('asc'); // Toggle sort direction
-
-        // Sort the table by the selected column
-        sortTableByColumn(sortKey, isAscending);
-    });
 });
