@@ -1,4 +1,4 @@
-# Simple LinkedIn Composer - README
+# Simple LinkedIn Composer
 
 ![Banner Image](composer-linkedin-side-by-side.png)
 
