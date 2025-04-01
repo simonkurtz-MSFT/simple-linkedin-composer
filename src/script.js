@@ -101,7 +101,6 @@ $('#linkedin-user-id').on('input', (event) => {
 function updateLinkedInLink(userId) {
     if (userId) {
         const LINKEDIN_USER_BASE_URL = `${LINKEDIN_BASE_URL}${encodeURIComponent(userId)}/`;
-        console.log(`LinkedIn User Base URL: ${LINKEDIN_USER_BASE_URL}`);
 
         $('#linkedin-create-post').attr('href', `${LINKEDIN_USER_BASE_URL}overlay/create-post`); // Update the href
         $('#linkedin-my-posts').attr('href', `${LINKEDIN_USER_BASE_URL}recent-activity/all/`); // Update the href
