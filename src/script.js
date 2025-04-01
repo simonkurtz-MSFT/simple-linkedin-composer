@@ -494,6 +494,25 @@ function sortTableByColumn(sortKey, isAscending) {
     currentSortOrder = isAscending;
 }
 
+function filterSnippets(filterText) {
+    const $rows = $('#snippets-table tbody tr');
+    const lowerCaseFilter = filterText.toLowerCase();
+
+    $rows.each(function () {
+        const snippetName = $(this).find('td[data-key="snippet"]').text().toLowerCase();
+        if (snippetName.includes(lowerCaseFilter)) {
+            $(this).show(); // Show rows that match the filter
+        } else {
+            $(this).hide(); // Hide rows that don't match the filter
+        }
+    });
+}
+
+$('#snippet-filter').on('input', function () {
+    const filterText = $(this).val();
+    filterSnippets(filterText);
+});
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
