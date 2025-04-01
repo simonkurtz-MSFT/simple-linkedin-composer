@@ -100,7 +100,7 @@ $('#linkedin-user-id').on('input', () => {
 function updateLinkedInLink(userId) {
     const $linkedinLink = $('#linkedin-link');
     if (userId) {
-        const linkedinUrl = LINKEDIN_POST_URL_TEMPLATE.replace('<user>', userId);
+        const linkedinUrl = LINKEDIN_POST_URL_TEMPLATE.replace('<user>', encodeURIComponent(userId));
         $linkedinLink.attr('href', linkedinUrl).show(); // Update the href and show the link
     } else {
         $linkedinLink.hide(); // Hide the link if no user ID is present
