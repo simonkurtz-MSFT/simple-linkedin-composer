@@ -231,12 +231,13 @@ function insertHashtagIntoEditor(hashtag) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 function updateSnippetsList() {
-    $('#snippets-table tbody').empty(); // Clear the table body
+    const $snippetsTableBody = $('#snippets-table tbody');
+    $snippetsTableBody.empty(); // Clear the table body
 
-    Object.keys(localStorage).forEach((key) => {
-        // Only process keys that start with the key prefix
-        if (!key.startsWith(KEY_PREFIX)) return;
+    const snippetKeys = Object.keys(localStorage).filter(key => key.startsWith(KEY_PREFIX));
+    const totalSnippets = snippetKeys.length;
 
+    snippetKeys.forEach((key) => {
         const snippet = JSON.parse(localStorage.getItem(key));
         const title = key.replace(KEY_PREFIX, ''); // Remove the key prefix
 
@@ -247,6 +248,15 @@ function updateSnippetsList() {
 
     // Reapply the current sort order
     sortTableByColumn(currentSortKey, currentSortOrder);
+
+    // Update the Snippets header
+    const visibleSnippets = $snippetsTableBody.find('tr:visible').length;
+    const $snippetsHeader = $('#snippets-header'); // Assuming the h2 has an ID of "snippets-header"
+    if (visibleSnippets === totalSnippets) {
+        $snippetsHeader.text(`Snippets (${totalSnippets})`);
+    } else {
+        $snippetsHeader.text(`Snippets (${visibleSnippets}/${totalSnippets})`);
+    }
 }
 
 // Load a snippet into the editor
@@ -505,22 +515,35 @@ function sortTableByColumn(sortKey, isAscending) {
     currentSortOrder = isAscending;
 }
 
-function filterSnippets(filterText) {
+const filterSnippets = (filterText) => {
     const $rows = $('#snippets-table tbody tr');
     const lowerCaseFilter = filterText.toLowerCase();
 
-    $rows.each(function () {
-        const snippetName = $(this).find('td[data-key="snippet"]').text().toLowerCase();
+    let visibleCount = 0;
+
+    $rows.each((_, row) => {
+        const snippetName = $(row).find('td[data-key="snippet"]').text().toLowerCase();
         if (snippetName.includes(lowerCaseFilter)) {
-            $(this).show(); // Show rows that match the filter
+            $(row).show(); // Show rows that match the filter
+            visibleCount++;
         } else {
-            $(this).hide(); // Hide rows that don't match the filter
+            $(row).hide(); // Hide rows that don't match the filter
         }
     });
-}
 
-$('#snippet-filter').on('input', function () {
-    const filterText = $(this).val();
+    // Update the Snippets header
+    const totalSnippets = $rows.length;
+    const $snippetsHeader = $('#snippets-header');
+    if (visibleCount === totalSnippets) {
+        $snippetsHeader.text(`Snippets (${totalSnippets})`);
+    } else {
+        $snippetsHeader.text(`Snippets (${visibleCount}/${totalSnippets})`);
+    }
+};
+
+// Update the event listener to use the updated filterSnippets function
+$('#snippet-filter').on('input', (e) => {
+    const filterText = $(e.target).val();
     filterSnippets(filterText);
 });
 
