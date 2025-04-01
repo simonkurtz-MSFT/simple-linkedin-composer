@@ -82,6 +82,7 @@ header h1 {
 .octicon-star, .octicon-repo-forked, .octicon-eye {
     fill: white;
     vertical-align: middle;
+    margin-bottom: 2px;
 }
 
 /* Input Fields */
