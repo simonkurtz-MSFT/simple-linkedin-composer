@@ -4,7 +4,7 @@
 
 // Key for storing LinkedIn user ID in localStorage
 const LINKEDIN_USER_ID_KEY = 'linkedin_id';
-const LINKEDIN_POST_URL_TEMPLATE = `https://www.linkedin.com/in/<user>/overlay/create-post`;
+const LINKEDIN_BASE_URL = 'https://www.linkedin.com/in/';
 
 const GITHUB_API_URL = 'https://api.github.com/repos/simonkurtz-MSFT/simple-linkedin-composer';
 
@@ -100,10 +100,15 @@ $('#linkedin-user-id').on('input', (event) => {
 // Update the LinkedIn link dynamically
 function updateLinkedInLink(userId) {
     if (userId) {
-        const linkedinUrl = LINKEDIN_POST_URL_TEMPLATE.replace('<user>', encodeURIComponent(userId));
-        $('#linkedin-link').attr('href', linkedinUrl).show(); // Update the href and show the link
+        const LINKEDIN_USER_BASE_URL = `${LINKEDIN_BASE_URL}${encodeURIComponent(userId)}/`;
+        console.log(`LinkedIn User Base URL: ${LINKEDIN_USER_BASE_URL}`);
+
+        $('#linkedin-create-post').attr('href', `${LINKEDIN_USER_BASE_URL}overlay/create-post`); // Update the href
+        $('#linkedin-my-posts').attr('href', `${LINKEDIN_USER_BASE_URL}recent-activity/all/`); // Update the href
+
+        $('#linkedin-links').show(); // Show the LinkedIn links section
     } else {
-        $('#linkedin-link').hide(); // Hide the link if no user ID is present
+        $('#linkedin-links').hide(); // Hide the LinkedIn links section
     }
 }
 

@@ -21,13 +21,16 @@ h1 a, h1 a:visited, h1 a:hover {
 
 body {
     font-family: 'Source Sans Pro', Arial, sans-serif;
-    line-height: 1.5;
     color: #333;
     margin: auto;
     padding: 10px;
     background-color: #f9f9f9;
     width: 700px;
     overflow-y: scroll;
+}
+
+#linkedin-links {
+    display: none;
 }
 
 header {
@@ -93,7 +96,7 @@ input[type="text"] {
 }
 
 input#linkedin-user-id {
-    margin-right: 10px;
+    margin: 0 25px 0 13px;
     width: 175px;
 }
 
@@ -167,16 +170,16 @@ button:disabled {
 /* Style for buttons */
 .action-button {
     display: inline-block;
-    padding: 10px 20px;
-    font-size: 16px;
-    color: #fff !important;
-    background-color: #0073b1; /* LinkedIn blue */
-    border: none;
-    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 1rem;
+    color: white !important;
+    background-color: #0077B5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     text-align: center;
     text-decoration: none; /* Remove underline for links */
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 }
 
 .action-button:hover {
