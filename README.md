@@ -1,18 +1,112 @@
 # Simple LinkedIn Composer
 
-An extremely simple LinkedIn composer for the sole purpose of crafting posts.
+![Banner Image](composer-linkedin-side-by-side.png)
 
-Try it out at [linkedin-composer.simondoescloud.com](https://linkedin-composer.simondoescloud.com/)!
+An enhanced rich-text editor for crafting better-formatted LinkedIn posts with emoji support and local snippet storage.
 
-## Background
+🔗 [Live Demo](https://linkedin-composer.simondoescloud.com/)  
+⭐ [GitHub Repository](https://github.com/simonkurtz-MSFT/simple-linkedin-composer)
 
-LinkedIn's post composer doesn't natively allow for rich text formatting, so this tool provides a simple way to compose posts with rich text and emojis.
-Tools that address custom formatting on LinkedIn are either not free or, if so, not feature-rich. This tool is completely free and open source. Do with it as you wish.
+## Table of Contents
+- [✨ Features](#features)
+- [🚀 Quick Start](#quick-start)
+- [📖 Detailed Usage Guide](#detailed-usage-guide)
+- [💾 Snippet Management](#snippet-management)
+- [🏷️ Hashtag Tools](#hashtag-tools)
+- [🔒 Privacy & Data](#privacy--data)
+- [🌐 Browser Support](#browser-support)
+- [🤝 Contributing](#contributing)
+- [📜 License](#license)
 
-**No data leaves your browser.** Everything is stored in your browser's local storage.
+<h2 id="features">✨ Features</h2>
 
-## Edge Split Screen
+- *Rich text formatting* (bold, italic, lists)
+- *Emoji picker* with search functionality
+- *Local storage* of post templates
+- *Hashtag tracking* and quick insertion
+- *Export/import* snippets as JSON
+- *Zero data collection* (runs 100% in browser)
+- *Edge split-screen* optimized
 
-This tool is really suitable for Edge's split screen feature to see everything side-by-side.
+<h2 id="quick-start">🚀 Quick Start</h2>
 
-![Composer and LinkedIn side-by-side](./composer-linkedin-side-by-side.png)
+1. Enter your LinkedIn username (from profile URL)
+2. Compose your post with formatting
+3. Click "Copy to Clipboard" 
+4. Paste into LinkedIn's composer
+5. Post as normal!
+
+<h2 id="detailed-usage-guide">📖 Detailed Usage Guide</h2>
+
+### Setting Up
+1. Get your LinkedIn username from your profile URL:
+https://www.linkedin.com/in/YOUR_USERNAME/
+
+2. Enter it in the "LinkedIn user id" field (saves automatically)
+
+### Writing Posts
+- Use the toolbar for formatting:
+- *B* for bold
+- I for italic
+- ☺ for emojis
+- List buttons for bullet/numbered lists
+
+### Saving Posts
+1. Click "Save snippet"
+2. Add a descriptive title (max 50 chars)
+3. Mark as template (optional) for frequent-use posts
+
+<h2 id="snippet-management">💾 Snippet Management</h2>
+
+| Action | How To |
+|--------|--------|
+| Save | Click "Save snippet" after writing |
+| Load | Click snippet name in table |
+| Delete | Click "Delete" button next to snippet |
+| Export | Click "Export" to download all snippets |
+| Import | Click "Import" to upload JSON backup |
+
+<h2 id="hashtag-tools">🏷️ Hashtag Tools</h2>
+
+The tool automatically:
+- Detects all #hashtags in your posts
+- Tracks how often you use each one
+- Lets you:
+- Sort by name or frequency
+- Click ➕ to insert into current post
+- Click LinkedIn icon to search the tag
+
+<h2 id="privacy--data">🔒 Privacy & Data</h2>
+
+- *No server communication* - everything stays in your browser
+- *LocalStorage* used for:
+- Saved snippets
+- Hashtag history
+- Your LinkedIn username
+- *Export option* available for backups
+
+<h2 id="browser-support">🌐 Browser Support</h2>
+
+| Browser       | Support Level | Notes                  |
+|---------------|---------------|------------------------|
+| *Chrome*    | ✅ Full       | Versión 90+ recomendada|
+| *Edge*      | ✅ Full       | Optimizado para split-screen |
+| *Firefox*   | ✅ Full       |                        |
+| *Safari*    | ✅ Full       | macOS/iOS 15+          |
+| *Mobile*    | ⚠️ Limited    | Usar versión desktop   |
+
+<h2 id="contributing">🤝 Contributing</h2>
+
+We welcome:
+- Bug reports
+- Feature requests
+- Pull requests
+
+<h2 id="license">📜 License</h2>
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
+---
+
+*Try it now:* [linkedin-composer.simondoescloud.com](https://linkedin-composer.simondoescloud.com/)  
+*Have questions?* Open an issue on [GitHub](https://github.com/simonkurtz-MSFT/simple-linkedin-composer/issues)
