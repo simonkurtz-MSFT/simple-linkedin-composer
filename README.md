@@ -80,10 +80,13 @@ Clicking ➕ inserts the hashtag at the cursor in the editor. Clicking the Linke
 
 ## 🔒 Privacy & Data
 
-There is **no server communication, no cloud sync, no tracking, no cookies, no ads, etc.** This tool is **entirely free to use**. Enjoy it!
-Please see the very permissive [MIT license](LICENSE) for details.
+There are **no server communications, no cloud syncs, no tracking mechanisms, no cookies, no ads, etc.**
 
 **Everything stays in your browser's local storage.**
+
+This tool is **entirely free to use**. Please see the very permissive [MIT license](LICENSE) for details.
+
+Enjoy it!
 
 ## 🌐 Browser Support
 
@@ -97,7 +100,7 @@ Please see the very permissive [MIT license](LICENSE) for details.
 
 ## 🤝 Contributing
 
-Please see [CONTRIBUTING.md] for details.
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 We welcome:
 
