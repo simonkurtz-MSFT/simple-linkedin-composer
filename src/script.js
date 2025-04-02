@@ -341,6 +341,13 @@ $('#save-button').on('click', () => {
     localStorage.setItem(key, JSON.stringify(snippet));
 
     updateSnippetsList();
+
+    // Apply the filter if the filter input is not empty
+    const filterText = $('#snippet-filter').val().trim();
+
+    if (filterText) {
+        filterSnippets(filterText);
+    }
 });
 
 // Export functionality
