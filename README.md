@@ -1,13 +1,10 @@
 # Simple LinkedIn Composer
 
+Hosted at [https://linkedin-composer.simondoescloud.com](https://linkedin-composer.simondoescloud.com)
+
 ![Banner Image](composer-linkedin-side-by-side.png)
 
 An enhanced rich-text editor for crafting better-formatted LinkedIn posts with emoji support and local snippet storage.
-
-Hosted at [https://linkedin-composer.simondoescloud.com](https://linkedin-composer.simondoescloud.com)
-
-🔗 [Live Demo](https://linkedin-composer.simondoescloud.com/)
-⭐ [GitHub Repository](https://github.com/simonkurtz-MSFT/simple-linkedin-composer)
 
 ## Table of Contents
 
@@ -15,7 +12,7 @@ Hosted at [https://linkedin-composer.simondoescloud.com](https://linkedin-compos
 - [🚀 Quick Start](#-quick-start)
 - [📖 Detailed Usage Guide](#-detailed-usage-guide)
 - [💾 Snippet Management](#-snippet-management)
-- [🏷️ Hashtags](#-hashtags)
+- [🏷️ Hashtags](#%EF%B8%8F-hashtags)
 - [🔒 Privacy & Data](#-privacy--data)
 - [🌐 Browser Support](#-browser-support)
 - [🤝 Contributing](#-contributing)
