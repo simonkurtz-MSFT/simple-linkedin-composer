@@ -20,13 +20,13 @@ An enhanced rich-text editor for crafting better-formatted LinkedIn posts with e
 
 ## ✨ Features
 
-- *Rich text formatting* (bold, italic, lists)
-- *Emoji picker* with search functionality
-- *Local storage* of post and template snippets
-- *Hashtag tracking* and quick insertion
-- *Export/import* snippets as JSON
-- *Zero data collection* (runs 100% in browser)
-- *Edge split-screen* optimized
+- **Rich text formatting** (bold, italic, lists)
+- **Emoji picker** with search functionality
+- **Local storage** of post templates
+- **Hashtag tracking** and quick insertion
+- **Export/import** snippets as JSON
+- **Zero data collection** (runs 100% in browser)
+- **Edge split-screen** optimized
 
 ## 🚀 Quick Start
 
@@ -43,11 +43,12 @@ An enhanced rich-text editor for crafting better-formatted LinkedIn posts with e
 1. Get your LinkedIn username from your LinkedIn profile URL (e.g. [https://www.linkedin.com/in/simonkurtz/](https://www.linkedin.com/in/simonkurtz/))
 1. Enter it in the "LinkedIn user id" field (saves automatically)
 
-### Composing Posts
-
-If you are starting with your first post, you can load a sample via the button under the editor.
-
-Use the toolbar for formatting.
+### Writing Posts
+- Use the toolbar for formatting:
+- **B** for bold
+- I for italic
+- ☺ for emojis
+- List buttons for bullet/numbered lists
 
 ### Saving Posts
 
@@ -70,33 +71,36 @@ Use the toolbar for formatting.
 | Load   | Click snippet name in table |
 | Delete | Click "Delete" button next to snippet |
 | Export | Click "Export" to download all snippets |
-| Import | Click "Import" to upload snippets (handles de-duping) |
+| Import | Click "Import" to upload JSON backup |
 
-## 🏷️ Hashtags
+<h2 id="hashtag-tools">🏷️ Hashtag Tools</h2>
 
-*Simple LinkedIn Composer* automatically detects hashtags in your post and tallies them in the hashtag organizer.
-The number of occurrences in your post is counted to give you insight into your own usage. You can sort by name or frequency of use (count).
-Clicking ➕ inserts the hashtag at the cursor in the editor. Clicking the LinkedIn icon opens its context on LinkedIn.
+The tool automatically:
+- Detects all #hashtags in your posts
+- Tracks how often you use each one
+- Lets you:
+- Sort by name or frequency
+- Click ➕ to insert into current post
+- Click LinkedIn icon to search the tag
 
-## 🔒 Privacy & Data
+<h2 id="privacy--data">🔒 Privacy & Data</h2>
 
-There are **no server communications, no cloud syncs, no tracking mechanisms, no cookies, no ads, etc.**
+- **No server communication** - everything stays in your browser
+- **LocalStorage** used for:
+- Saved snippets
+- Hashtag history
+- Your LinkedIn username
+- **Export option** available for backups
 
-**Everything stays in your browser's local storage.**
-
-This tool is **entirely free to use**. Please see the very permissive [MIT license](LICENSE) for details.
-
-Enjoy it!
-
-## 🌐 Browser Support
+<h2 id="browser-support">🌐 Browser Support</h2>
 
 | Browser       | Support Level | Notes                  |
 |---------------|---------------|------------------------|
-| *Chrome*      | ✅ Full       |                       |
-| *Edge*        | ✅ Full       | Use split-screen      |
-| *Firefox*     | ✅ Full       |                       |
-| *Safari*      | ✅ Full       | MacOS/iOS 15+         |
-| *Mobile*      | ⚠️ Limited    | Use Desktop Version   |
+| **Chrome**    | ✅ Full       | Version 90+ recommended|
+| **Edge**      | ✅ Full       | Optimized for split-screen |
+| **Firefox**   | ✅ Full       |                        |
+| **Safari**    | ✅ Full       | macOS/iOS 15+          |
+| **Mobile**    | ⚠️ Limited    | Use version desktop   |
 
 ## 🤝 Contributing
 
@@ -120,6 +124,5 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-*Try it now:* [https://linkedin-composer.simondoescloud.com](https://linkedin-composer.simondoescloud.com)
-
-*Have questions?* Open an issue on [GitHub](https://github.com/simonkurtz-MSFT/simple-linkedin-composer/issues)
+**Try it now:** [linkedin-composer.simondoescloud.com](https://linkedin-composer.simondoescloud.com/)  
+**Have questions?** Open an issue on [GitHub](https://github.com/simonkurtz-MSFT/simple-linkedin-composer/issues)
