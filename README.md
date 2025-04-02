@@ -4,109 +4,122 @@
 
 An enhanced rich-text editor for crafting better-formatted LinkedIn posts with emoji support and local snippet storage.
 
-🔗 [Live Demo](https://linkedin-composer.simondoescloud.com/)  
+Hosted at [https://linkedin-composer.simondoescloud.com](https://linkedin-composer.simondoescloud.com)
+
+🔗 [Live Demo](https://linkedin-composer.simondoescloud.com/)
 ⭐ [GitHub Repository](https://github.com/simonkurtz-MSFT/simple-linkedin-composer)
 
 ## Table of Contents
-- [✨ Features](#features)
-- [🚀 Quick Start](#quick-start)
-- [📖 Detailed Usage Guide](#detailed-usage-guide)
-- [💾 Snippet Management](#snippet-management)
-- [🏷️ Hashtag Tools](#hashtag-tools)
-- [🔒 Privacy & Data](#privacy--data)
-- [🌐 Browser Support](#browser-support)
-- [🤝 Contributing](#contributing)
-- [📜 License](#license)
 
-<h2 id="features">✨ Features</h2>
+- [✨ Features](#-features)
+- [🚀 Quick Start](#-quick-start)
+- [📖 Detailed Usage Guide](#-detailed-usage-guide)
+- [💾 Snippet Management](#-snippet-management)
+- [🏷️ Hashtags](#-hashtags)
+- [🔒 Privacy & Data](#-privacy--data)
+- [🌐 Browser Support](#-browser-support)
+- [🤝 Contributing](#-contributing)
+- [📜 License](#-license)
+
+## ✨ Features
 
 - *Rich text formatting* (bold, italic, lists)
 - *Emoji picker* with search functionality
-- *Local storage* of post templates
+- *Local storage* of post and template snippets
 - *Hashtag tracking* and quick insertion
 - *Export/import* snippets as JSON
 - *Zero data collection* (runs 100% in browser)
 - *Edge split-screen* optimized
 
-<h2 id="quick-start">🚀 Quick Start</h2>
+## 🚀 Quick Start
 
-1. Enter your LinkedIn username (from profile URL)
-2. Compose your post with formatting
-3. Click "Copy to Clipboard" 
-4. Paste into LinkedIn's composer
-5. Post as normal!
+1. Enter your LinkedIn username.
+1. Compose or load a snippet. *Side-by-side is really nice in Edge!*
+1. Click "Create a new LinkedIn Post".
+1. Click "Copy to Clipboard." **Do not just copy content from the editor.**
+1. Paste into the LinkedIn post.
 
-<h2 id="detailed-usage-guide">📖 Detailed Usage Guide</h2>
+## 📖 Detailed Usage Guide
 
 ### Setting Up
-1. Get your LinkedIn username from your profile URL:
-https://www.linkedin.com/in/YOUR_USERNAME/
 
-2. Enter it in the "LinkedIn user id" field (saves automatically)
+1. Get your LinkedIn username from your LinkedIn profile URL (e.g. [https://www.linkedin.com/in/simonkurtz/](https://www.linkedin.com/in/simonkurtz/))
+1. Enter it in the "LinkedIn user id" field (saves automatically)
 
-### Writing Posts
-- Use the toolbar for formatting:
-- *B* for bold
-- I for italic
-- ☺ for emojis
-- List buttons for bullet/numbered lists
+### Composing Posts
+
+If you are starting with your first post, you can load a sample via the button under the editor.
+
+Use the toolbar for formatting.
 
 ### Saving Posts
-1. Click "Save snippet"
-2. Add a descriptive title (max 50 chars)
-3. Mark as template (optional) for frequent-use posts
 
-<h2 id="snippet-management">💾 Snippet Management</h2>
+1. Click "Save snippet"
+1. Add a descriptive title (max 50 chars)
+1. Mark as template (optional) for frequent-use posts
+
+### Posting on LinkedIn
+
+1. Compose or load a snippet. *Side-by-side is really nice in Edge!*
+1. Click "Create a new LinkedIn Post".
+1. Click "Copy to Clipboard." **Do not just copy content from the editor.**
+1. Paste into the LinkedIn post.
+
+## 💾 Snippet Management
 
 | Action | How To |
 |--------|--------|
-| Save | Click "Save snippet" after writing |
-| Load | Click snippet name in table |
+| Save   | Click "Save snippet" after writing |
+| Load   | Click snippet name in table |
 | Delete | Click "Delete" button next to snippet |
 | Export | Click "Export" to download all snippets |
-| Import | Click "Import" to upload JSON backup |
+| Import | Click "Import" to upload snippets (handles de-duping) |
 
-<h2 id="hashtag-tools">🏷️ Hashtag Tools</h2>
+## 🏷️ Hashtags
 
-The tool automatically:
-- Detects all #hashtags in your posts
-- Tracks how often you use each one
-- Lets you:
-- Sort by name or frequency
-- Click ➕ to insert into current post
-- Click LinkedIn icon to search the tag
+*Simple LinkedIn Composer* automatically detects hashtags in your post and tallies them in the hashtag organizer.
+The number of occurrences in your post is counted to give you insight into your own usage. You can sort by name or frequency of use (count).
+Clicking ➕ inserts the hashtag at the cursor in the editor. Clicking the LinkedIn icon opens its context on LinkedIn.
 
-<h2 id="privacy--data">🔒 Privacy & Data</h2>
+## 🔒 Privacy & Data
 
-- *No server communication* - everything stays in your browser
-- *LocalStorage* used for:
-- Saved snippets
-- Hashtag history
-- Your LinkedIn username
-- *Export option* available for backups
+There is **no server communication, no cloud sync, no tracking, no cookies, no ads, etc.** This tool is **entirely free to use**. Enjoy it!
+Please see the very permissive [MIT license](LICENSE) for details.
 
-<h2 id="browser-support">🌐 Browser Support</h2>
+**Everything stays in your browser's local storage.**
+
+## 🌐 Browser Support
 
 | Browser       | Support Level | Notes                  |
 |---------------|---------------|------------------------|
-| *Chrome*    | ✅ Full       | Versión 90+ recomendada|
-| *Edge*      | ✅ Full       | Optimizado para split-screen |
-| *Firefox*   | ✅ Full       |                        |
-| *Safari*    | ✅ Full       | macOS/iOS 15+          |
-| *Mobile*    | ⚠️ Limited    | Usar versión desktop   |
+| *Chrome*      | ✅ Full       |                       |
+| *Edge*        | ✅ Full       | Use split-screen      |
+| *Firefox*     | ✅ Full       |                       |
+| *Safari*      | ✅ Full       | MacOS/iOS 15+         |
+| *Mobile*      | ⚠️ Limited    | Use Desktop Version   |
 
-<h2 id="contributing">🤝 Contributing</h2>
+## 🤝 Contributing
+
+Please see [CONTRIBUTING.md] for details.
 
 We welcome:
+
 - Bug reports
 - Feature requests
 - Pull requests
 
-<h2 id="license">📜 License</h2>
+### Thank You
+
+A big *THANK YOU!* to the following contributors:
+
+- [Carolina-GomezM](https://github.com/Carolina-GomezM)
+
+## 📜 License
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-*Try it now:* [linkedin-composer.simondoescloud.com](https://linkedin-composer.simondoescloud.com/)  
+*Try it now:* [https://linkedin-composer.simondoescloud.com](https://linkedin-composer.simondoescloud.com)
+
 *Have questions?* Open an issue on [GitHub](https://github.com/simonkurtz-MSFT/simple-linkedin-composer/issues)
