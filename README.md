@@ -112,11 +112,6 @@ We welcome:
 - Feature requests
 - Pull requests
 
-### Thank You
-
-A big *THANK YOU!* to the following contributors:
-
-- [Carolina-GomezM](https://github.com/Carolina-GomezM)
 
 ## 📜 License
 
