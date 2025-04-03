@@ -47,8 +47,13 @@ const digitsToMathBold = generateDigitUnicodeMap(0x1D7CE);          // Mathemati
 // Add special cases for specific characters (e.g., 'h' in italic)
 latinToMathItalic['h'] = '\u210E';
 
+let hasUnsavedChanges = false;      // Flag to track unsaved changes
+
 let currentSortKey = 'timestamp';   // Default sort key
 let currentSortOrder = false;       // Default sort order (false = descending, true = ascending)
+
+let sortNameAsc = true;             // Toggle state for name sorting
+let sortCountAsc = true;            // Toggle state for count sorting
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // GitHub Stats
@@ -90,12 +95,11 @@ function loadLinkedInUserId() {
     }
 }
 
-// Save LinkedIn user ID to localStorage when it changes
-$('#linkedin-user-id').on('input', (event) => {
+function setLinkedInUserId(event) {
     const userId = $(event.target).val().trim();
     localStorage.setItem(LINKEDIN_USER_ID_KEY, userId);
     updateLinkedInLink(userId); // Update the LinkedIn link dynamically
-});
+}
 
 // Update the LinkedIn link dynamically
 function updateLinkedInLink(userId) {
@@ -153,9 +157,6 @@ function updateHashtagCounts() {
     renderHashtagList(hashtags);
 }
 
-let sortNameAsc = true; // Toggle state for name sorting
-let sortCountAsc = true; // Toggle state for count sorting
-
 // Function to render the hashtag list in the UI
 function renderHashtagList(hashtags) {
     const $hashtagList = $('#hashtag-list');
@@ -192,19 +193,20 @@ function renderHashtagList(hashtags) {
     });
 }
 
-// Event listener for sorting by name
-$('#sort-name').on('click', () => {
+function sortHashtagsByName() {
     const hashtags = JSON.parse(localStorage.getItem('hashtags')) || {};
+
     const sortedHashtags = Object.entries(hashtags).sort(([tagA], [tagB]) => {
         return sortNameAsc ? tagA.localeCompare(tagB) : tagB.localeCompare(tagA);
     });
     sortNameAsc = !sortNameAsc; // Toggle sorting order
     renderHashtagList(Object.fromEntries(sortedHashtags));
-});
+}
 
 // Event listener for sorting by count with tie-breaking by name
-$('#sort-count').on('click', () => {
+function sortHashtagsByCount() {
     const hashtags = JSON.parse(localStorage.getItem('hashtags')) || {};
+
     const sortedHashtags = Object.entries(hashtags).sort(([tagA, countA], [tagB, countB]) => {
         if (countA === countB) {
             return tagA.localeCompare(tagB); // Tie-breaking: Sort by name ascending
@@ -213,7 +215,7 @@ $('#sort-count').on('click', () => {
     });
     sortCountAsc = !sortCountAsc; // Toggle sorting order
     renderHashtagList(Object.fromEntries(sortedHashtags));
-});
+}
 
 // Function to insert a hashtag into the editor
 function insertHashtagIntoEditor(hashtag) {
@@ -289,7 +291,7 @@ function generateKey(content) {
 }
 
 // Clear all saved snippets from local storage
-$('#clear-button').on('click', () => {
+function clearSnippetsFromStorage() {
     if (Object.keys(localStorage).length === 0)
         return;
 
@@ -300,10 +302,10 @@ $('#clear-button').on('click', () => {
         localStorage.removeItem("hashtags");
         renderHashtagList({});
     }
-});
+}
 
 // Save the content to local storage
-$('#save-button').on('click', () => {
+function saveSnippet() {
     const content = quill.getText().trim();
     if (!content) {
         alert('The editor is empty. Please write something to save.');
@@ -348,10 +350,10 @@ $('#save-button').on('click', () => {
     if (filterText) {
         filterSnippets(filterText);
     }
-});
+}
 
 // Export functionality
-$('#export-data').on('click', () => {
+function exportSnippets() {
     const data = {};
 
     // Filter localStorage keys that start with "snippet-"
@@ -364,13 +366,12 @@ $('#export-data').on('click', () => {
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const filename = `LinkedIn-Composer-Data-${timestamp}.json`;
 
-    // Log and download the filtered data
-    console.log(JSON.stringify(data, null, 2));
+    // Download the filtered data
     downloadFile(filename, JSON.stringify(data, null, 2));
-});
+}
 
 // Import functionality
-$('#import-data').on('click', () => {
+function importSnippets() {
     if (!confirmUnsavedChanges()) {
         return; // Exit if the user cancels
     }
@@ -427,7 +428,7 @@ $('#import-data').on('click', () => {
     });
 
     input.click();
-});
+}
 
 function addSnippetToTable(title, isTemplate, timestamp) {
     const $tbody = $('#snippets-table tbody');
@@ -548,19 +549,13 @@ const filterSnippets = (filterText) => {
     }
 };
 
-// Update the event listener to use the updated filterSnippets function
-$('#snippet-filter').on('input', (e) => {
-    const filterText = $(e.target).val();
-    filterSnippets(filterText);
-});
-
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Copy to Clipboard
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-$('#copy-button').on('click', async () => {
+async function copyToClipboard() {
     const semanticHtml = quill.getSemanticHTML().trim();
     console.log(`\nSemantic HTML input:\n\n${semanticHtml}`);
 
@@ -630,7 +625,7 @@ $('#copy-button').on('click', async () => {
         console.error('Failed to copy content: ', err);
         alert('Failed to copy content. Please try again.');
     }
-});
+}
 
 function processNode(node) {
     if (node.nodeType === Node.TEXT_NODE) {
@@ -722,24 +717,24 @@ function confirmUnsavedChanges() {
 }
 
 // Listen for emoji selection
-$('emoji-picker').on('emoji-click', (event) => {
+function pickEmoji(event) {
     const emoji = event.detail.unicode;
     const range = quill.getSelection();
     if (range) {
         quill.insertText(range.index, emoji);
     }
     $('.emoji-picker-container').hide();
-});
+}
 
 // Hide the emoji picker if clicked outside
-$(document).on('click', (event) => {
+function hideEmojiPicker(event) {
     if (
         !$(event.target).closest('.emoji-picker-container').length &&
         !$(event.target).closest('.ql-emoji').length
     ) {
         $('.emoji-picker-container').hide();
     }
-});
+}
 
 // Initialize Quill
 const quill = new Quill('#editor-container', {
@@ -769,16 +764,15 @@ quill.on('text-change', () => {
     hasUnsavedChanges = true;
 });
 
-
 // Update the "load-sample-button" click handler to include the confirmation prompt
-$('#load-sample-button').on('click', () => {
+function loadSampleText() {
     if (!confirmUnsavedChanges()) {
         return; // Exit if the user cancels
     }
 
     quill.setContents(JSON.parse(samplePostJson)); // Populate the editor with the sample text
     hasUnsavedChanges = false; // Reset the flag since new content is loaded
-});
+}
 
 
 
@@ -831,13 +825,32 @@ function accordionSetup() {
     });
 }
 
+function eventListenerSetup() {
+    // LinkedIn
+    $('#linkedin-user-id').on('input', (event) => setLinkedInUserId(event)); // Set LinkedIn user ID on input change
+    $('#sort-name').on('click', () => sortHashtagsByName());
+    $('#sort-count').on('click', () => sortHashtagsByCount());
+
+    // Snippets
+    $('#clear-button').on('click', () => clearSnippetsFromStorage());
+    $('#save-button').on('click', () => saveSnippet());
+    $('#export-data').on('click', () => exportSnippets());
+    $('#import-data').on('click', () => importSnippets());
+    $('#snippet-filter').on('input', (e) => filterSnippets($(e.target).val()));
+    $('#load-sample-button').on('click', () => loadSampleText());
+
+    // Clipboard
+    $('#copy-button').on('click', async () => await copyToClipboard());
+
+    // Editor
+    $('emoji-picker').on('emoji-click', (e) => pickEmoji(e));
+    $(document).on('click', (e) => hideEmojiPicker(e));
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Startup
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-let hasUnsavedChanges = false; // Flag to track unsaved changes
 
 $(() => {
     // Fetch the stats on page load
@@ -854,6 +867,9 @@ $(() => {
 
     // Set up snippet sort upon column header click
     setupSnippetSort();
+
+    // Set up the event listeners for various elements
+    eventListenerSetup();
 
     quill.focus();
 });
