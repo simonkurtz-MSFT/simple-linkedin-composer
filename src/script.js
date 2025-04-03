@@ -845,16 +845,14 @@ $(() => {
     // Call the function to load the LinkedIn user ID on page load
     loadLinkedInUserId();
 
+    // Set up the accordion behavior for expanding and collapsing the major sections
     accordionSetup();
 
-    // Initialize the snippets list on page load
+    // Initialize the snippets list on page load. This also performs the initial sort by "Timestamp" in descending order.
     updateSnippetsList();
 
-    // Set up snippet sort
+    // Set up snippet sort upon column header click
     setupSnippetSort();
-
-    // Perform initial sort by "Timestamp" in descending order
-    sortTableByColumn('timestamp', false);
 
     quill.focus();
 });
