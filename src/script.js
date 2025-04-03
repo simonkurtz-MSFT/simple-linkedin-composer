@@ -55,6 +55,8 @@ let currentSortOrder = false;       // Default sort order (false = descending, t
 let sortNameAsc = true;             // Toggle state for name sorting
 let sortCountAsc = true;            // Toggle state for count sorting
 
+let quill;
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // GitHub Stats
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -127,34 +129,13 @@ function extractHashtags(text) {
     return (text.match(hashtagRegex) || []);
 }
 
-// Function to update hashtag counts in local storage
-function updateHashtagCounts() {
-    const hashtags = JSON.parse(localStorage.getItem("hashtags")) || {};
-    const snippetKeys = Object.keys(localStorage).filter(key => key.startsWith("snippet-"));
-
-    // Reset hashtag counts
-    Object.keys(hashtags).forEach(tag => hashtags[tag] = 0);
-
-    // Count hashtags from all snippets
-    snippetKeys.forEach(key => {
-        const snippet = JSON.parse(localStorage.getItem(key));
-        const delta = snippet.delta || {};
-        const ops = delta.ops || [];
-
-        // Extract hashtags from each insert property in the ops array
-        ops.forEach(op => {
-            if (op.insert && typeof op.insert === "string") {
-                const snippetHashtags = extractHashtags(op.insert);
-                snippetHashtags.forEach(tag => {
-                    hashtags[tag] = (hashtags[tag] || 0) + 1;
-                });
-            }
-        });
-    });
-
-    // Save updated hashtags to local storage
-    localStorage.setItem("hashtags", JSON.stringify(hashtags));
-    renderHashtagList(hashtags);
+// Function to insert a hashtag into the editor
+function insertHashtagIntoEditor(hashtag) {
+    const range = quill.getSelection(); // Get the current cursor position
+    if (range) {
+        quill.insertText(range.index, `${hashtag} `); // Insert the hashtag followed by a space
+        quill.setSelection(range.index + hashtag.length + 1); // Move the cursor after the inserted text
+    }
 }
 
 // Function to render the hashtag list in the UI
@@ -193,16 +174,6 @@ function renderHashtagList(hashtags) {
     });
 }
 
-function sortHashtagsByName() {
-    const hashtags = JSON.parse(localStorage.getItem('hashtags')) || {};
-
-    const sortedHashtags = Object.entries(hashtags).sort(([tagA], [tagB]) => {
-        return sortNameAsc ? tagA.localeCompare(tagB) : tagB.localeCompare(tagA);
-    });
-    sortNameAsc = !sortNameAsc; // Toggle sorting order
-    renderHashtagList(Object.fromEntries(sortedHashtags));
-}
-
 // Event listener for sorting by count with tie-breaking by name
 function sortHashtagsByCount() {
     const hashtags = JSON.parse(localStorage.getItem('hashtags')) || {};
@@ -217,13 +188,44 @@ function sortHashtagsByCount() {
     renderHashtagList(Object.fromEntries(sortedHashtags));
 }
 
-// Function to insert a hashtag into the editor
-function insertHashtagIntoEditor(hashtag) {
-    const range = quill.getSelection(); // Get the current cursor position
-    if (range) {
-        quill.insertText(range.index, `${hashtag} `); // Insert the hashtag followed by a space
-        quill.setSelection(range.index + hashtag.length + 1); // Move the cursor after the inserted text
-    }
+function sortHashtagsByName() {
+    const hashtags = JSON.parse(localStorage.getItem('hashtags')) || {};
+
+    const sortedHashtags = Object.entries(hashtags).sort(([tagA], [tagB]) => {
+        return sortNameAsc ? tagA.localeCompare(tagB) : tagB.localeCompare(tagA);
+    });
+    sortNameAsc = !sortNameAsc; // Toggle sorting order
+    renderHashtagList(Object.fromEntries(sortedHashtags));
+}
+
+// Function to update hashtag counts in local storage
+function updateHashtagCounts() {
+    const hashtags = JSON.parse(localStorage.getItem("hashtags")) || {};
+    const snippetKeys = Object.keys(localStorage).filter(key => key.startsWith("snippet-"));
+
+    // Reset hashtag counts
+    Object.keys(hashtags).forEach(tag => hashtags[tag] = 0);
+
+    // Count hashtags from all snippets
+    snippetKeys.forEach(key => {
+        const snippet = JSON.parse(localStorage.getItem(key));
+        const delta = snippet.delta || {};
+        const ops = delta.ops || [];
+
+        // Extract hashtags from each insert property in the ops array
+        ops.forEach(op => {
+            if (op.insert && typeof op.insert === "string") {
+                const snippetHashtags = extractHashtags(op.insert);
+                snippetHashtags.forEach(tag => {
+                    hashtags[tag] = (hashtags[tag] || 0) + 1;
+                });
+            }
+        });
+    });
+
+    // Save updated hashtags to local storage
+    localStorage.setItem("hashtags", JSON.stringify(hashtags));
+    renderHashtagList(hashtags);
 }
 
 
@@ -232,62 +234,41 @@ function insertHashtagIntoEditor(hashtag) {
 // Snippet Functions
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-function updateSnippetsList() {
-    const $snippetsTableBody = $('#snippets-table tbody');
-    $snippetsTableBody.empty(); // Clear the table body
+function addSnippetToTable(title, isTemplate, timestamp) {
+    const $tbody = $('#snippets-table tbody');
+    const isoTimestamp = new Date(timestamp).toISOString(); // ISO format for sorting
+    const templateCell = isTemplate === true ? '✔' : '';
+    const displayTimestamp = new Date(timestamp).toLocaleString(); // Human-readable format
 
-    const snippetKeys = Object.keys(localStorage).filter(key => key.startsWith(KEY_PREFIX));
-    const totalSnippets = snippetKeys.length;
+    const $row = $(`
+        <tr>
+            <td data-key="snippet" class="snippet-link">${title}</td>
+            <td data-key="timestamp" data-value="${isoTimestamp}">${displayTimestamp}</td>
+            <td data-key="template" data-value="${isTemplate}">${templateCell}</td>
+            <td>
+                <button class="delete-snippet">Delete</button>
+            </td>
+        </tr>
+    `);
 
-    snippetKeys.forEach((key) => {
-        const snippet = JSON.parse(localStorage.getItem(key));
-        const title = key.replace(KEY_PREFIX, ''); // Remove the key prefix
-
-        addSnippetToTable(title, snippet.isTemplate, snippet.timestamp);
+    // Add click functionality to load the snippet into the editor
+    $row.find('.snippet-link').on('click', function () {
+        const key = `${KEY_PREFIX}${title}`;
+        loadSnippet(key); // Call loadSnippet with the correct key
     });
 
-    updateHashtagCounts(); // Update hashtag counts after loading snippets
+    // Add delete functionality to the button
+    $row.find('.delete-snippet').on('click', function () {
+        if (confirm(`Are you sure you want to delete this snippet?\n\n${title}`)) {
+            const key = `${KEY_PREFIX}${title}`;
+            localStorage.removeItem(key);
+            $row.remove(); // Remove the row from the table
 
-    // Reapply the current sort order
-    sortTableByColumn(currentSortKey, currentSortOrder);
+            updateHashtagCounts();
+        }
+    });
 
-    // Update the Snippets header
-    const visibleSnippets = $snippetsTableBody.find('tr:visible').length;
-    const $snippetsHeader = $('#snippets-header'); // Assuming the h2 has an ID of "snippets-header"
-    if (visibleSnippets === totalSnippets) {
-        $snippetsHeader.text(`Snippets (${totalSnippets})`);
-    } else {
-        $snippetsHeader.text(`Snippets (${visibleSnippets}/${totalSnippets})`);
-    }
-}
-
-// Load a snippet into the editor
-function loadSnippet(key) {
-    if (!confirmUnsavedChanges()) {
-        return; // Exit if the user cancels
-    }
-
-    const savedSnippet = localStorage.getItem(key);
-
-    if (savedSnippet) {
-        snippet = JSON.parse(savedSnippet);
-        const { delta } = snippet;
-        quill.setContents(delta); // Load the snippet content into the editor
-        $('#is-template').prop('checked', snippet.isTemplate === true);
-
-        // Extract the snippet title from the key
-        const snippetTitle = key.replace(KEY_PREFIX, ''); // Remove the key prefix
-        $('#snippet-title').val(snippetTitle); // Set the snippet title in the textbox
-
-        hasUnsavedChanges = false; // Reset the flag since new content is loaded
-    } else {
-        alert('Snippet not found.');
-    }
-}
-
-// Generate a key from the first 50 alphanumeric characters
-function generateKey(content) {
-    return KEY_PREFIX + content.replace(/[^a-zA-Z0-9 ]/g, '').substring(0, 50).trim().replace(/\s+/g, '-') || 'Untitled';
+    $tbody.append($row);
 }
 
 // Clear all saved snippets from local storage
@@ -301,54 +282,6 @@ function clearSnippetsFromStorage() {
 
         localStorage.removeItem("hashtags");
         renderHashtagList({});
-    }
-}
-
-// Save the content to local storage
-function saveSnippet() {
-    const content = quill.getText().trim();
-    if (!content) {
-        alert('The editor is empty. Please write something to save.');
-        return;
-    }
-
-    // Get the custom snippet title
-    let title = $('#snippet-title').val().trim();
-    if (!title) {
-        alert('Snippet title cannot be empty.');
-        return;
-    }
-
-    // Limit the title to 50 characters
-    title = title.substring(0, 50);
-
-    // Generate a key for the snippet
-    const key = `${KEY_PREFIX}${title.replace(/[^a-zA-Z0-9 -]/g, '').replace(/\s+/g, '-')}`;
-
-    // Check if the snippet already exists in localStorage
-    if (localStorage.getItem(key)) {
-        const confirmOverride = confirm(`A snippet with this title already exists. Do you want to overwrite it?\n\n${title}`);
-        if (!confirmOverride) {
-            return; // Exit if the user does not confirm
-        }
-    }
-
-    // Save the snippet to localStorage
-    const snippet = {
-        delta: quill.getContents(),
-        timestamp: new Date().toISOString(),
-        isTemplate: $('#is-template').is(':checked')
-    };
-
-    localStorage.setItem(key, JSON.stringify(snippet));
-
-    updateSnippetsList();
-
-    // Apply the filter if the filter input is not empty
-    const filterText = $('#snippet-filter').val().trim();
-
-    if (filterText) {
-        filterSnippets(filterText);
     }
 }
 
@@ -368,6 +301,37 @@ function exportSnippets() {
 
     // Download the filtered data
     downloadFile(filename, JSON.stringify(data, null, 2));
+}
+
+const filterSnippets = (filterText) => {
+    const $rows = $('#snippets-table tbody tr');
+    const lowerCaseFilter = filterText.toLowerCase();
+
+    let visibleCount = 0;
+
+    $rows.each((_, row) => {
+        const snippetName = $(row).find('td[data-key="snippet"]').text().toLowerCase();
+        if (snippetName.includes(lowerCaseFilter)) {
+            $(row).show(); // Show rows that match the filter
+            visibleCount++;
+        } else {
+            $(row).hide(); // Hide rows that don't match the filter
+        }
+    });
+
+    // Update the Snippets header
+    const totalSnippets = $rows.length;
+    const $snippetsHeader = $('#snippets-header');
+    if (visibleCount === totalSnippets) {
+        $snippetsHeader.text(`Snippets (${totalSnippets})`);
+    } else {
+        $snippetsHeader.text(`Snippets (${visibleCount}/${totalSnippets})`);
+    }
+};
+
+// Generate a key from the first 50 alphanumeric characters
+function generateKey(content) {
+    return KEY_PREFIX + content.replace(/[^a-zA-Z0-9 ]/g, '').substring(0, 50).trim().replace(/\s+/g, '-') || 'Untitled';
 }
 
 // Import functionality
@@ -430,41 +394,76 @@ function importSnippets() {
     input.click();
 }
 
-function addSnippetToTable(title, isTemplate, timestamp) {
-    const $tbody = $('#snippets-table tbody');
-    const isoTimestamp = new Date(timestamp).toISOString(); // ISO format for sorting
-    const templateCell = isTemplate === true ? '✔' : '';
-    const displayTimestamp = new Date(timestamp).toLocaleString(); // Human-readable format
+// Load a snippet into the editor
+function loadSnippet(key) {
+    if (!confirmUnsavedChanges()) {
+        return; // Exit if the user cancels
+    }
 
-    const $row = $(`
-        <tr>
-            <td data-key="snippet" class="snippet-link">${title}</td>
-            <td data-key="timestamp" data-value="${isoTimestamp}">${displayTimestamp}</td>
-            <td data-key="template" data-value="${isTemplate}">${templateCell}</td>
-            <td>
-                <button class="delete-snippet">Delete</button>
-            </td>
-        </tr>
-    `);
+    const savedSnippet = localStorage.getItem(key);
 
-    // Add click functionality to load the snippet into the editor
-    $row.find('.snippet-link').on('click', function () {
-        const key = `${KEY_PREFIX}${title}`;
-        loadSnippet(key); // Call loadSnippet with the correct key
-    });
+    if (savedSnippet) {
+        snippet = JSON.parse(savedSnippet);
+        const { delta } = snippet;
+        quill.setContents(delta); // Load the snippet content into the editor
+        $('#is-template').prop('checked', snippet.isTemplate === true);
 
-    // Add delete functionality to the button
-    $row.find('.delete-snippet').on('click', function () {
-        if (confirm(`Are you sure you want to delete this snippet?\n\n${title}`)) {
-            const key = `${KEY_PREFIX}${title}`;
-            localStorage.removeItem(key);
-            $row.remove(); // Remove the row from the table
+        // Extract the snippet title from the key
+        const snippetTitle = key.replace(KEY_PREFIX, ''); // Remove the key prefix
+        $('#snippet-title').val(snippetTitle); // Set the snippet title in the textbox
 
-            updateHashtagCounts();
+        hasUnsavedChanges = false; // Reset the flag since new content is loaded
+    } else {
+        alert('Snippet not found.');
+    }
+}
+
+// Save the content to local storage
+function saveSnippet() {
+    const content = quill.getText().trim();
+    if (!content) {
+        alert('The editor is empty. Please write something to save.');
+        return;
+    }
+
+    // Get the custom snippet title
+    let title = $('#snippet-title').val().trim();
+    if (!title) {
+        alert('Snippet title cannot be empty.');
+        return;
+    }
+
+    // Limit the title to 50 characters
+    title = title.substring(0, 50);
+
+    // Generate a key for the snippet
+    const key = `${KEY_PREFIX}${title.replace(/[^a-zA-Z0-9 -]/g, '').replace(/\s+/g, '-')}`;
+
+    // Check if the snippet already exists in localStorage
+    if (localStorage.getItem(key)) {
+        const confirmOverride = confirm(`A snippet with this title already exists. Do you want to overwrite it?\n\n${title}`);
+        if (!confirmOverride) {
+            return; // Exit if the user does not confirm
         }
-    });
+    }
 
-    $tbody.append($row);
+    // Save the snippet to localStorage
+    const snippet = {
+        delta: quill.getContents(),
+        timestamp: new Date().toISOString(),
+        isTemplate: $('#is-template').is(':checked')
+    };
+
+    localStorage.setItem(key, JSON.stringify(snippet));
+
+    updateSnippetsList();
+
+    // Apply the filter if the filter input is not empty
+    const filterText = $('#snippet-filter').val().trim();
+
+    if (filterText) {
+        filterSnippets(filterText);
+    }
 }
 
 function setupSnippetSort() {
@@ -523,31 +522,34 @@ function sortTableByColumn(sortKey, isAscending) {
     currentSortOrder = isAscending;
 }
 
-const filterSnippets = (filterText) => {
-    const $rows = $('#snippets-table tbody tr');
-    const lowerCaseFilter = filterText.toLowerCase();
+function updateSnippetsList() {
+    const $snippetsTableBody = $('#snippets-table tbody');
+    $snippetsTableBody.empty(); // Clear the table body
 
-    let visibleCount = 0;
+    const snippetKeys = Object.keys(localStorage).filter(key => key.startsWith(KEY_PREFIX));
+    const totalSnippets = snippetKeys.length;
 
-    $rows.each((_, row) => {
-        const snippetName = $(row).find('td[data-key="snippet"]').text().toLowerCase();
-        if (snippetName.includes(lowerCaseFilter)) {
-            $(row).show(); // Show rows that match the filter
-            visibleCount++;
-        } else {
-            $(row).hide(); // Hide rows that don't match the filter
-        }
+    snippetKeys.forEach((key) => {
+        const snippet = JSON.parse(localStorage.getItem(key));
+        const title = key.replace(KEY_PREFIX, ''); // Remove the key prefix
+
+        addSnippetToTable(title, snippet.isTemplate, snippet.timestamp);
     });
 
+    updateHashtagCounts(); // Update hashtag counts after loading snippets
+
+    // Reapply the current sort order
+    sortTableByColumn(currentSortKey, currentSortOrder);
+
     // Update the Snippets header
-    const totalSnippets = $rows.length;
-    const $snippetsHeader = $('#snippets-header');
-    if (visibleCount === totalSnippets) {
+    const visibleSnippets = $snippetsTableBody.find('tr:visible').length;
+    const $snippetsHeader = $('#snippets-header'); // Assuming the h2 has an ID of "snippets-header"
+    if (visibleSnippets === totalSnippets) {
         $snippetsHeader.text(`Snippets (${totalSnippets})`);
     } else {
-        $snippetsHeader.text(`Snippets (${visibleCount}/${totalSnippets})`);
+        $snippetsHeader.text(`Snippets (${visibleSnippets}/${totalSnippets})`);
     }
-};
+}
 
 
 
@@ -627,33 +629,6 @@ async function copyToClipboard() {
     }
 }
 
-function processNode(node) {
-    if (node.nodeType === Node.TEXT_NODE) {
-        // For text nodes, determine the formatting of the parent element
-        const parent = node.parentElement;
-
-        // Skip processing if the parent is an anchor tag (<a>) or if the text contains a URL. Otherwise, URLs will be
-        // converted to Unicode characters and not be interpreted correctly as links.
-        if (parent && parent.tagName === 'A') {
-            return; // Skip processing links
-        }
-        if (node.textContent.match(/https?:\/\/[^\s]+/)) {
-            return; // Skip processing text nodes containing URLs
-        }
-
-        const isBold = parent && (parent.tagName === 'B' || parent.tagName === 'STRONG');
-        const isItalic = parent && (parent.tagName === 'I' || parent.tagName === 'EM');
-
-        // Transform the text content based on the formatting
-        node.textContent = Array.from(node.textContent)
-            .map((char) => getStyledUnicode(char, isBold, isItalic))
-            .join('');
-    } else if (node.nodeType === Node.ELEMENT_NODE) {
-        // Recursively process child nodes
-        Array.from(node.childNodes).forEach(processNode);
-    }
-}
-
 // Function to get styled Unicode character
 function getStyledUnicode(char, isBold, isItalic) {
     // Check if the character is a Latin letter (A-Z or a-z)
@@ -683,11 +658,81 @@ function getStyledUnicode(char, isBold, isItalic) {
     return char;
 }
 
+function processNode(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+        // For text nodes, determine the formatting of the parent element
+        const parent = node.parentElement;
+
+        // Skip processing if the parent is an anchor tag (<a>) or if the text contains a URL. Otherwise, URLs will be
+        // converted to Unicode characters and not be interpreted correctly as links.
+        if (parent && parent.tagName === 'A') {
+            return; // Skip processing links
+        }
+        if (node.textContent.match(/https?:\/\/[^\s]+/)) {
+            return; // Skip processing text nodes containing URLs
+        }
+
+        const isBold = parent && (parent.tagName === 'B' || parent.tagName === 'STRONG');
+        const isItalic = parent && (parent.tagName === 'I' || parent.tagName === 'EM');
+
+        // Transform the text content based on the formatting
+        node.textContent = Array.from(node.textContent)
+            .map((char) => getStyledUnicode(char, isBold, isItalic))
+            .join('');
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+        // Recursively process child nodes
+        Array.from(node.childNodes).forEach(processNode);
+    }
+}
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Quill Setup
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+function clearEditor() {
+    quill.setText('');
+    hasUnsavedChanges = false; // Reset the flag since the editor is cleared intentionally
+}
+
+// Function to check for unsaved changes and prompt for confirmation
+function confirmUnsavedChanges() {
+    if (hasUnsavedChanges) {
+        return confirm('You have unsaved changes. Do you want to discard them and proceed?');
+    }
+    return true;
+}
+
+// Hide the emoji picker if clicked outside
+function hideEmojiPicker(event) {
+    if (
+        !$(event.target).closest('.emoji-picker-container').length &&
+        !$(event.target).closest('.ql-emoji').length
+    ) {
+        $('.emoji-picker-container').hide();
+    }
+}
+
+// Update the "load-sample-button" click handler to include the confirmation prompt
+function loadSampleText() {
+    if (!confirmUnsavedChanges()) {
+        return; // Exit if the user cancels
+    }
+
+    quill.setContents(JSON.parse(samplePostJson)); // Populate the editor with the sample text
+    hasUnsavedChanges = false; // Reset the flag since new content is loaded
+}
+
+// Listen for emoji selection
+function pickEmoji(event) {
+    const emoji = event.detail.unicode;
+    const range = quill.getSelection();
+    if (range) {
+        quill.insertText(range.index, emoji);
+    }
+    $('.emoji-picker-container').hide();
+}
 
 // Toggle the emoji picker visibility
 function toggleEmojiPicker() {
@@ -703,75 +748,29 @@ function toggleEmojiPicker() {
     $emojiPicker.toggle(); // Toggle visibility
 }
 
-function clearEditor() {
-    quill.setText('');
-    hasUnsavedChanges = false; // Reset the flag since the editor is cleared intentionally
-}
-
-// Function to check for unsaved changes and prompt for confirmation
-function confirmUnsavedChanges() {
-    if (hasUnsavedChanges) {
-        return confirm('You have unsaved changes. Do you want to discard them and proceed?');
-    }
-    return true;
-}
-
-// Listen for emoji selection
-function pickEmoji(event) {
-    const emoji = event.detail.unicode;
-    const range = quill.getSelection();
-    if (range) {
-        quill.insertText(range.index, emoji);
-    }
-    $('.emoji-picker-container').hide();
-}
-
-// Hide the emoji picker if clicked outside
-function hideEmojiPicker(event) {
-    if (
-        !$(event.target).closest('.emoji-picker-container').length &&
-        !$(event.target).closest('.ql-emoji').length
-    ) {
-        $('.emoji-picker-container').hide();
-    }
-}
-
 // Initialize Quill
-const quill = new Quill('#editor-container', {
-    modules: {
-        toolbar: {
-            container: [
-                ['bold', 'italic'/*, 'underline', 'strike'*/],
-                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                ['emoji'], // Custom emoji button
-                ['clean', 'clear']
-            ],
-            handlers: {
-                emoji: toggleEmojiPicker,
-                clear: clearEditor
+function initializeQuill() {
+    return new Quill('#editor-container', {
+        modules: {
+            toolbar: {
+                container: [
+                    ['bold', 'italic'/*, 'underline', 'strike'*/],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    ['emoji'], // Custom emoji button
+                    ['clean', 'clear']
+                ],
+                handlers: {
+                    emoji: toggleEmojiPicker,
+                    clear: clearEditor
+                },
+            },
+            clipboard: {
+                matchers: [], // Allow all content by default
             },
         },
-        clipboard: {
-            matchers: [], // Allow all content by default
-        },
-    },
-    placeholder: 'Compose your post, then follow instructions below...',
-    theme: 'snow',
-});
-
-// Listen for changes in the editor to set the unsaved changes flag
-quill.on('text-change', () => {
-    hasUnsavedChanges = true;
-});
-
-// Update the "load-sample-button" click handler to include the confirmation prompt
-function loadSampleText() {
-    if (!confirmUnsavedChanges()) {
-        return; // Exit if the user cancels
-    }
-
-    quill.setContents(JSON.parse(samplePostJson)); // Populate the editor with the sample text
-    hasUnsavedChanges = false; // Reset the flag since new content is loaded
+        placeholder: 'Compose your post, then follow instructions below...',
+        theme: 'snow',
+    });
 }
 
 
@@ -779,38 +778,6 @@ function loadSampleText() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Utility Functions
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-// Generate Unicode translations for Latin characters
-function generateUnicodeMap(baseCodePoint) {
-    const map = {};
-
-    for (let i = 0; i < 26; i++) {
-        map[String.fromCharCode(65 + i)] = String.fromCodePoint(baseCodePoint + i);         // Uppercase A-Z
-        map[String.fromCharCode(97 + i)] = String.fromCodePoint(baseCodePoint + 26 + i);    // Lowercase a-z
-    }
-
-    return map;
-}
-
-function generateDigitUnicodeMap(baseCodePoint) {
-    const map = {};
-
-    for (let i = 0; i < 10; i++) {
-        map[String.fromCharCode(48 + i)] = String.fromCodePoint(baseCodePoint + i);         // Digits 0-9
-    }
-
-    return map;
-}
-
-// Utility function to download a file
-function downloadFile(filename, content) {
-    const blob = new Blob([content], { type: "application/json" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-    link.click();
-    URL.revokeObjectURL(link.href);
-}
 
 function accordionSetup() {
     // Accordion functionality
@@ -823,6 +790,16 @@ function accordionSetup() {
         // Optionally, close other accordions (if needed)
         // $('.accordion-content').not($content).removeClass('open');
     });
+}
+
+// Utility function to download a file
+function downloadFile(filename, content) {
+    const blob = new Blob([content], { type: "application/json" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(link.href);
 }
 
 function eventListenerSetup() {
@@ -845,7 +822,31 @@ function eventListenerSetup() {
     // Editor
     $('emoji-picker').on('emoji-click', (e) => pickEmoji(e));
     $(document).on('click', (e) => hideEmojiPicker(e));
+    quill.on('text-change', () => hasUnsavedChanges = true);
 }
+
+// Generate Unicode translations for Latin characters
+function generateDigitUnicodeMap(baseCodePoint) {
+    const map = {};
+
+    for (let i = 0; i < 10; i++) {
+        map[String.fromCharCode(48 + i)] = String.fromCodePoint(baseCodePoint + i);         // Digits 0-9
+    }
+
+    return map;
+}
+
+function generateUnicodeMap(baseCodePoint) {
+    const map = {};
+
+    for (let i = 0; i < 26; i++) {
+        map[String.fromCharCode(65 + i)] = String.fromCodePoint(baseCodePoint + i);         // Uppercase A-Z
+        map[String.fromCharCode(97 + i)] = String.fromCodePoint(baseCodePoint + 26 + i);    // Lowercase a-z
+    }
+
+    return map;
+}
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -853,6 +854,8 @@ function eventListenerSetup() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 $(() => {
+    quill = initializeQuill();
+
     // Fetch the stats on page load
     fetchGitHubStats();
 
