@@ -340,33 +340,34 @@ function importSnippets() {
         return; // Exit if the user cancels
     }
 
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "application/json";
+    const $input = $('<input>', {
+        type: 'file',
+        accept: 'application/json',
+    });
 
-    input.addEventListener("change", async (event) => {
+    $input.on('change', async (event) => {
         const file = event.target.files[0];
         if (!file) return;
 
-        const content = await file.text();
         try {
+            const content = await file.text();
             const importedData = JSON.parse(content);
-            let i = 0;
+            let importedCount = 0;
 
             // Import data into localStorage
-            for (let [key, value] of Object.entries(importedData)) {
+            $.each(importedData, (key, value) => {
                 const existingItem = localStorage.getItem(key);
 
                 if (existingItem) {
                     const existingData = JSON.parse(existingItem);
                     value = JSON.parse(value);
-                    console.log(existingData.timestamp, value.timestamp, existingData.timestamp === value.timestamp);
+
                     if (existingData.timestamp === value.timestamp) {
                         console.warn(`Duplicate entry with key ${key}. Skipping.`);
-                        continue;
+                        return;
                     } else if (existingData.timestamp > value.timestamp) {
                         console.warn(`Older entry with key ${key}. Skipping.`);
-                        continue;
+                        return;
                     }
                 }
 
@@ -376,23 +377,23 @@ function importSnippets() {
                     : value;
 
                 localStorage.setItem(key, JSON.stringify(parsedValue));
-                i++;
-            }
+                importedCount++;
+            });
 
-            if (i > 0) {
-                alert(`Successfully imported ${i} snippet(s).`);
+            if (importedCount > 0) {
+                alert(`Successfully imported ${importedCount} snippet(s).`);
                 updateSnippetsList(); // Refresh the snippets list
             } else {
                 alert('No new snippets were imported. The data may already exist in localStorage.');
             }
         } catch (error) {
-            console.error("Error importing data:", error);
-            alert("Failed to import data. Please check the file format.");
+            console.error('Error importing data:', error);
+            alert('Failed to import data. Please check the file format.');
         }
     });
 
-    input.click();
-}
+    $input.trigger('click');
+};
 
 // Load a snippet into the editor
 function loadSnippet(key) {
@@ -577,25 +578,25 @@ async function copyToClipboard() {
     Array.from(doc.body.childNodes).forEach(processNode);
 
     // 3) Process unordered lists (<ul>) into plain text with bullet points
-    const unorderedLists = doc.querySelectorAll('ul');
-    unorderedLists.forEach((ul) => {
-        const listItems = Array.from(ul.querySelectorAll('li')).map((li) => {
-            const paragraph = document.createElement('p');
-            paragraph.textContent = `   • ${li.textContent.trim()}`;
-            return paragraph;
-        });
-        ul.replaceWith(...listItems); // Replace the <ul> with individual <p> elements
+    const unorderedLists = $(doc).find('ul');
+    unorderedLists.each((_, ul) => {
+        const $ul = $(ul);
+        const listItems = $ul.find('li').map((_, li) => {
+            const $paragraph = $('<p>').text(`   • ${$(li).text().trim()}`);
+            return $paragraph.get(0); // Return the DOM element for replaceWith
+        }).get();
+        $ul.replaceWith(...listItems); // Replace the <ul> with individual <p> elements
     });
 
     // 4) Process ordered lists (<ol>) into individual paragraphs
-    const orderedLists = doc.querySelectorAll('ol');
-    orderedLists.forEach((ol) => {
-        const listItems = Array.from(ol.querySelectorAll('li')).map((li, index) => {
-            const paragraph = document.createElement('p');
-            paragraph.textContent = `   ${index + 1}. ${li.textContent.trim()}`;
-            return paragraph;
-        });
-        ol.replaceWith(...listItems); // Replace the <ol> with individual <p> elements
+    const orderedLists = $(doc).find('ol');
+    orderedLists.each((_, ol) => {
+        const $ol = $(ol);
+        const listItems = $ol.find('li').map((index, li) => {
+            const $paragraph = $('<p>').text(`   ${index + 1}. ${$(li).text().trim()}`);
+            return $paragraph.get(0); // Return the DOM element for replaceWith
+        }).get();
+        $ol.replaceWith(...listItems); // Replace the <ol> with individual <p> elements
     });
 
     // 5) Serialize the modified DOM back to a string and replace the special encoded ampersand character with the actual character.
@@ -795,12 +796,16 @@ function accordionSetup() {
 // Utility function to download a file
 function downloadFile(filename, content) {
     const blob = new Blob([content], { type: "application/json" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-    link.click();
-    URL.revokeObjectURL(link.href);
-}
+    const $link = $('<a>', {
+        href: URL.createObjectURL(blob),
+        download: filename,
+    });
+
+    $link.appendTo('body'); // Temporarily add the link to the DOM
+    $link[0].click(); // Trigger the download
+    $link.remove(); // Remove the link from the DOM
+    URL.revokeObjectURL($link.attr('href')); // Revoke the object URL
+};
 
 function eventListenerSetup() {
     // LinkedIn
