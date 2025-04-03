@@ -564,7 +564,7 @@ $('#copy-button').on('click', async () => {
     const semanticHtml = quill.getSemanticHTML().trim();
     console.log(`\nSemantic HTML input:\n\n${semanticHtml}`);
 
-    // 1) String-replace spaces, apostrophes, and quotes.
+    // 1) String-replace spaces, apostrophes, and quotes. We can't replace the ampersand here as DOMParser would reverse that.
     let modifiedHtml = semanticHtml
         .replaceAll('<p>&nbsp;</p>', '<p></p>')
         .replaceAll('&nbsp;', ' ')
@@ -601,8 +601,9 @@ $('#copy-button').on('click', async () => {
         ol.replaceWith(...listItems); // Replace the <ol> with individual <p> elements
     });
 
-    // 5) Serialize the modified DOM back to a string
-    modifiedHtml = doc.body.innerHTML.trim();
+    // 5) Serialize the modified DOM back to a string and replace the special encoded ampersand character with the actual character.
+    modifiedHtml = doc.body.innerHTML.trim()
+        .replaceAll('&amp;', '&');
 
     // 6) Remove <strong>, <b>, <em>, and <i> tags using regex
     modifiedHtml = modifiedHtml.replace(/<\/?(strong|b|em|i)>/g, '');
