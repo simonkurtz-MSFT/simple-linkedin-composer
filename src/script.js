@@ -828,6 +828,7 @@ function eventListenerSetup() {
     // Editor
     $('emoji-picker').on('emoji-click', (e) => pickEmoji(e));
     $(document).on('click', (e) => hideEmojiPicker(e));
+    $('#editor-container').on('copy', async () => await copyToClipboard());
     quill.on('text-change', () => hasUnsavedChanges = true);
 }
 
