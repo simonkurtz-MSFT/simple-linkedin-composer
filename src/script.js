@@ -236,9 +236,10 @@ function updateHashtagCounts() {
 
 function addSnippetToTable(title, isTemplate, timestamp) {
     const $tbody = $('#snippets-table tbody');
-    const isoTimestamp = new Date(timestamp).toISOString(); // ISO format for sorting
     const templateCell = isTemplate === true ? '✔' : '';
-    const displayTimestamp = new Date(timestamp).toLocaleString(); // Human-readable format
+    const isoTimestamp = new Date(timestamp).toISOString(); // ISO format for sorting
+    // The timestamp's format is generally deferred to the browser's locale (undefined for locale & no assertion on hour12 property). We only format with leading zeroes for display uniformity.
+    const displayTimestamp = new Date(timestamp).toLocaleString(undefined, { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
     const $row = $(`
         <tr>
@@ -303,7 +304,7 @@ function exportSnippets() {
     downloadFile(filename, JSON.stringify(data, null, 2));
 }
 
-const filterSnippets = (filterText) => {
+function filterSnippets(filterText) {
     const $rows = $('#snippets-table tbody tr');
     const lowerCaseFilter = filterText.toLowerCase();
 
@@ -407,13 +408,13 @@ function loadSnippet(key) {
         snippet = JSON.parse(savedSnippet);
         const { delta } = snippet;
         quill.setContents(delta); // Load the snippet content into the editor
+        hasUnsavedChanges = false; // Reset the flag since new content is loaded
         $('#is-template').prop('checked', snippet.isTemplate === true);
 
         // Extract the snippet title from the key
         const snippetTitle = key.replace(KEY_PREFIX, ''); // Remove the key prefix
         $('#snippet-title').val(snippetTitle); // Set the snippet title in the textbox
 
-        hasUnsavedChanges = false; // Reset the flag since new content is loaded
     } else {
         alert('Snippet not found.');
     }
@@ -470,12 +471,12 @@ function saveSnippet() {
 function setupSnippetSort() {
     $('#snippets-table th[data-sort]').on('click', function () {
         const sortKey = $(this).data('sort');
-        const isAscending = $(this).hasClass('asc');
-        sortTableByColumn(sortKey, !isAscending); // Toggle the sorting order
+        const isAsc = $(this).hasClass('asc');
+        sortTableByColumn(sortKey, !isAsc); // Toggle the sorting order
     });
 }
 
-function sortTableByColumn(sortKey, isAscending) {
+function sortTableByColumn(sortKey, isAsc) {
     const $table = $('#snippets-table');
     const $tbody = $table.find('tbody');
     const $rows = $tbody.find('tr').get();
@@ -486,7 +487,7 @@ function sortTableByColumn(sortKey, isAscending) {
             const cellB = $(rowB).find(`td[data-key="${sortKey}"]`).text().trim();
 
             // Parse timestamps for comparison
-            return isAscending
+            return isAsc
                 ? new Date(cellA) - new Date(cellB)
                 : new Date(cellB) - new Date(cellA);
         } else if (sortKey === 'template') {
@@ -496,31 +497,30 @@ function sortTableByColumn(sortKey, isAscending) {
             // Sort by isTemplate (true first on the first click)
             const valueA = cellA === true ? 0 : 1;
             const valueB = cellB === true ? 0 : 1;
-            return isAscending ? valueA - valueB : valueB - valueA;
+            return isAsc ? valueA - valueB : valueB - valueA;
         } else {
             const cellA = $(rowA).find(`td[data-key="${sortKey}"]`).text().trim();
             const cellB = $(rowB).find(`td[data-key="${sortKey}"]`).text().trim();
 
             // Compare strings for "Snippet"
-            return isAscending
+            return isAsc
                 ? cellA.localeCompare(cellB)
                 : cellB.localeCompare(cellA);
         }
     });
 
     // Re-append sorted rows to the table body
-    $.each($rows, function (index, row) {
+    $.each($rows, (i, row) => {
         $tbody.append(row);
     });
 
     // Update header classes for visual feedback
-    const $header = $table.find(`th[data-sort="${sortKey}"]`);
     $table.find('th').removeClass('asc desc');
-    $header.addClass(isAscending ? 'asc' : 'desc');
+    $table.find(`th[data-sort="${sortKey}"]`).addClass(isAsc ? 'asc' : 'desc');
 
     // Store the current sort key and order
     currentSortKey = sortKey;
-    currentSortOrder = isAscending;
+    currentSortOrder = isAsc;
 }
 
 function updateSnippetsList() {
@@ -542,9 +542,10 @@ function updateSnippetsList() {
     // Reapply the current sort order
     sortTableByColumn(currentSortKey, currentSortOrder);
 
-    // Update the Snippets header
+    // Update the Snippets header counts
     const visibleSnippets = $snippetsTableBody.find('tr:visible').length;
     const $snippetsHeader = $('#snippets-header'); // Assuming the h2 has an ID of "snippets-header"
+
     if (visibleSnippets === totalSnippets) {
         $snippetsHeader.text(`Snippets (${totalSnippets})`);
     } else {
@@ -560,7 +561,7 @@ function updateSnippetsList() {
 
 async function copyToClipboard() {
     const semanticHtml = quill.getSemanticHTML().trim();
-    console.log(`\nSemantic HTML input:\n\n${semanticHtml}`);
+    console.log(`\n1/3) Semantic HTML input:\n\n${semanticHtml}`);
 
     // 1) String-replace spaces, apostrophes, and quotes. We can't replace the ampersand here as DOMParser would reverse that.
     let modifiedHtml = semanticHtml
@@ -569,7 +570,7 @@ async function copyToClipboard() {
         .replaceAll('&#39;', "'")
         .replaceAll('&quot;', '"');
 
-    console.log(`\nModified HTML input:\n\n${modifiedHtml}`);
+    console.log(`\n2/3) Modified HTML input:\n\n${modifiedHtml}`);
 
     const parser = new DOMParser();
     const doc = parser.parseFromString(modifiedHtml, 'text/html');
@@ -615,7 +616,7 @@ async function copyToClipboard() {
         modifiedHtml += `${newLine}${newLine}✒️ Post written in Simple LinkedIn Composer. Always free, never tracked. ✒️${newLine}https://linkedin-composer.simondoescloud.com`;
     }
 
-    console.log(`\nModified output:\n\n${modifiedHtml}`);
+    console.log(`\n3/3) Modified output:\n\n${modifiedHtml}`);
 
     try {
         const clipboardItem = new ClipboardItem({
