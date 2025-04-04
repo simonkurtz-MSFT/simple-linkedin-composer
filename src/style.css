@@ -1,24 +1,3 @@
-/* Common Link Styles */
-h1 a, h1 a:visited, h1 a:hover {
-    color: white;
-    text-decoration: none;
-}
-
-.link {
-    text-decoration: none;
-    font-weight: bold;
-    transition: color 0.2s ease-in-out;
-}
-
-.link:hover {
-    text-decoration: underline;
-    /*color: #005582; /* Hover color for all links */
-}
-
-.link:visited {
-    color: inherit; /* Ensure visited links match unvisited links */
-}
-
 body {
     font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     color: #333;
@@ -29,10 +8,26 @@ body {
     overflow-y: scroll;
 }
 
-#linkedin-links {
-    display: none;
+a, h1 a, h1 a:visited, h1 a:hover {
+    text-decoration: none;
+    color: white;
 }
 
+.link {
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s ease-in-out;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+.link:visited {
+    color: inherit;
+}
+
+/* Header */
 header {
     display: flex;
     justify-content: space-between;
@@ -40,27 +35,15 @@ header {
     padding: 10px 20px;
     background-color: #0077B5;
     color: white;
+
+    h1 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: normal;
+    }
 }
 
-header h1 {
-    margin: 0;
-    font-size: 1.5rem;
-}
-
-.github-link {
-    display: flex;
-    align-items: center;
-    font-size: 1rem;
-    margin-left:100px;
-}
-
-.github-logo {
-    width: 24px;
-    height: 24px;
-    margin-right: 8px;
-}
-
-/* GitHub Stats */
+/* GitHub Link and Stats */
 #github-stats {
     font-size: 0.9rem;
     color: white;
@@ -74,8 +57,21 @@ header h1 {
     }
 }
 
+.github-link {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    margin-left: 100px;
+}
+
+.github-logo {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+}
+
 .github-stat {
-    min-width: 40px;    /* reduce the jarring on load */
+    min-width: 40px;
 }
 
 .octicon-star, .octicon-repo-forked, .octicon-eye {
@@ -142,11 +138,7 @@ input#linkedin-user-id {
 }
 
 /* Buttons */
-.action-buttons {
-    margin-top: 10px;
-}
-
-button {
+button, .action-button {
     padding: 8px 12px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -157,7 +149,7 @@ button {
     transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 }
 
-button:hover {
+button:hover, .action-button:hover {
     background-color: #005582;
     border-color: #004466;
 }
@@ -167,28 +159,12 @@ button:disabled {
     cursor: not-allowed;
 }
 
-/* Style for buttons */
-.action-button {
-    display: inline-block;
-    padding: 8px 12px;
-    font-size: 1rem;
-    color: white !important;
-    background-color: #0077B5;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    text-align: center;
-    text-decoration: none; /* Remove underline for links */
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-}
-
-.action-button:hover {
-    background-color: #005582; /* Darker LinkedIn blue for hover */
-    text-decoration: none;
-}
-
 .action-button:active {
-    background-color: #003f5e; /* Even darker blue for active state */
+    background-color: #003f5e;
+}
+
+.action-buttons {
+    margin-top: 10px;
 }
 
 /* Snippets Table */
@@ -196,101 +172,82 @@ button:disabled {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1rem;
+
+    th {
+        background-color: #f4f4f4;
+    }
+
+    td {
+        font-size: 14px;
+    }
+
+    th[data-sort] {
+        cursor: pointer;
+    }
+
+    th.asc::after {
+        content: ' ▲';
+    }
+
+    th.desc::after {
+        content: ' ▼';
+    }
+
+    th, td {
+        text-align: left;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        vertical-align: middle;
+    }
+
+    td:first-child {
+        cursor: pointer;
+        color: #0077B5;
+        text-decoration: underline;
+
+        &:hover {
+            color: #005582;
+            text-decoration: none;
+        }
+    }
+
+    th:nth-child(2) {
+        width: 160px;
+    }
+
+    th:nth-child(3) {
+        text-align: left;
+    }
+
+    td:nth-child(3) {
+        text-align: center;
+    }
+
+    th:nth-child(3), td:nth-child(3) {
+        width: 88px;
+
+        justify-content: center;
+        align-items: center;
+    }
+
+    th:nth-child(4), td:nth-child(4) {
+        width: 75px;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+    }
 }
 
-#snippets-table th,
-#snippets-table td {
-    text-align: left;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    vertical-align: middle;
-}
-
-#snippets-table th {
-    background-color: #f4f4f4;
-}
-
-/* Timestamp */
-#snippets-table th:nth-child(2) {
-    width: 175px;
-}
-
-/* Template */
-#snippets-table th:nth-child(3) {
-    width: 85px;
-    justify-content: center;
-    align-items: center;
-}
-
-#snippets-table td:nth-child(3) {
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Delete Button */
-#snippets-table th:nth-child(4) {
-    width: 75px;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-}
-
-#snippets-table td:nth-child(4) {
-    justify-content: center;
-    align-items: center;
-}
-
-#snippets-table td:first-child {
-    cursor: pointer;
-    color: #0077B5;
-    text-decoration: underline;
-}
-
-#snippets-table td:first-child:hover {
-    color: #005582;
-    text-decoration: none;
-}
-
-#snippets-table th[data-sort] {
-    cursor: pointer;
-}
-
-#snippets-table th.asc::after {
-    content: ' ▲'; /* Up arrow for ascending */
-}
-
-#snippets-table th.desc::after {
-    content: ' ▼'; /* Down arrow for descending */
-}
-
-/* Footer */
-footer {
-    margin-top: 35px;
-    text-align: center;
-    font-size: 0.9rem;
-    color: #666;
-}
-
-footer a {
-    font-size: 0.9rem;
-    color: #333;
-}
-
-.linkedin-user-id,
-.snippet-title {
-    margin: 15px 0;
-}
-
+/* Hashtag Controls */
 #hashtag-controls {
     margin-bottom: 10px;
-}
 
-#hashtag-controls button {
-    margin-right: 10px;
-    padding: 5px 10px;
-    font-size: 14px;
-    cursor: pointer;
+    button {
+        margin-right: 10px;
+        padding: 5px 10px;
+        font-size: 14px;
+        cursor: pointer;
+    }
 }
 
 #hashtag-list {
@@ -320,24 +277,7 @@ footer a {
     color: #0073e6;
 }
 
-section {
-    margin-bottom: 20px;
-}
-
-.linkedin-icon-link {
-    margin-right: 5px;
-    display: inline-flex;
-    align-items: center;
-}
-
-.linkedin-icon {
-    width: 16px;
-    height: 16px;
-    margin-right: 5px;
-    vertical-align: middle;
-}
-
-/* Accordion Styles */
+/* Accordion */
 .accordion {
     margin-bottom: 20px;
     border: 1px solid #ccc;
@@ -368,4 +308,38 @@ section {
 
 .accordion-content.open {
     display: block;
+}
+
+/* Footer */
+footer {
+    margin-top: 35px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #666;
+
+    a {
+        font-size: 0.9rem;
+        color: #333;
+    }
+}
+
+.linkedin-user-id, .snippet-title {
+    margin: 15px 0;
+}
+
+section {
+    margin-bottom: 20px;
+}
+
+.linkedin-icon-link {
+    margin-right: 5px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.linkedin-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+    vertical-align: middle;
 }
