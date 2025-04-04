@@ -20,7 +20,7 @@ h1 a, h1 a:visited, h1 a:hover {
 }
 
 body {
-    font-family: 'Source Sans Pro', Arial, sans-serif;
+    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     color: #333;
     margin: auto;
     padding: 10px;
@@ -70,7 +70,6 @@ header h1 {
 
     a {
         color: white;
-        font-weight: bold;
         text-decoration: none;
     }
 }
@@ -97,7 +96,7 @@ input[type="text"] {
 }
 
 input#linkedin-user-id {
-    margin: 0 25px 0 13px;
+    margin-right: 10px;
     width: 175px;
 }
 
@@ -209,7 +208,6 @@ button:disabled {
 
 #snippets-table th {
     background-color: #f4f4f4;
-    font-weight: bold;
 }
 
 /* Timestamp */
@@ -309,7 +307,6 @@ footer a {
     border-radius: 5px;
     background-color: #f9f9f9;
     font-size: 14px;
-    font-weight: bold;
 }
 
 .add-hashtag-button {
@@ -353,7 +350,7 @@ section {
     color: #FFF;
     padding: 10px 15px;
     font-size: 1.5em;
-    font-weight: bold;
+    font-weight: normal;
     cursor: pointer;
     user-select: none;
     margin: 0;
