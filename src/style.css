@@ -8,9 +8,13 @@ body {
     overflow-y: scroll;
 }
 
+main {
+    margin-top: 5px;
+}
+
 a, h1 a, h1 a:visited, h1 a:hover {
     text-decoration: none;
-    color: white;
+    color: #fff;
 }
 
 .link {
@@ -34,7 +38,7 @@ header {
     align-items: center;
     padding: 10px 20px;
     background-color: #0077B5;
-    color: white;
+    color: #fff;
 
     h1 {
         margin: 0;
@@ -46,13 +50,13 @@ header {
 /* GitHub Link and Stats */
 #github-stats {
     font-size: 0.9rem;
-    color: white;
+    color: #fff;
     display: flex;
     align-items: center;
     gap: 5px;
 
     a {
-        color: white;
+        color: #fff;
         text-decoration: none;
     }
 }
@@ -75,7 +79,7 @@ header {
 }
 
 .octicon-star, .octicon-repo-forked, .octicon-eye {
-    fill: white;
+    fill: #fff;
     vertical-align: middle;
     margin-bottom: 2px;
 }
@@ -101,7 +105,7 @@ input#linkedin-user-id {
     margin-bottom: 15px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    background-color: white;
+    background-color: #fff;
     padding: 10px;
     width: 700px;
     height: 600px;
@@ -116,7 +120,7 @@ input#linkedin-user-id {
     display: none;
     position: absolute;
     z-index: 1000;
-    background: white;
+    background: #fff;
     border: 1px solid #ccc;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 4px;
@@ -143,7 +147,7 @@ button, .action-button {
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: #0077B5;
-    color: white;
+    color: #fff;
     font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
@@ -167,11 +171,43 @@ button:disabled {
     margin-top: 10px;
 }
 
+#copy-button {
+    margin-bottom: 5px;
+}
+
+/* Call-to-Action Buttons */
+.cta-button {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #28a745;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.cta-button:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+.cta-button:active {
+    background-color: #1e7e34; /* Even darker green on active */
+}
+
+/* Specific styles for "Create a new LinkedIn Post" */
+.cta-button.linkedin-post {
+    background-color: #0077B5; /* LinkedIn blue */
+}
+
+.cta-button.linkedin-post:hover {
+    background-color: #005582; /* Darker LinkedIn blue on hover */
+}
+
 /* Snippets Table */
 #snippets-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 1rem;
 
     th {
         background-color: #f4f4f4;
@@ -349,4 +385,20 @@ section {
     height: 16px;
     margin-right: 5px;
     vertical-align: middle;
+}
+
+#instructions {
+    span.cta {
+        padding: 4px 6px;;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #28a745;
+        color: #fff;
+        font-size: 1rem;
+    }
+
+    li {
+        margin: 12px 0;
+        line-height: 1.5rem;
+    }
 }

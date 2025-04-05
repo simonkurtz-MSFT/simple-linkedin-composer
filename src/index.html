@@ -15,8 +15,8 @@
     <link rel="mask-icon" href="images/simple-linkedin-composer-logo-192x192.png" color="#000000">
     <link rel="alternate icon" class="js-site-favicon" type="image/png" href="images/simple-linkedin-composer-logo-192x192.png">
 
-    <!-- Fonts and Styles -->
-     <!-- The styles from jsdelivr.net are already minified, so no need to use the minified versions. -->
+    <!-- Styles -->
+    <!-- The styles from jsdelivr.net are already minified, so no need to use the minified versions. -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
     <link href="style.css" rel="stylesheet">
 </head>
@@ -60,12 +60,26 @@
     </header>
 
     <main>
+        <!-- Instructions -->
+        <section class="accordion">
+            <h2 class="accordion-header">Instructions</h2>
+            <div id="instructions" class="accordion-content">
+                <ol>
+                    <li>Enter your LinkedIn user id (stored in local storage).</li>
+                    <li>Compose your post snippet and press <span class="cta">Save Snippet</span>. If you want to use this as a template going forward, check "Mark as template" prior to saving.</li>
+                    <li>Press <span class="cta">Copy to Clipboard</span> to copy the post content.</li>
+                    <li>Press <span class="cta">Create a new LinkedIn post</span> to open the LinkedIn post page.</li>
+                    <li>Paste into the textbox, check for accuracy, then post it.</li>
+                </ol>
+            </div>
+        </section>
+
         <!-- LinkedIn User ID Input -->
         <section class="linkedin-user-id">
             <label for="linkedin-user-id">LinkedIn user id:</label>
             <input type="text" id="linkedin-user-id" placeholder="Enter your LinkedIn user id">
             <span id="linkedin-links">
-                <a id="linkedin-create-post" class="action-button" href="#" target="_blank">Create a new LinkedIn Post</a>
+                <a id="linkedin-create-post" class="cta-button" href="#" target="_blank">Create a new LinkedIn Post</a>
                 <a id="linkedin-my-posts" class="action-button" href="#" target="_blank">My LinkedIn Posts</a>
             </span>
         </section>
@@ -88,10 +102,11 @@
 
         <!-- Buttons -->
         <section class="action-buttons">
-            <button id="copy-button">Copy to Clipboard</button>
-            <button id="export-data">Export</button>
-            <button id="import-data">Import</button>
-            <button id="load-sample-button">Load a Sample</button>
+            <button id="copy-button" class="cta-button">Copy to Clipboard</button>
+            <br />
+            <button id="export-data">Export Snippets</button>
+            <button id="import-data">Import Snippets</button>
+            <button id="load-sample-button">Load a Sample Snippet</button>
         </section>
 
         <!-- Hashtags -->
@@ -117,7 +132,7 @@
                     <input type="text" id="snippet-title" placeholder="Enter a custom snippet title">
                 </section>
                 <div id="snippet-controls">
-                    <button id="save-button">Save Snippet</button>
+                    <button id="save-button" class="cta-button">Save Snippet</button>
                     <button id="clear-button">Clear List</button>
                     <input type="text" id="snippet-filter" placeholder="Filter snippets..." />
                 </div>
@@ -134,20 +149,6 @@
                         <!-- Snippets will be dynamically added here -->
                     </tbody>
                 </table>
-            </div>
-        </section>
-
-        <!-- Instructions -->
-        <section class="accordion">
-            <h2 class="accordion-header">Instructions</h2>
-            <div class="accordion-content">
-                <ol>
-                    <li>Enter your LinkedIn user id (stored in local storage).</li>
-                    <li>Compose your post and save it (stored in local storage).</li>
-                    <li>Click the "Copy to Clipboard" button to copy the post content.</li>
-                    <li>Click the "Create a new LinkedIn post" link to open the LinkedIn post page.</li>
-                    <li>Paste into the textbox, check for accuracy, then post it.</li>
-                </ol>
             </div>
         </section>
 
