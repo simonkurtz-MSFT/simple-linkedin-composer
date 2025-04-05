@@ -469,7 +469,6 @@ function saveSnippet() {
 }
 
 function setupSnippetPaging() {
-    console.log('Setting up DataTable for snippets...');
     $('#snippets-table').DataTable({
         paging: true,
         pageLength: 10, // Number of rows per page
