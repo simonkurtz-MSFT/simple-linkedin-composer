@@ -1,10 +1,10 @@
 # Simple LinkedIn Composer
 
+An enhanced rich-text editor for crafting better-formatted LinkedIn posts with emoji support and local snippet storage.
+
 Hosted at [https://linkedin-composer.simondoescloud.com](https://linkedin-composer.simondoescloud.com)
 
 ![Banner Image](composer-linkedin-side-by-side-1.6.0.png)
-
-An enhanced rich-text editor for crafting better-formatted LinkedIn posts with emoji support and local snippet storage.
 
 ## Table of Contents
 
