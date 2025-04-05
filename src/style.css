@@ -205,9 +205,18 @@ button:disabled {
 }
 
 /* Snippets Table */
+#snippets-table_wrapper {
+    margin-top: 10px;
+}
+
+#snippets-table_length {
+    margin-top: 10px;
+}
+
 #snippets-table {
+    padding-top: 5px;
     width: 100%;
-    border-collapse: collapse;
+
 
     th {
         background-color: #f4f4f4;

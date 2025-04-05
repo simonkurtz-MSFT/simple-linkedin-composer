@@ -468,6 +468,16 @@ function saveSnippet() {
     }
 }
 
+function setupSnippetPaging() {
+    console.log('Setting up DataTable for snippets...');
+    $('#snippets-table').DataTable({
+        paging: true,
+        pageLength: 10, // Number of rows per page
+        searching: false, // Disable search if not needed
+        dom: '<"top"lp>rt<"clear">',
+    });
+}
+
 function setupSnippetSort() {
     $('#snippets-table th[data-sort]').on('click', function () {
         const sortKey = $(this).data('sort');
@@ -877,6 +887,9 @@ $(() => {
 
     // Set up snippet sort upon column header click
     setupSnippetSort();
+
+    // Set up Snippets table for paging
+    setupSnippetPaging();
 
     // Set up the event listeners for various elements
     eventListenerSetup();
