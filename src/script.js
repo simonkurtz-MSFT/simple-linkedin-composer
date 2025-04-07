@@ -720,14 +720,13 @@
 
     // Initialize Quill
     function initializeQuill() {
-        return new Quill('#editor-container', {
+        const quill = new Quill('#editor-container', {
             modules: {
                 toolbar: {
                     container: [
                         ['bold', 'italic'/*, 'underline', 'strike'*/],
                         [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                        ['emoji'], // Custom emoji button
-                        ['clean', 'clear']
+                        ['clean', 'emoji', 'clear']
                     ],
                     handlers: {
                         emoji: toggleEmojiPicker,
@@ -741,6 +740,31 @@
             placeholder: 'Compose your post, then follow instructions below...',
             theme: 'snow',
         });
+
+        // Add tooltips to the toolbar buttons
+        const toolbar = quill.getModule('toolbar');
+        const $toolbarButtons = $(toolbar.container).find('button, .ql-picker');
+
+        $toolbarButtons.each((_, button) => {
+            const $button = $(button);
+            if ($button.hasClass('ql-bold')) {
+                $button.attr('title', 'Bold (Ctrl+B)');
+            } else if ($button.hasClass('ql-italic')) {
+                $button.attr('title', 'Italic (Ctrl+I)');
+            } else if ($button.hasClass('ql-list') && $button.attr('value') === 'ordered') {
+                $button.attr('title', 'Ordered List');
+            } else if ($button.hasClass('ql-list') && $button.attr('value') === 'bullet') {
+                $button.attr('title', 'Bullet List');
+            } else if ($button.hasClass('ql-clean')) {
+                $button.attr('title', 'Remove Formatting from selected content');
+            } else if ($button.hasClass('ql-emoji')) {
+                $button.attr('title', 'Insert Emoji');
+            } else if ($button.hasClass('ql-clear')) {
+                $button.attr('title', 'Clear Editor');
+            }
+        });
+
+        return quill;
     }
 
 
