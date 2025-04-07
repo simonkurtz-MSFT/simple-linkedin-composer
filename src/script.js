@@ -269,51 +269,6 @@
     // Hashtag Functions
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Function to insert a hashtag into the editor
-    function insertHashtagIntoEditor(hashtag) {
-        const range = quill.getSelection(); // Get the current cursor position
-        if (range) {
-            quill.insertText(range.index, `${hashtag} `); // Insert the hashtag followed by a space
-            quill.setSelection(range.index + hashtag.length + 1); // Move the cursor after the inserted text
-        }
-    }
-
-    // Function to render the hashtag list in the UI
-    function renderHashtagList(hashtags) {
-        const $hashtagList = $('#hashtag-list');
-        $hashtagList.empty(); // Clear existing list
-
-        $.each(hashtags, (tag, count) => {
-            const $hashtagItem = $('<div>').addClass('hashtag-item');
-
-            // Create the clickable ➕️ symbol
-            const $addButton = $('<a>')
-                .text('➕️')
-                .attr('href', '#')
-                .addClass('add-hashtag-button')
-                .attr('title', 'Add this hashtag to the editor')
-                .on('click', (event) => {
-                    event.preventDefault();
-                    insertHashtagIntoEditor(tag);
-                });
-
-            // Create the LinkedIn icon link
-            const $linkedinLink = $('<a>')
-                .attr('href', `https://www.linkedin.com/feed/hashtag/?keywords=${tag.substring(1)}`)
-                .attr('target', '_blank')
-                .addClass('linkedin-icon-link')
-                .attr('title', 'View this hashtag on LinkedIn')
-                .append($('<img>')
-                    .attr('src', 'images/linkedin-icon.svg')
-                    .attr('alt', 'LinkedIn')
-                    .addClass('linkedin-icon'));
-
-            // Add the ➕️ symbol, LinkedIn icon, and hashtag text to the item
-            $hashtagItem.append($addButton, $linkedinLink, `${tag} (${count})`);
-            $hashtagList.append($hashtagItem);
-        });
-    }
-
     function sortHashtagsByCount() {
         const sortedHashtags = hashtagManager.sortHashtagsByCount(sortCountAsc);
         sortCountAsc = !sortCountAsc; // Toggle sorting order
@@ -348,7 +303,7 @@
             snippetManager.clearAllSnippets();
             updateSnippetsList();
             localStorage.removeItem("hashtags");
-            renderHashtagList({});
+            hashtagManager.renderHashtagList({});
         }
     }
 
