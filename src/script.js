@@ -52,9 +52,6 @@
 
     let hasUnsavedChanges = false;      // Flag to track unsaved changes
 
-    let currentSortKey = 'timestamp';   // Default sort key
-    let currentSortOrder = false;       // Default sort order (false = descending, true = ascending)
-
     let sortNameAsc = true;             // Toggle state for name sorting
     let sortCountAsc = true;            // Toggle state for count sorting
 
