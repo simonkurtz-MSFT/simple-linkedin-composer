@@ -66,7 +66,6 @@
     // GitHub Stats
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
     async function fetchGitHubStats() {
         try {
             const response = await fetch(GITHUB_API_URL);
@@ -502,13 +501,6 @@
         localStorage.setItem(key, JSON.stringify(snippet));
 
         updateSnippetsList();
-
-        // Apply the filter if the filter input is not empty
-        const filterText = $('#snippet-filter').val().trim();
-
-        if (filterText) {
-            filterSnippets(filterText);
-        }
     }
 
     // Initialize the DataTable with custom search functionality
