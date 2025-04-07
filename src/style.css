@@ -1,9 +1,26 @@
+/* Define CSS variables for colors, font sizes, and common styles */
+:root {
+    --primary-color: #0077B5;
+    --primary-hover-color: #005582;
+    --primary-active-color: #003f5e;
+    --secondary-color: #28a745;
+    --secondary-hover-color: #218838;
+    --secondary-active-color: #1e7e34;
+    --text-color: #333;
+    --background-color: #f9f9f9;
+    --border-color: #ccc;
+    --font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-size-small: 0.9rem;
+    --font-size-medium: 1rem;
+    --font-size-large: 1.5rem;
+}
+
 body {
-    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    color: #333;
+    font-family: var(--font-family);
+    color: var(--text-color);
     margin: auto;
     padding: 10px;
-    background-color: #f9f9f9;
+    background-color: var(--background-color);
     width: 700px;
     overflow-y: scroll;
 }
@@ -37,7 +54,7 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color: #0077B5;
+    background-color: var(--primary-color);
     color: #fff;
 
     h1 {
@@ -146,18 +163,18 @@ button.ql-emoji, button.ql-clear {
 /* Buttons */
 button, .action-button {
     padding: 8px 12px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
-    background-color: #0077B5;
+    background-color: var(--primary-color);
     color: #fff;
-    font-size: 1rem;
+    font-size: var(--font-size-medium);
     cursor: pointer;
     transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 }
 
 button:hover, .action-button:hover {
-    background-color: #005582;
-    border-color: #004466;
+    background-color: var(--primary-hover-color);
+    border-color: var(--primary-hover-color);
 }
 
 button:disabled {
@@ -166,7 +183,7 @@ button:disabled {
 }
 
 .action-button:active {
-    background-color: #003f5e;
+    background-color: var(--primary-active-color);
 }
 
 .action-buttons {
@@ -180,30 +197,30 @@ button:disabled {
 /* Call-to-Action Buttons */
 .cta-button {
     padding: 8px 12px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
-    background-color: #28a745;
+    background-color: var(--secondary-color);
     color: #fff;
-    font-size: 1rem;
+    font-size: var(--font-size-medium);
     cursor: pointer;
     transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 }
 
 .cta-button:hover {
-    background-color: #218838; /* Darker green on hover */
+    background-color: var(--secondary-hover-color); /* Darker green on hover */
 }
 
 .cta-button:active {
-    background-color: #1e7e34; /* Even darker green on active */
+    background-color: var(--secondary-active-color); /* Even darker green on active */
 }
 
 /* Specific styles for "Create a new LinkedIn Post" */
 .cta-button.linkedin-post {
-    background-color: #0077B5; /* LinkedIn blue */
+    background-color: var(--primary-color); /* LinkedIn blue */
 }
 
 .cta-button.linkedin-post:hover {
-    background-color: #005582; /* Darker LinkedIn blue on hover */
+    background-color: var(--primary-hover-color); /* Darker LinkedIn blue on hover */
 }
 
 /* Snippets Table */
