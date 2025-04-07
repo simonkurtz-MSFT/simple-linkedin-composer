@@ -56,8 +56,100 @@
     let sortCountAsc = true;            // Toggle state for count sorting
 
     let quill;
-    //let snippetsData = {};              // In-memory object to store snippets
     let snippetManager;
+    let hashtagManager;
+
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // HashtagManager Class
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class HashtagManager {
+        constructor() {
+            this.hashtags = {};
+        }
+
+        extractHashtags(text) {
+            const hashtagRegex = /#\w+/g;
+            return (text.match(hashtagRegex) || []);
+        }
+
+        insertHashtagIntoEditor(hashtag) {
+            const range = quill.getSelection();
+            if (range) {
+                quill.insertText(range.index, `${hashtag} `);
+                quill.setSelection(range.index + hashtag.length + 1);
+            }
+        }
+
+        renderHashtagList() {
+            const $hashtagList = $('#hashtag-list');
+            $hashtagList.empty();
+
+            $.each(this.hashtags, (tag, count) => {
+                const $hashtagItem = $('<div>').addClass('hashtag-item');
+
+                // Create the clickable ➕️ symbol
+                const $addButton = $('<a>')
+                    .text('➕️')
+                    .attr('href', '#')
+                    .addClass('add-hashtag-button')
+                    .attr('title', 'Add this hashtag to the editor')
+                    .on('click', (event) => {
+                        event.preventDefault();
+                        this.insertHashtagIntoEditor(tag);
+                    });
+
+                // Create the LinkedIn icon link
+                const $linkedinLink = $('<a>')
+                    .attr('href', `https://www.linkedin.com/feed/hashtag/?keywords=${tag.substring(1)}`)
+                    .attr('target', '_blank')
+                    .addClass('linkedin-icon-link')
+                    .attr('title', 'View this hashtag on LinkedIn')
+                    .append($('<img>')
+                        .attr('src', 'images/linkedin-icon.svg')
+                        .attr('alt', 'LinkedIn')
+                        .addClass('linkedin-icon'));
+
+                // Add the ➕️ symbol, LinkedIn icon, and hashtag text to the item
+                $hashtagItem.append($addButton, $linkedinLink, `${tag} (${count})`);
+                $hashtagList.append($hashtagItem);
+            });
+        }
+
+        sortHashtagsByCount(asc = true) {
+            return Object.entries(this.hashtags).sort(([tagA, countA], [tagB, countB]) => {
+                if (countA === countB) {
+                    return tagA.localeCompare(tagB);
+                }
+                return asc ? countA - countB : countB - countA;
+            });
+        }
+
+        sortHashtagsByName(asc = true) {
+            return Object.entries(this.hashtags).sort(([tagA], [tagB]) => {
+                return asc ? tagA.localeCompare(tagB) : tagB.localeCompare(tagA);
+            });
+        }
+
+        updateHashtagCounts(snippetsData) {
+            this.hashtags = {};
+            Object.values(snippetsData).forEach(snippet => {
+                const delta = snippet.delta || {};
+                const ops = delta.ops || [];
+                ops.forEach(op => {
+                    if (op.insert && typeof op.insert === 'string') {
+                        const snippetHashtags = this.extractHashtags(op.insert);
+                        snippetHashtags.forEach(tag => {
+                            this.hashtags[tag] = (this.hashtags[tag] || 0) + 1;
+                        });
+                    }
+                });
+            });
+            localStorage.setItem("hashtags", JSON.stringify(this.hashtags));
+        }
+    }
 
 
 
@@ -177,12 +269,6 @@
     // Hashtag Functions
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Function to extract hashtags from a string
-    function extractHashtags(text) {
-        const hashtagRegex = /#\w+/g;
-        return (text.match(hashtagRegex) || []);
-    }
-
     // Function to insert a hashtag into the editor
     function insertHashtagIntoEditor(hashtag) {
         const range = quill.getSelection(); // Get the current cursor position
@@ -228,58 +314,24 @@
         });
     }
 
-    // Event listener for sorting by count with tie-breaking by name
     function sortHashtagsByCount() {
-        const hashtags = JSON.parse(localStorage.getItem('hashtags')) || {};
-
-        const sortedHashtags = Object.entries(hashtags).sort(([tagA, countA], [tagB, countB]) => {
-            if (countA === countB) {
-                return tagA.localeCompare(tagB); // Tie-breaking: Sort by name ascending
-            }
-            return sortCountAsc ? countA - countB : countB - countA;
-        });
+        const sortedHashtags = hashtagManager.sortHashtagsByCount(sortCountAsc);
         sortCountAsc = !sortCountAsc; // Toggle sorting order
-        renderHashtagList(Object.fromEntries(sortedHashtags));
+        hashtagManager.hashtags = Object.fromEntries(sortedHashtags);
+        hashtagManager.renderHashtagList();
     }
 
     function sortHashtagsByName() {
-        const hashtags = JSON.parse(localStorage.getItem('hashtags')) || {};
-
-        const sortedHashtags = Object.entries(hashtags).sort(([tagA], [tagB]) => {
-            return sortNameAsc ? tagA.localeCompare(tagB) : tagB.localeCompare(tagA);
-        });
+        const sortedHashtags = hashtagManager.sortHashtagsByName(sortNameAsc);
         sortNameAsc = !sortNameAsc; // Toggle sorting order
-        renderHashtagList(Object.fromEntries(sortedHashtags));
+        hashtagManager.hashtags = Object.fromEntries(sortedHashtags);
+        hashtagManager.renderHashtagList();
     }
 
     // Function to update hashtag counts in local storage
     function updateHashtagCounts() {
-        const hashtags = JSON.parse(localStorage.getItem("hashtags")) || {};
-        const snippetKeys = Object.keys(localStorage).filter(key => key.startsWith("snippet-"));
-
-        // Reset hashtag counts
-        Object.keys(hashtags).forEach(tag => hashtags[tag] = 0);
-
-        // Count hashtags from all snippets
-        snippetKeys.forEach(key => {
-            const snippet = JSON.parse(localStorage.getItem(key));
-            const delta = snippet.delta || {};
-            const ops = delta.ops || [];
-
-            // Extract hashtags from each insert property in the ops array
-            ops.forEach(op => {
-                if (op.insert && typeof op.insert === "string") {
-                    const snippetHashtags = extractHashtags(op.insert);
-                    snippetHashtags.forEach(tag => {
-                        hashtags[tag] = (hashtags[tag] || 0) + 1;
-                    });
-                }
-            });
-        });
-
-        // Save updated hashtags to local storage
-        localStorage.setItem("hashtags", JSON.stringify(hashtags));
-        renderHashtagList(hashtags);
+        hashtagManager.updateHashtagCounts(snippetManager.getSnippets());
+        hashtagManager.renderHashtagList();
     }
 
 
@@ -840,7 +892,8 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     $(() => {
-        snippetManager = new SnippetManager(KEY_PREFIX);
+        snippetManager = new SnippetManager();
+        hashtagManager = new HashtagManager();
         quill = initializeQuill();
 
         // Fetch the stats on page load
@@ -857,6 +910,9 @@
 
         // Initialize the snippets list on page load. This also performs the initial sort by "Timestamp" in descending order.
         updateSnippetsList();
+
+        // Update hashtags on page load
+        updateHashtagCounts();
 
         // Set up the event listeners for various elements
         eventListenerSetup();
