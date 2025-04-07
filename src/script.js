@@ -56,7 +56,60 @@
     let sortCountAsc = true;            // Toggle state for count sorting
 
     let quill;
-    let snippetsData = {};              // In-memory object to store snippets
+    //let snippetsData = {};              // In-memory object to store snippets
+    let snippetManager;
+
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // SnippetManager Class
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+    class SnippetManager {
+        constructor() {
+            this.KEY_PREFIX = KEY_PREFIX;
+            this.snippetsData = {};
+        }
+
+        clearAllSnippets() {
+            const snippetKeys = Object.keys(localStorage).filter(key => key.startsWith(this.KEY_PREFIX));
+            snippetKeys.forEach(key => localStorage.removeItem(key));
+            this.snippetsData = {};
+        }
+
+        deleteSnippet(title) {
+            const key = `${this.KEY_PREFIX}${title}`;
+            localStorage.removeItem(key);
+            delete this.snippetsData[title];
+        }
+
+        getSnippets() {
+            return this.snippetsData;
+        }
+
+        loadSnippets() {
+            this.snippetsData = {};
+            const snippetKeys = Object.keys(localStorage).filter(key => key.startsWith(this.KEY_PREFIX));
+
+            snippetKeys.forEach(key => {
+                const snippet = JSON.parse(localStorage.getItem(key));
+                const title = key.replace(this.KEY_PREFIX, '');
+                this.snippetsData[title] = snippet;
+            });
+        }
+
+        saveSnippet(title, content, isTemplate) {
+            const key = `${this.KEY_PREFIX}${title}`;
+            const snippet = {
+                delta: content,
+                timestamp: new Date().toISOString(),
+                isTemplate: isTemplate
+            };
+
+            localStorage.setItem(key, JSON.stringify(snippet));
+        }
+    }
+
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -237,13 +290,11 @@
 
     // Clear all saved snippets from local storage
     function clearSnippetsFromStorage() {
-        if (Object.keys(localStorage).length === 0)
-            return;
+        if (Object.keys(localStorage).length === 0) return;
 
         if (confirm('Are you sure you want to clear all saved snippets? This action cannot be undone.')) {
-            localStorage.clear();
+            snippetManager.clearAllSnippets();
             updateSnippetsList();
-
             localStorage.removeItem("hashtags");
             renderHashtagList({});
         }
@@ -252,13 +303,11 @@
     function deleteSnippet(e) {
         const title = $(e.target).data('key');
         if (confirm(`Are you sure you want to delete this snippet?\n\n${title}`)) {
-            const key = `${KEY_PREFIX}${title}`;
-            localStorage.removeItem(key);   // Remove from localStorage
-            delete snippetsData[title];     // Remove from in-memory object
-            updateSnippetsList();           // Refresh the table
-            updateHashtagCounts();          // Update hashtag counts
+            snippetManager.deleteSnippet(title);
+            updateSnippetsList();
+            updateHashtagCounts();
         }
-    };
+    }
 
     // Export functionality
     function exportSnippets() {
@@ -339,57 +388,31 @@
         $input.trigger('click');
     };
 
-    // Event listener for loading a snippet into the editor
-    $(document).on('click', '.snippet-link', function () {
-        const title = $(this).data('key');
-        const key = `${KEY_PREFIX}${title}`;
-        loadSnippet(key); // Load the snippet into the editor
-    });
-
     // Load a snippet into the editor
     function loadSnippet(key) {
-        if (!confirmUnsavedChanges()) {
-            return; // Exit if the user cancels
-        }
+        if (!confirmUnsavedChanges()) return;
 
         const savedSnippet = localStorage.getItem(key);
-
         if (savedSnippet) {
             const snippet = JSON.parse(savedSnippet);
             const { delta } = snippet;
-            quill.setContents(delta); // Load the snippet content into the editor
-            hasUnsavedChanges = false; // Reset the flag since new content is loaded
+            quill.setContents(delta);
+            hasUnsavedChanges = false;
             $('#is-template').prop('checked', snippet.isTemplate === true);
 
-            // Extract the snippet title from the key
-            const snippetTitle = key.replace(KEY_PREFIX, ''); // Remove the key prefix
-            $('#snippet-title').val(snippetTitle); // Set the snippet title in the textbox
-
+            const snippetTitle = key.replace(KEY_PREFIX, '');
+            $('#snippet-title').val(snippetTitle);
         } else {
             alert('Snippet not found.');
         }
     }
 
-    // Function to load snippets from localStorage into the in-memory object
-    function loadSnippetsFromStorage() {
-        snippetsData = {}; // Clear the in-memory object
-
-        const snippetKeys = Object.keys(localStorage).filter(key => key.startsWith(KEY_PREFIX));
-
-        snippetKeys.forEach((key) => {
-            const snippet = JSON.parse(localStorage.getItem(key));
-            const title = key.replace(KEY_PREFIX, ''); // Remove the key prefix
-            snippetsData[title] = snippet; // Store the snippet in the in-memory object
-        });
-    }
-
-    // Function to populate the DataTable using the in-memory object
     function populateSnippetsTable() {
         const $snippetsTable = $('#snippets-table').DataTable();
-        $snippetsTable.clear(); // Clear the existing table data
+        $snippetsTable.clear();
 
-        Object.entries(snippetsData).forEach(([title, snippet]) => {
-            const isoTimestamp = new Date(snippet.timestamp).toISOString(); // ISO format for sorting
+        Object.entries(snippetManager.getSnippets()).forEach(([title, snippet]) => {
+            const isoTimestamp = new Date(snippet.timestamp).toISOString();
             const displayTimestamp = new Date(snippet.timestamp).toLocaleString(undefined, {
                 year: 'numeric', month: '2-digit', day: '2-digit',
                 hour: '2-digit', minute: '2-digit', second: '2-digit'
@@ -405,10 +428,9 @@
             ]);
         });
 
-        $snippetsTable.draw(); // Redraw the table
+        $snippetsTable.draw();
     }
 
-    // Save the content to local storage
     function saveSnippet() {
         const content = quill.getText().trim();
         if (!content) {
@@ -416,36 +438,21 @@
             return;
         }
 
-        // Get the custom snippet title
         let title = $('#snippet-title').val().trim();
         if (!title) {
             alert('Snippet title cannot be empty.');
             return;
         }
 
-        // Limit the title to 50 characters
-        title = title.substring(0, 50);
+        title = title.substring(0, 50); // Limit the title to 50 characters
+        const isTemplate = $('#is-template').is(':checked');
 
-        // Generate a key for the snippet
-        const key = `${KEY_PREFIX}${title.replace(/[^a-zA-Z0-9 -]/g, '').replace(/\s+/g, '-')}`;
-
-        // Check if the snippet already exists in localStorage
-        if (localStorage.getItem(key)) {
+        if (snippetManager.getSnippets()[title]) {
             const confirmOverride = confirm(`A snippet with this title already exists. Do you want to overwrite it?\n\n${title}`);
-            if (!confirmOverride) {
-                return; // Exit if the user does not confirm
-            }
+            if (!confirmOverride) return;
         }
 
-        // Save the snippet to localStorage
-        const snippet = {
-            delta: quill.getContents(),
-            timestamp: new Date().toISOString(),
-            isTemplate: $('#is-template').is(':checked')
-        };
-
-        localStorage.setItem(key, JSON.stringify(snippet));
-
+        snippetManager.saveSnippet(title, quill.getContents(), isTemplate);
         updateSnippetsList();
     }
 
@@ -515,10 +522,9 @@
         });
     };
 
-    // Function to update the snippets list (load from storage and populate the table)
     function updateSnippetsList() {
-        loadSnippetsFromStorage(); // Load snippets into the in-memory object
-        populateSnippetsTable(); // Populate the table using the in-memory object
+        snippetManager.loadSnippets(); // Load snippets into the manager
+        populateSnippetsTable(); // Populate the table using the manager's data
     }
 
 
@@ -789,6 +795,11 @@
         $('#import-data').on('click', () => importSnippets());
         $('#load-sample-button').on('click', () => loadSampleText());
         $(document).on('click', '.delete-snippet', (e) => deleteSnippet(e));
+        $(document).on('click', '.snippet-link', function () {
+            const title = $(this).data('key');
+            const key = `${KEY_PREFIX}${title}`;
+            loadSnippet(key);
+        });
 
         // Clipboard
         $('#copy-button').on('click', async () => await copyToClipboard());
@@ -829,6 +840,7 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     $(() => {
+        snippetManager = new SnippetManager(KEY_PREFIX);
         quill = initializeQuill();
 
         // Fetch the stats on page load
