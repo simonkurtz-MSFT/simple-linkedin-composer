@@ -98,6 +98,10 @@ Enjoy it!
 | *Safari*      | ✅ Full       | MacOS/iOS 15+         |
 | *Mobile*      | ⚠️ Limited    | Use Desktop Version   |
 
+## Development
+
+I am keeping this intentionally simple: just markup, script, and style. Change what you want, refresh the browser, done. This could be done in TypeScript and Sass along with build tools, etc., but then it becomes more involved than I think it needs to be. That would make much more sense if this was a more complex web app.
+
 ## 🤝 Contributing
 
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
