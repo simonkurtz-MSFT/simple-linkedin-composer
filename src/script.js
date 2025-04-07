@@ -341,6 +341,15 @@
         downloadFile(filename, JSON.stringify(data, null, 2));
     }
 
+    function filterTable(filter) {
+        let table = $('#snippets-table').DataTable();
+        let lowerCaseFilter = filter.trim().toLowerCase();
+        console.log(lowerCaseFilter);
+        table.column(0).search(lowerCaseFilter).draw(); // Search only the snippets title column
+
+        updateSnippetsHeader();
+    }
+
     // Import functionality
     function importSnippets() {
         if (!confirmUnsavedChanges()) {
@@ -513,22 +522,7 @@
                         fontSize: '1rem',
                         width: '200px', // Make it full width
                         margin: '0.5rem 0', // Add some spacing
-                    }).on('input', (e) => {
-                        let lowerCaseFilter = $(e.target).val().trim().toLowerCase();
-                        table.column(0).search(lowerCaseFilter).draw(); // Search only the snippets title column
-
-                        // Get the count of visible rows after filtering
-                        const visibleCount = table.rows({ filter: 'applied' }).count();
-                        const totalSnippets = table.columns(0).data().count();
-
-                        // Update the Snippets header
-                        const $snippetsHeader = $('#snippets-header');
-                        if (visibleCount === totalSnippets) {
-                            $snippetsHeader.text(`Snippets (${totalSnippets})`);
-                        } else {
-                            $snippetsHeader.text(`Snippets (${visibleCount}/${totalSnippets})`);
-                        }
-                    });
+                    }).on('input', (e) => filterTable($(e.target).val()));
 
                 // Remove the "Search:" label
                 $('#snippets-table_filter label').contents().filter((_, el) => el.nodeType === 3).remove();
@@ -536,9 +530,26 @@
         });
     };
 
+    function updateSnippetsHeader() {
+        let table = $('#snippets-table').DataTable();
+        // Get the count of visible rows after filtering
+        const visibleCount = table.rows({ filter: 'applied' }).count();
+        const totalSnippets = table.columns(0).data().count();
+
+        // Update the Snippets header
+        const $snippetsHeader = $('#snippets-header');
+        if (visibleCount === totalSnippets) {
+            $snippetsHeader.text(`Snippets (${totalSnippets})`);
+        } else {
+            $snippetsHeader.text(`Snippets (${visibleCount}/${totalSnippets})`);
+        }
+
+    }
+
     function updateSnippetsList() {
         snippetManager.loadSnippets(); // Load snippets into the manager
         populateSnippetsTable(); // Populate the table using the manager's data
+        updateSnippetsHeader();
     }
 
 
