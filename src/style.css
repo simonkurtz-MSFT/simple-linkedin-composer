@@ -230,14 +230,6 @@ button:disabled {
         cursor: pointer;
     }
 
-    th.asc::after {
-        content: ' ▲';
-    }
-
-    th.desc::after {
-        content: ' ▼';
-    }
-
     th, td {
         text-align: left;
         padding: 0.5rem;

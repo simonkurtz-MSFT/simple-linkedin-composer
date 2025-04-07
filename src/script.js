@@ -59,6 +59,8 @@
     let sortCountAsc = true;            // Toggle state for count sorting
 
     let quill;
+    let snippetsData = {};              // In-memory object to store snippets
+
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // GitHub Stats
@@ -307,31 +309,31 @@
         downloadFile(filename, JSON.stringify(data, null, 2));
     }
 
-    function filterSnippets(filterText) {
-        const $rows = $('#snippets-table tbody tr');
-        const lowerCaseFilter = filterText.toLowerCase();
+    // function filterSnippets(filterText) {
+    //     const $rows = $('#snippets-table tbody tr');
+    //     const lowerCaseFilter = filterText.toLowerCase();
 
-        let visibleCount = 0;
+    //     let visibleCount = 0;
 
-        $rows.each((_, row) => {
-            const snippetName = $(row).find('td[data-key="snippet"]').text().toLowerCase();
-            if (snippetName.includes(lowerCaseFilter)) {
-                $(row).show(); // Show rows that match the filter
-                visibleCount++;
-            } else {
-                $(row).hide(); // Hide rows that don't match the filter
-            }
-        });
+    //     $rows.each((_, row) => {
+    //         const snippetName = $(row).find('td[data-key="snippet"]').text().toLowerCase();
+    //         if (snippetName.includes(lowerCaseFilter)) {
+    //             $(row).show(); // Show rows that match the filter
+    //             visibleCount++;
+    //         } else {
+    //             $(row).hide(); // Hide rows that don't match the filter
+    //         }
+    //     });
 
-        // Update the Snippets header
-        const totalSnippets = $rows.length;
-        const $snippetsHeader = $('#snippets-header');
-        if (visibleCount === totalSnippets) {
-            $snippetsHeader.text(`Snippets (${totalSnippets})`);
-        } else {
-            $snippetsHeader.text(`Snippets (${visibleCount}/${totalSnippets})`);
-        }
-    };
+    //     // Update the Snippets header
+    //     const totalSnippets = $rows.length;
+    //     const $snippetsHeader = $('#snippets-header');
+    //     if (visibleCount === totalSnippets) {
+    //         $snippetsHeader.text(`Snippets (${totalSnippets})`);
+    //     } else {
+    //         $snippetsHeader.text(`Snippets (${visibleCount}/${totalSnippets})`);
+    //     }
+    // };
 
     // Generate a key from the first 50 alphanumeric characters
     function generateKey(content) {
@@ -423,6 +425,44 @@
         }
     }
 
+    // Function to load snippets from localStorage into the in-memory object
+    function loadSnippetsFromStorage() {
+        snippetsData = {}; // Clear the in-memory object
+
+        const snippetKeys = Object.keys(localStorage).filter(key => key.startsWith(KEY_PREFIX));
+
+        snippetKeys.forEach((key) => {
+            const snippet = JSON.parse(localStorage.getItem(key));
+            const title = key.replace(KEY_PREFIX, ''); // Remove the key prefix
+            snippetsData[title] = snippet; // Store the snippet in the in-memory object
+        });
+    }
+
+    // Function to populate the DataTable using the in-memory object
+    function populateSnippetsTable() {
+        const $snippetsTable = $('#snippets-table').DataTable();
+        $snippetsTable.clear(); // Clear the existing table data
+
+        Object.entries(snippetsData).forEach(([title, snippet]) => {
+            const isoTimestamp = new Date(snippet.timestamp).toISOString(); // ISO format for sorting
+            const displayTimestamp = new Date(snippet.timestamp).toLocaleString(undefined, {
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+
+            const isTemplate = snippet.isTemplate === true ? '✔' : '';
+
+            $snippetsTable.row.add([
+                `<span class="snippet-link" data-key="${title}">${title}</span>`,
+                `<span data-key="timestamp" data-value="${isoTimestamp}">${displayTimestamp}</span>`,
+                `<span data-key="template" data-value="${snippet.isTemplate}">${isTemplate}</span>`,
+                `<button class="delete-snippet" data-key="${title}">Delete</button>`
+            ]);
+        });
+
+        $snippetsTable.draw(); // Redraw the table
+    }
+
     // Save the content to local storage
     function saveSnippet() {
         const content = quill.getText().trim();
@@ -471,14 +511,56 @@
         }
     }
 
-    function setupSnippetPaging() {
+    // Initialize the DataTable with custom search functionality
+    const setupSnippetPaging = () => {
         $('#snippets-table').DataTable({
             paging: true,
-            pageLength: 10, // Number of rows per page
-            searching: false, // Disable search if not needed
-            dom: '<"top"lp>rt<"clear">',
+            pageLength: 10,
+            searching: true,   // roll our own
+            dom: '<"top"f>rt<"bottom"lp><"clear">',
+            columnDefs: [
+                { orderable: false, targets: 3 }, // Disable sorting for the "Delete" column
+            ],
+            initComplete: function () {
+                // Customize the search to target only the first column (snippet title)
+                const table = this.api();
+                const $snippetsHeader = $('#snippets-header');
+
+                // Update the total snippets count after the table is fully initialized
+                table.on('draw', () => {
+                    const totalSnippets = table.columns(0).data().count();
+                    $snippetsHeader.text(`Snippets (${totalSnippets})`);
+                });
+
+                $('#snippets-table_filter input')
+                    .addClass('form-control') // Add the same class as the snippets filter textbox
+                    .attr('placeholder', 'Search snippets...') // Add a placeholder for better UX
+                    .css({
+                        fontSize: '1rem',
+                        width: '200px', // Make it full width
+                        margin: '0.5rem 0', // Add some spacing
+                    }).on('input', (e) => {
+                        let lowerCaseFilter = $(e.target).val().trim().toLowerCase();
+                        table.column(0).search(lowerCaseFilter).draw(); // Search only the snippets title column
+
+                        // Get the count of visible rows after filtering
+                        const visibleCount = table.rows({ filter: 'applied' }).count();
+                        const totalSnippets = table.columns(0).data().count();
+
+                        // Update the Snippets header
+                        const $snippetsHeader = $('#snippets-header');
+                        if (visibleCount === totalSnippets) {
+                            $snippetsHeader.text(`Snippets (${totalSnippets})`);
+                        } else {
+                            $snippetsHeader.text(`Snippets (${visibleCount}/${totalSnippets})`);
+                        }
+                    });
+
+                // Remove the "Search:" label
+                $('#snippets-table_filter label').contents().filter((_, el) => el.nodeType === 3).remove();
+            },
         });
-    }
+    };
 
     function setupSnippetSort() {
         $('#snippets-table th[data-sort]').on('click', function () {
@@ -535,28 +617,11 @@
         currentSortOrder = isAsc;
     }
 
-    function updateSnippetsList() {
-        const $snippetsTableBody = $('#snippets-table tbody');
-        $snippetsTableBody.empty(); // Clear the table body
-
-        const snippetKeys = Object.keys(localStorage).filter(key => key.startsWith(KEY_PREFIX));
-        const totalSnippets = snippetKeys.length;
-
-        snippetKeys.forEach((key) => {
-            const snippet = JSON.parse(localStorage.getItem(key));
-            const title = key.replace(KEY_PREFIX, ''); // Remove the key prefix
-
-            addSnippetToTable(title, snippet.isTemplate, snippet.timestamp);
-        });
-
-        updateHashtagCounts(); // Update hashtag counts after loading snippets
-
-        // Reapply the current sort order
-        sortTableByColumn(currentSortKey, currentSortOrder);
-
-        // Update the Snippets header counts
-        const visibleSnippets = $snippetsTableBody.find('tr:visible').length;
-        const $snippetsHeader = $('#snippets-header'); // Assuming the h2 has an ID of "snippets-header"
+    // Update the Snippets header counts
+    function updateSnippetsHeader() {
+        const totalSnippets = Object.keys(snippetsData).length;
+        const visibleSnippets = $('#snippets-table tbody tr:visible').length;
+        const $snippetsHeader = $('#snippets-header');
 
         if (visibleSnippets === totalSnippets) {
             $snippetsHeader.text(`Snippets (${totalSnippets})`);
@@ -564,6 +629,31 @@
             $snippetsHeader.text(`Snippets (${visibleSnippets}/${totalSnippets})`);
         }
     }
+
+    // Function to update the snippets list (load from storage and populate the table)
+    function updateSnippetsList() {
+        loadSnippetsFromStorage(); // Load snippets into the in-memory object
+        populateSnippetsTable(); // Populate the table using the in-memory object
+    }
+
+    // Event listener for deleting a snippet
+    $(document).on('click', '.delete-snippet', function () {
+        const title = $(this).data('key');
+        if (confirm(`Are you sure you want to delete this snippet?\n\n${title}`)) {
+            const key = `${KEY_PREFIX}${title}`;
+            localStorage.removeItem(key); // Remove from localStorage
+            delete snippetsData[title]; // Remove from in-memory object
+            updateSnippetsList(); // Refresh the table
+            updateHashtagCounts(); // Update hashtag counts
+        }
+    });
+
+    // Event listener for loading a snippet into the editor
+    $(document).on('click', '.snippet-link', function () {
+        const title = $(this).data('key');
+        const key = `${KEY_PREFIX}${title}`;
+        loadSnippet(key); // Load the snippet into the editor
+    });
 
 
 
@@ -831,7 +921,6 @@
         $('#save-button').on('click', () => saveSnippet());
         $('#export-data').on('click', () => exportSnippets());
         $('#import-data').on('click', () => importSnippets());
-        $('#snippet-filter').on('input', (e) => filterSnippets($(e.target).val()));
         $('#load-sample-button').on('click', () => loadSampleText());
 
         // Clipboard
@@ -884,14 +973,14 @@
         // Set up the accordion behavior for expanding and collapsing the major sections
         accordionSetup();
 
+        // Set up Snippets table for paging
+        setupSnippetPaging();
+
         // Initialize the snippets list on page load. This also performs the initial sort by "Timestamp" in descending order.
         updateSnippetsList();
 
         // Set up snippet sort upon column header click
         setupSnippetSort();
-
-        // Set up Snippets table for paging
-        setupSnippetPaging();
 
         // Set up the event listeners for various elements
         eventListenerSetup();
