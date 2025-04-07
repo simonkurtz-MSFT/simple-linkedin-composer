@@ -296,14 +296,21 @@
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Clear all saved snippets from local storage
-    function clearSnippetsFromStorage() {
+    function clearAllData() {
         if (Object.keys(localStorage).length === 0) return;
 
-        if (confirm('Are you sure you want to clear all saved snippets? This action cannot be undone.')) {
+        if (confirm('Are you sure you want to clear all Simple LinkedIn Composer data from your browser\'s storage? This includes snippets as well as any settings.\n\nConsider exporting your saved snippets first as this clear action cannot be undone.')) {
+            // Clear all snippets from storage, the in-memory object, then refresh the snippets list (showing zero entries).
             snippetManager.clearAllSnippets();
             updateSnippetsList();
+
+            // Clear all hashtags from storage, then render the hashtag list.
             localStorage.removeItem("hashtags");
             hashtagManager.renderHashtagList({});
+
+            // Clear all remaining items for this web app from localstorage.
+            localStorage.clear();
+            alert('All localStorage data has been cleared.');
         }
     }
 
@@ -799,6 +806,15 @@
         });
     }
 
+    function checkFirstTimeUser() {
+        const firstTimeUser = localStorage.getItem('firstTimeUser');
+        if (!firstTimeUser) {
+            $('div#instructions').addClass('open');
+            alert('Welcome to Simple LinkedIn Composer! I hope you find this app useful. Please check the instructions to get started.');
+            localStorage.setItem('firstTimeUser', 'false');
+        }
+    }
+
     // Utility function to download a file
     function downloadFile(filename, content) {
         const blob = new Blob([content], { type: "application/json" });
@@ -820,7 +836,7 @@
         $('#sort-count').on('click', () => sortHashtagsByCount());
 
         // Snippets
-        $('#clear-button').on('click', () => clearSnippetsFromStorage());
+        $('#clear-button').on('click', () => clearAllData());
         $('#save-button').on('click', () => saveSnippet());
         $('#export-data').on('click', () => exportSnippets());
         $('#import-data').on('click', () => importSnippets());
@@ -895,6 +911,8 @@
 
         // Set up the event listeners for various elements
         eventListenerSetup();
+
+        checkFirstTimeUser();
 
         quill.focus();
     });
