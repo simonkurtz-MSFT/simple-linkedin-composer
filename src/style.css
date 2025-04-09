@@ -3,9 +3,9 @@
     --primary-color: #0077B5;
     --primary-hover-color: #005582;
     --primary-active-color: #003f5e;
-    --secondary-color: #28a745;
-    --secondary-hover-color: #218838;
-    --secondary-active-color: #1e7e34;
+    --secondary-color: #1e7e34; /* Darker green for better contrast */
+    --secondary-hover-color: #155d27; /* Even darker green on hover */
+    --secondary-active-color: #0f441d; /* Darkest green on active */
     --text-color: #333;
     --background-color: #f9f9f9;
     --border-color: #ccc;
@@ -412,7 +412,7 @@ section {
         padding: 4px 6px;;
         border: 1px solid #ccc;
         border-radius: 4px;
-        background-color: #28a745;
+        background-color: var(--secondary-color);
         color: #fff;
         font-size: 1rem;
     }
