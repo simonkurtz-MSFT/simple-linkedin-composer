@@ -215,6 +215,10 @@ button:disabled {
 }
 
 /* Specific styles for "Create a new LinkedIn Post" */
+#linkedin-links {
+    display: none;
+}
+
 .cta-button.linkedin-post {
     background-color: var(--primary-color); /* LinkedIn blue */
 }
