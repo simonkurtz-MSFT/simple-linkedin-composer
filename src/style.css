@@ -21,7 +21,7 @@ body {
     margin: auto;
     padding: 10px;
     background-color: var(--background-color);
-    width: 700px;
+    width: 750px;
     overflow-y: scroll;
 }
 
@@ -121,11 +121,14 @@ input#linkedin-user-id {
 #editor-container {
     margin-bottom: 15px;
     border: 1px solid #ccc;
-    border-radius: 4px;
     background-color: #fff;
     padding: 10px;
-    width: 700px;
+    width: 750px;
     height: 600px;
+
+    .ql-editor {
+        overflow-y: scroll;
+}
 }
 
 .ql-editor.ql-blank::before {
