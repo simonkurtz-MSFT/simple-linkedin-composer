@@ -201,6 +201,8 @@
             localStorage.setItem(key, JSON.stringify(snippet));
 
             hasUnsavedChanges = false; // Reset the flag since the snippet is saved
+
+            toastr.success('Snippet saved successfully', 'Success');
         }
     }
 
@@ -312,7 +314,8 @@
 
             // Clear all remaining items for this web app from localstorage.
             localStorage.clear();
-            alert('All localStorage data has been cleared.');
+
+            toastr.success('All localStorage data has been cleared.', 'Success');
         }
     }
 
@@ -341,6 +344,8 @@
 
         // Download the filtered data
         downloadFile(filename, JSON.stringify(data, null, 2));
+
+        toastr.success('Snippets exported successfully', 'Success');
     }
 
     function filterTable(filter) {
@@ -399,14 +404,15 @@
                 });
 
                 if (importedCount > 0) {
-                    alert(`Successfully imported ${importedCount} snippet(s).`);
+                    toastr.success(`Successfully imported ${importedCount} snippet(s).`, 'Success');
+
                     updateSnippetsList(); // Refresh the snippets list
                 } else {
-                    alert('No new snippets were imported. The data may already exist in localStorage.');
+                    toastr.info('No new snippets were imported. The data may already exist in localStorage.', 'Info');
                 }
             } catch (error) {
                 console.error('Error importing data:', error);
-                alert('Failed to import data. Please check the file format.');
+                toastr.error('Failed to import data. Please check the file format.', 'Error');
             }
         });
 
@@ -418,6 +424,7 @@
         if (!confirmUnsavedChanges()) return;
 
         const savedSnippet = localStorage.getItem(key);
+
         if (savedSnippet) {
             const snippet = JSON.parse(savedSnippet);
             const { delta } = snippet;
@@ -428,7 +435,7 @@
             const snippetTitle = key.replace(KEY_PREFIX, '');
             $('#snippet-title').val(snippetTitle);
         } else {
-            alert('Snippet not found.');
+            toastr.warning('Snippet not found.', 'Warning');
         }
     }
 
@@ -459,13 +466,13 @@
     function saveSnippet() {
         const content = quill.getText().trim();
         if (!content) {
-            alert('The editor is empty. Please write something to save.');
+            toastr.info('The editor is empty. Please write something to save.', 'Info');
             return;
         }
 
         let title = $('#snippet-title').val().trim();
         if (!title) {
-            alert('Snippet title cannot be empty.');
+            toastr.warning('Please enter a title for the snippet.', 'Warning');
             return;
         }
 
@@ -628,8 +635,10 @@
             await navigator.clipboard.write([clipboardItem]);
         } catch (err) {
             console.error('Failed to copy content: ', err);
-            alert('Failed to copy content. Please try again.');
+            toastr.error('Failed to copy content. Please try again.', 'Error');
         }
+
+        toastr.success('Post copied to clipboard. Paste it into LinkedIn!', 'Success');
     }
 
     // Function to get styled Unicode character
@@ -823,9 +832,30 @@
         const firstTimeUser = localStorage.getItem('firstTimeUser');
         if (!firstTimeUser) {
             $('div#instructions').addClass('open');
-            alert('Welcome to Simple LinkedIn Composer! I hope you find this app useful. Please check the instructions to get started.');
+            toastr.info('Welcome to Simple LinkedIn Composer! I hope you find this app useful. Please check the instructions to get started.', 'Info');
             localStorage.setItem('firstTimeUser', 'false');
         }
+    }
+
+    function configureToastr() {
+        // Include Toastr configuration
+        toastr.options = {
+            closeButton: true,
+            debug: false,
+            newestOnTop: true,
+            progressBar: true,
+            positionClass: "toast-top-right",
+            preventDuplicates: true,
+            onclick: null,
+            showDuration: "200",
+            hideDuration: "1000",
+            timeOut: "2000",
+            extendedTimeOut: "1000",
+            showEasing: "swing",
+            hideEasing: "linear",
+            showMethod: "fadeIn",
+            hideMethod: "fadeOut"
+        };
     }
 
     // Utility function to download a file
@@ -921,6 +951,9 @@
 
         // Update hashtags on page load
         updateHashtagCounts();
+
+        // Configure Toastr notifications
+        configureToastr();
 
         // Set up the event listeners for various elements
         eventListenerSetup();

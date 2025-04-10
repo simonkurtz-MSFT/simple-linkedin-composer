@@ -432,3 +432,33 @@ section {
         margin-top: 35px;
     }
 }
+
+/* Toastr Notifications */
+#toast-container > .toast {
+    font-family: var(--font-family);
+    font-size: var(--font-size-medium);
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Increase shadow opacity */
+    background-color: rgba(255, 255, 255, 0.95); /* Make the background less transparent */
+    opacity: 0.9;
+}
+
+#toast-container > .toast-success {
+    background-color: var(--secondary-color);
+    color: #fff;
+}
+
+#toast-container > .toast-error {
+    background-color: #d9534f;
+    color: #fff;
+}
+
+#toast-container > .toast-info {
+    background-color: #5bc0de;
+    color: #fff;
+}
+
+#toast-container > .toast-warning {
+    background-color: #f0ad4e;
+    color: #fff;
+}
