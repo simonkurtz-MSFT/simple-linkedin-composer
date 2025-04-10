@@ -258,7 +258,7 @@ button:disabled {
 
     th, td {
         text-align: left;
-        padding: 0.5rem;
+        padding: 5px 8px;
         border: 1px solid #ccc;
         vertical-align: middle;
     }
