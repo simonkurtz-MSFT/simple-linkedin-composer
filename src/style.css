@@ -19,9 +19,9 @@ body {
     font-family: var(--font-family);
     color: var(--text-color);
     margin: auto;
-    padding: 10px;
+    padding-top: 10px;
     background-color: var(--background-color);
-    width: 775px;
+    width: 800px;
     overflow-y: scroll;
 }
 
