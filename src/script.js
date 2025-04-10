@@ -199,6 +199,8 @@
             };
 
             localStorage.setItem(key, JSON.stringify(snippet));
+
+            hasUnsavedChanges = false; // Reset the flag since the snippet is saved
         }
     }
 
