@@ -423,6 +423,15 @@ section {
         font-size: 1rem;
     }
 
+    span.cta2 {
+        padding: 4px 6px;;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: var(--primary-color);
+        color: #fff;
+        font-size: 1rem;
+    }
+
     li {
         margin: 12px 0;
         line-height: 1.5rem;
