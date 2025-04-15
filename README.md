@@ -4,7 +4,7 @@ An enhanced rich-text editor for crafting better-formatted LinkedIn posts with e
 
 Hosted at [https://linkedin-composer.simondoescloud.com](https://linkedin-composer.simondoescloud.com)
 
-![Banner Image](composer-linkedin-side-by-side-1.6.0.png)
+![Banner Image](composer-linkedin-side-by-side-1.7.0.png)
 
 ## Table of Contents
 
