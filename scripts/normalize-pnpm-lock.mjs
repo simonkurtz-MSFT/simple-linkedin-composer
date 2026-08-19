@@ -3,13 +3,9 @@ import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
 
 const lockfilePath = "pnpm-lock.yaml";
-const canonicalRegistry = "https://registry.npmjs.org";
-const tarballPattern = /(tarball:\s*)(https?:\/\/[^\s,}\]]+)/gu;
-const publicRegistryHosts = new Set([
-  "registry.npmjs.com",
-  "registry.npmjs.org",
-  "registry.yarnpkg.com",
-]);
+const inlineTarballPattern =
+  /(?:,\s*tarball:\s*[^,}\r\n]+)|(?:tarball:\s*[^,}\r\n]+,\s*)/gu;
+const blockTarballPattern = /^\s+tarball:\s*.*(?:\r?\n|$)/gmu;
 
 const runGit = (arguments_, { cwd = process.cwd(), input } = {}) =>
   spawnSync("git", arguments_, {
@@ -18,47 +14,8 @@ const runGit = (arguments_, { cwd = process.cwd(), input } = {}) =>
     input,
   });
 
-const normalizePackagePath = (pathname) =>
-  pathname.replace(/%40/giu, "@").replace(/%2f/giu, "/");
-
-export const normalizeTarballUrl = (value) => {
-  const url = new URL(value);
-
-  if (url.username || url.password) {
-    throw new Error("Lockfile tarball URLs must not contain credentials.");
-  }
-
-  if (publicRegistryHosts.has(url.hostname)) {
-    return `${canonicalRegistry}${normalizePackagePath(url.pathname)}`;
-  }
-
-  const isMicrosoftProxy =
-    url.hostname === "pkgs.dev.azure.com" ||
-    url.hostname.endsWith(".pkgs.dev.azure.com") ||
-    url.hostname.endsWith(".pkgs.visualstudio.com");
-
-  if (isMicrosoftProxy) {
-    const registryMarker = "/npm/registry/";
-    const registryIndex = url.pathname.indexOf(registryMarker);
-
-    if (registryIndex >= 0) {
-      const packagePath = url.pathname.slice(
-        registryIndex + registryMarker.length,
-      );
-      return `${canonicalRegistry}/${normalizePackagePath(packagePath)}`;
-    }
-  }
-
-  throw new Error(
-    "Lockfile contains a tarball URL outside the public npm registry policy.",
-  );
-};
-
 export const normalizeLockfile = (content) =>
-  content.replace(
-    tarballPattern,
-    (_match, prefix, value) => `${prefix}${normalizeTarballUrl(value)}`,
-  );
+  content.replace(inlineTarballPattern, "").replace(blockTarballPattern, "");
 
 export const normalizeStagedLockfile = ({ cwd = process.cwd() } = {}) => {
   const stagedDiff = runGit(
@@ -119,7 +76,7 @@ const isDirectRun =
 if (isDirectRun) {
   try {
     if (normalizeStagedLockfile()) {
-      console.log("Normalized staged pnpm lockfile registry URLs.");
+      console.log("Removed tarball metadata from the staged pnpm lockfile.");
     }
   } catch (error) {
     console.error(

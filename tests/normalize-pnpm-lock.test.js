@@ -6,11 +6,9 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
   normalizeLockfile,
   normalizeStagedLockfile,
-  normalizeTarballUrl,
 } from "../scripts/normalize-pnpm-lock.mjs";
 
-const canonicalTarball =
-  "https://registry.npmjs.org/example/-/example-1.0.0.tgz";
+const publicTarball = "https://registry.npmjs.org/example/-/example-1.0.0.tgz";
 const visualStudioProxyHost = ["ms-feed-2", "pkgs", "visualstudio", "com"].join(
   ".",
 );
@@ -40,6 +38,8 @@ const createRepository = () => {
 
 const lockfile = (tarball, suffix = "") =>
   `lockfileVersion: '9.0'\npackages:\n  example@1.0.0:\n    resolution: {integrity: sha512-test, tarball: ${tarball}}\n${suffix}`;
+const lockfileWithoutTarball = (suffix = "") =>
+  `lockfileVersion: '9.0'\npackages:\n  example@1.0.0:\n    resolution: {integrity: sha512-test}\n${suffix}`;
 
 afterEach(() => {
   for (const directory of temporaryRepositories.splice(0)) {
@@ -47,38 +47,38 @@ afterEach(() => {
   }
 });
 
-describe("lockfile URL normalization", () => {
-  it("leaves canonical public URLs unchanged", () => {
-    const content = lockfile(canonicalTarball);
+describe("lockfile tarball removal", () => {
+  it("leaves lockfiles without tarball metadata unchanged", () => {
+    const content = lockfileWithoutTarball();
     expect(normalizeLockfile(content)).toBe(content);
   });
 
-  it("normalizes noncanonical public registry URLs", () => {
-    expect(
-      normalizeTarballUrl(
-        "http://registry.yarnpkg.com/example/-/example-1.0.0.tgz",
-      ),
-    ).toBe(canonicalTarball);
-  });
-
-  it("normalizes Microsoft proxy URLs", () => {
-    expect(normalizeTarballUrl(proxyTarball)).toBe(canonicalTarball);
-  });
-
-  it("normalizes scoped proxy package paths", () => {
-    const azureProxyHost = ["pkgs", "dev", "azure", "com"].join(".");
-    const proxy = `https://${azureProxyHost}/example/project/_packaging/npm/npm/registry/%40scope%2Fpackage/-/package-1.0.0.tgz`;
-    expect(normalizeTarballUrl(proxy)).toBe(
-      "https://registry.npmjs.org/@scope/package/-/package-1.0.0.tgz",
+  it("removes public registry tarball metadata", () => {
+    expect(normalizeLockfile(lockfile(publicTarball))).toBe(
+      lockfileWithoutTarball(),
     );
   });
 
-  it("rejects unknown private registries without printing their URL", () => {
-    expect(() =>
-      normalizeTarballUrl(
-        "https://packages.example.test/npm/example-1.0.0.tgz",
-      ),
-    ).toThrow("outside the public npm registry policy");
+  it("removes Microsoft proxy tarball metadata", () => {
+    expect(normalizeLockfile(lockfile(proxyTarball))).toBe(
+      lockfileWithoutTarball(),
+    );
+  });
+
+  it("removes block-style tarball metadata", () => {
+    const content =
+      "lockfileVersion: '9.0'\npackages:\n  example@1.0.0:\n    resolution:\n      integrity: sha512-test\n      tarball: https://packages.example.test/example.tgz\n";
+    expect(normalizeLockfile(content)).toBe(
+      "lockfileVersion: '9.0'\npackages:\n  example@1.0.0:\n    resolution:\n      integrity: sha512-test\n",
+    );
+  });
+
+  it("removes a leading inline tarball property", () => {
+    const content =
+      "    resolution: {tarball: https://packages.example.test/example.tgz, integrity: sha512-test}\n";
+    expect(normalizeLockfile(content)).toBe(
+      "    resolution: {integrity: sha512-test}\n",
+    );
   });
 });
 
@@ -86,7 +86,7 @@ describe("staged lockfile normalization", () => {
   it("updates only the index when the lockfile is staged", () => {
     const directory = createRepository();
     const path = join(directory, "pnpm-lock.yaml");
-    const canonical = lockfile(canonicalTarball);
+    const canonical = lockfileWithoutTarball();
     const proxy = lockfile(proxyTarball);
     writeFileSync(path, canonical);
     git(directory, "add", "pnpm-lock.yaml");
@@ -102,7 +102,7 @@ describe("staged lockfile normalization", () => {
   it("preserves mixed staged and unstaged lockfile content", () => {
     const directory = createRepository();
     const path = join(directory, "pnpm-lock.yaml");
-    const canonical = lockfile(canonicalTarball);
+    const canonical = lockfileWithoutTarball();
     const staged = lockfile(proxyTarball);
     const workingTree = lockfile(proxyTarball, "# unrelated unstaged change\n");
     writeFileSync(path, canonical);

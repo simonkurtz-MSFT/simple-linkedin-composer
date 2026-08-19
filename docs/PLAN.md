@@ -11,15 +11,15 @@ This plan contains only open work. Each step requires explicit approval before i
 
 ## Priorities
 
-| Priority | Work | Impact | Effort | Step |
-| --- | --- | --- | --- | --- |
-| Red | Remove unsafe rendering of imported or persisted values | High | Medium | 4 |
-| Red | Reconcile privacy claims with runtime GitHub API and CDN requests | High | Medium | 4 |
-| Red | Add reproducible dependencies, seven-day cooldowns, immutable workflow pins, and registry policy | High | Medium | 2-3, 7 |
-| Orange | Add focused tests around post conversion, storage, and import/export behavior | High | Medium | 4 |
-| Orange | Replace the fixed-width interface with an accessible responsive composer workspace | High | High | 5-6 |
-| Orange | Build and validate production output before GitHub Pages deployment | High | Medium | 7 |
-| Green | Complete installable application metadata and offline behavior if justified | Medium | Medium | 7 or later |
+| Priority | Work                                                                                             | Impact | Effort | Step       |
+| -------- | ------------------------------------------------------------------------------------------------ | ------ | ------ | ---------- |
+| Red      | Remove unsafe rendering of imported or persisted values                                          | High   | Medium | 4          |
+| Red      | Reconcile privacy claims with runtime GitHub API and CDN requests                                | High   | Medium | 4          |
+| Red      | Add reproducible dependencies, seven-day cooldowns, immutable workflow pins, and registry policy | High   | Medium | 2-3, 7     |
+| Orange   | Add focused tests around post conversion, storage, and import/export behavior                    | High   | Medium | 4          |
+| Orange   | Replace the fixed-width interface with an accessible responsive composer workspace               | High   | High   | 5-6        |
+| Orange   | Build and validate production output before GitHub Pages deployment                              | High   | Medium | 7          |
+| Green    | Complete installable application metadata and offline behavior if justified                      | Medium | Medium | 7 or later |
 
 ## Step 2: Toolchain And Supply Chain
 
@@ -39,9 +39,9 @@ This plan contains only open work. Each step requires explicit approval before i
 
 **Scope:** Keep corporate install routing separate from public repository artifacts.
 
-- Add an installed repository pre-commit hook that normalizes staged pnpm lockfile tarball URLs to `https://registry.npmjs.org/`.
+- Configure pnpm to omit tarball URLs and add an installed repository pre-commit hook that removes any preserved `tarball` metadata from the staged pnpm lockfile.
 - Preserve unrelated staged and unstaged lockfile changes during normalization.
-- Add focused tests for public, proxy-style, scoped, canonical, staged-only, and mixed-index cases.
+- Add focused tests for absent, public, proxy-style, inline, block-style, staged-only, and mixed-index tarball cases.
 - Document that Microsoft proxy registries belong only in untracked user or machine configuration.
 - Verify tracked files contain no proxy credentials, tokens, or private feed URLs.
 

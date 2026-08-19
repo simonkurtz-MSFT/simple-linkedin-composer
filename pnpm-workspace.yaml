@@ -1,6 +1,7 @@
 packages:
   - .
 
+lockfileIncludeTarballUrl: false
 minimumReleaseAge: 10080
 minimumReleaseAgeIgnoreMissingTime: false
 minimumReleaseAgeStrict: true

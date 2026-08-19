@@ -20,18 +20,18 @@ Hosted at [https://linkedin-composer.simondoescloud.com](https://linkedin-compos
 
 ## ✨ Features
 
-- *Rich text formatting* (bold, italic, lists)
-- *Emoji picker* with search functionality
-- *Local storage* of post and template snippets
-- *Hashtag tracking* and quick insertion
-- *Export/import* snippets as JSON
-- *Zero data collection* (runs 100% in browser)
-- *Edge split-screen* optimized
+- _Rich text formatting_ (bold, italic, lists)
+- _Emoji picker_ with search functionality
+- _Local storage_ of post and template snippets
+- _Hashtag tracking_ and quick insertion
+- _Export/import_ snippets as JSON
+- _Zero data collection_ (runs 100% in browser)
+- _Edge split-screen_ optimized
 
 ## 🚀 Quick Start
 
 1. Enter your LinkedIn username.
-1. Compose or load a snippet. *Side-by-side is really nice in Edge!*
+1. Compose or load a snippet. _Side-by-side is really nice in Edge!_
 1. Click "Create a new LinkedIn Post".
 1. Click "Copy to Clipboard." **Do not just copy content from the editor.**
 1. Paste into the LinkedIn post.
@@ -57,32 +57,34 @@ Use the toolbar for formatting.
 
 ### Posting on LinkedIn
 
-1. Compose or load a snippet. *Side-by-side is really nice in Edge!*
+1. Compose or load a snippet. _Side-by-side is really nice in Edge!_
 1. Click "Create a new LinkedIn Post".
 1. Click "Copy to Clipboard." **Do not just copy content from the editor.**
 1. Paste into the LinkedIn post.
 
 ## 💾 Snippet Management
 
-| Action | How To |
-|--------|--------|
-| Save   | Click "Save snippet" after writing |
-| Load   | Click snippet name in table |
-| Delete | Click "Delete" button next to snippet |
-| Export | Click "Export" to download all snippets |
+| Action | How To                                                |
+| ------ | ----------------------------------------------------- |
+| Save   | Click "Save snippet" after writing                    |
+| Load   | Click snippet name in table                           |
+| Delete | Click "Delete" button next to snippet                 |
+| Export | Click "Export" to download all snippets               |
 | Import | Click "Import" to upload snippets (handles de-duping) |
+
+Imports accept the existing exported JSON object format. Each key must be `snippet-` followed by a title of up to 50 characters. Each value may be the exported JSON string or its parsed object and must contain a Quill `delta`, a valid timestamp, and an optional Boolean template flag. Supported formatting is bold, italic, ordered or bullet lists, and HTTP(S) links. Unknown or malformed entries are skipped without deleting other valid local snippets.
 
 ## 🏷️ Hashtags
 
-*Simple LinkedIn Composer* automatically detects hashtags in your post and tallies them in the hashtag organizer.
+_Simple LinkedIn Composer_ automatically detects hashtags in your post and tallies them in the hashtag organizer.
 The number of occurrences in your post is counted to give you insight into your own usage. You can sort by name or frequency of use (count).
 Clicking ➕ inserts the hashtag at the cursor in the editor. Clicking the LinkedIn icon opens its context on LinkedIn.
 
 ## 🔒 Privacy & Data
 
-There are **no server communications, no cloud syncs, no tracking mechanisms, no cookies, no ads, etc.**
+The application makes **no background requests to third-party services**. Its scripts, styles, editor libraries, and emoji data ship with the static site. External sites open only when you choose one of the displayed links.
 
-**Everything stays in your browser's local storage.**
+**Post content, snippets, hashtags, and profile settings stay in your browser's local storage.** There is no cloud sync, tracking, cookie, or advertising service.
 
 This tool is **entirely free to use**. Please see the very permissive [MIT license](LICENSE) for details.
 
@@ -90,13 +92,13 @@ Enjoy it!
 
 ## 🌐 Browser Support
 
-| Browser       | Support Level | Notes                  |
-|---------------|---------------|------------------------|
-| *Chrome*      | ✅ Full       |                       |
-| *Edge*        | ✅ Full       | Use split-screen      |
-| *Firefox*     | ✅ Full       |                       |
-| *Safari*      | ✅ Full       | MacOS/iOS 15+         |
-| *Mobile*      | ⚠️ Limited    | Use Desktop Version   |
+| Browser   | Support Level | Notes               |
+| --------- | ------------- | ------------------- |
+| _Chrome_  | ✅ Full       |                     |
+| _Edge_    | ✅ Full       | Use split-screen    |
+| _Firefox_ | ✅ Full       |                     |
+| _Safari_  | ✅ Full       | MacOS/iOS 15+       |
+| _Mobile_  | ⚠️ Limited    | Use Desktop Version |
 
 ## Development
 
@@ -109,7 +111,7 @@ The application remains plain HTML, CSS, and JavaScript. Vite provides the local
 
 Use `pnpm check` to run formatting, linting, tests, and the production build. The generated static site is written to `dist/`.
 
-The pre-commit hook normalizes only the staged `pnpm-lock.yaml` content to the public npm registry and preserves unstaged lockfile work.
+The repository configures pnpm not to include tarball URLs. The pre-commit hook removes any `tarball` metadata preserved in the staged `pnpm-lock.yaml` and leaves unstaged lockfile work unchanged.
 
 Corporate or Microsoft proxy registry routing belongs in untracked user or machine pnpm configuration. Do not add proxy URLs, credentials, tokens, or private feed settings to repository files.
 
@@ -125,7 +127,7 @@ We welcome:
 
 ### Thank You
 
-A big *THANK YOU!* to the following contributors:
+A big _THANK YOU!_ to the following contributors:
 
 - [Carolina-GomezM](https://github.com/Carolina-GomezM)
 
@@ -135,6 +137,6 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-*Try it now:* [https://linkedin-composer.simondoescloud.com](https://linkedin-composer.simondoescloud.com)
+_Try it now:_ [https://linkedin-composer.simondoescloud.com](https://linkedin-composer.simondoescloud.com)
 
-*Have questions?* Open an issue on [GitHub](https://github.com/simonkurtz-MSFT/simple-linkedin-composer/issues)
+_Have questions?_ Open an issue on [GitHub](https://github.com/simonkurtz-MSFT/simple-linkedin-composer/issues)

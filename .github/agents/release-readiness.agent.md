@@ -21,7 +21,7 @@ Prepare reviewed, reproducible static releases without publishing them.
 ## Procedure
 
 1. Inspect package, lockfile, hook, workflow, Pages, version, privacy, and documentation changes in scope.
-2. Apply the seven-day cooldown, exact package pins, canonical public lockfile registry, immutable Action SHAs, explicit timeouts, and least-privilege permissions.
+2. Apply the seven-day cooldown, exact package pins, tarball-free lockfile policy, immutable Action SHAs, explicit timeouts, and least-privilege permissions.
 3. Run the `release-validation` skill.
 4. Verify the production build contains only intended static assets and no local configuration or source-only artifacts.
 5. Report commands, results, skipped checks, exceptions, residual risks, and the next approval gate.

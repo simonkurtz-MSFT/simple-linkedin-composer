@@ -14,8 +14,8 @@
     "preview": "vite preview",
     "hooks:install": "node scripts/install-hooks.mjs",
     "lockfile:normalize": "node scripts/normalize-pnpm-lock.mjs",
-    "format": "prettier --write package.json pnpm-workspace.yaml *.config.js .github/dependabot.yml src/main.js scripts/**/*.mjs tests/**/*.js",
-    "format:check": "prettier --check package.json pnpm-workspace.yaml *.config.js .github/dependabot.yml src/main.js scripts/**/*.mjs tests/**/*.js",
+    "format": "prettier --write package.json pnpm-workspace.yaml *.config.js .github/dependabot.yml src/main.js src/hashtag-data.js src/post-conversion.js src/snippet-data.js scripts/**/*.mjs tests/**/*.js",
+    "format:check": "prettier --check package.json pnpm-workspace.yaml *.config.js .github/dependabot.yml src/main.js src/hashtag-data.js src/post-conversion.js src/snippet-data.js scripts/**/*.mjs tests/**/*.js",
     "lint": "pnpm lint:js && pnpm lint:css && pnpm lint:html && pnpm lint:md",
     "lint:js": "eslint .",
     "lint:css": "stylelint \"src/**/*.css\"",
@@ -29,6 +29,7 @@
     "datatables.net-dt": "1.13.11",
     "emoji-picker-element": "1.29.1",
     "jquery": "4.0.0",
+    "emoji-picker-element-data": "1.8.0",
     "quill": "2.0.3",
     "toastr": "2.1.4"
   },

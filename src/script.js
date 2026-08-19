@@ -1,3 +1,18 @@
+import { convertSemanticHtmlToLinkedInText } from './post-conversion.js';
+import {
+    countSnippetHashtags,
+    extractHashtags,
+    sortHashtagsByCount as sortHashtagEntriesByCount,
+    sortHashtagsByName as sortHashtagEntriesByName,
+} from './hashtag-data.js';
+import {
+    createSnippetExport,
+    importSnippets as mergeSnippetImport,
+    loadStoredSnippets,
+    parseSnippet,
+    SNIPPET_KEY_PREFIX,
+} from './snippet-data.js';
+
 (() => {
     'use strict';
 
@@ -9,9 +24,7 @@
     const LINKEDIN_USER_ID_KEY = 'linkedin_id';
     const LINKEDIN_BASE_URL = 'https://www.linkedin.com/in/';
 
-    const GITHUB_API_URL = 'https://api.github.com/repos/simonkurtz-MSFT/simple-linkedin-composer';
-
-    const KEY_PREFIX = "snippet-";
+    const KEY_PREFIX = SNIPPET_KEY_PREFIX;
 
     // Sample text to load into the editor
     const samplePostJson = `{
@@ -36,20 +49,6 @@
     ]
 }`;
 
-    // The Unicode code points are starting points for the ranges in hexadecimal format in their Mathematical variants (https://www.unicode.org/charts/PDF/U1D400.pdf).
-    // Enter the hex code here (without leading `0x`): https://unicodeplus.com
-    // Generate specific Unicode maps
-    const latinToMathSansSerif = generateUnicodeMap(0x1D5A0);           // Mathematical Sans-Serif
-    const latinToMathBold = generateUnicodeMap(0x1D400);                // Mathematical Bold
-    const latinToMathItalic = generateUnicodeMap(0x1D434);              // Mathematical Italic
-    const latinToMathBoldItalic = generateUnicodeMap(0x1D468);          // Mathematical Bold Italic
-    // Generate specific Unicode maps for digits
-    const digitsToMathSansSerif = generateDigitUnicodeMap(0x1D7E2);     // Mathematical Sans-Serif
-    const digitsToMathBold = generateDigitUnicodeMap(0x1D7CE);          // Mathematical Bold
-
-    // Add special cases for specific characters (e.g., 'h' in italic)
-    latinToMathItalic['h'] = '\u210E';
-
     let hasUnsavedChanges = false;      // Flag to track unsaved changes
 
     let sortNameAsc = true;             // Toggle state for name sorting
@@ -71,8 +70,7 @@
         }
 
         extractHashtags(text) {
-            const hashtagRegex = /#\w+/g;
-            return (text.match(hashtagRegex) || []);
+            return extractHashtags(text);
         }
 
         insertHashtagIntoEditor(hashtag) {
@@ -105,6 +103,7 @@
                 const $linkedinLink = $('<a>')
                     .attr('href', `https://www.linkedin.com/feed/hashtag/?keywords=${tag.substring(1)}`)
                     .attr('target', '_blank')
+                    .attr('rel', 'noopener noreferrer')
                     .addClass('linkedin-icon-link')
                     .attr('title', 'View this hashtag on LinkedIn')
                     .append($('<img>')
@@ -119,34 +118,15 @@
         }
 
         sortHashtagsByCount(asc = true) {
-            return Object.entries(this.hashtags).sort(([tagA, countA], [tagB, countB]) => {
-                if (countA === countB) {
-                    return tagA.localeCompare(tagB);
-                }
-                return asc ? countA - countB : countB - countA;
-            });
+            return sortHashtagEntriesByCount(this.hashtags, asc);
         }
 
         sortHashtagsByName(asc = true) {
-            return Object.entries(this.hashtags).sort(([tagA], [tagB]) => {
-                return asc ? tagA.localeCompare(tagB) : tagB.localeCompare(tagA);
-            });
+            return sortHashtagEntriesByName(this.hashtags, asc);
         }
 
         updateHashtagCounts(snippetsData) {
-            this.hashtags = {};
-            Object.values(snippetsData).forEach(snippet => {
-                const delta = snippet.delta || {};
-                const ops = delta.ops || [];
-                ops.forEach(op => {
-                    if (op.insert && typeof op.insert === 'string') {
-                        const snippetHashtags = this.extractHashtags(op.insert);
-                        snippetHashtags.forEach(tag => {
-                            this.hashtags[tag] = (this.hashtags[tag] || 0) + 1;
-                        });
-                    }
-                });
-            });
+            this.hashtags = countSnippetHashtags(snippetsData);
             localStorage.setItem("hashtags", JSON.stringify(this.hashtags));
         }
     }
@@ -180,14 +160,8 @@
         }
 
         loadSnippets() {
-            this.snippetsData = {};
-            const snippetKeys = Object.keys(localStorage).filter(key => key.startsWith(this.KEY_PREFIX));
-
-            snippetKeys.forEach(key => {
-                const snippet = JSON.parse(localStorage.getItem(key));
-                const title = key.replace(this.KEY_PREFIX, '');
-                this.snippetsData[title] = snippet;
-            });
+            const { snippets } = loadStoredSnippets(localStorage);
+            this.snippetsData = snippets;
         }
 
         saveSnippet(title, content, isTemplate) {
@@ -203,29 +177,6 @@
             hasUnsavedChanges = false; // Reset the flag since the snippet is saved
 
             toastr.success('Snippet saved successfully', 'Success');
-        }
-    }
-
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-    // GitHub Stats
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-    async function fetchGitHubStats() {
-        try {
-            const response = await fetch(GITHUB_API_URL);
-
-            if (!response.ok) {
-                throw new Error('Failed to fetch GitHub stats');
-            }
-
-            const data = await response.json();
-            $('#star-count').text(data.stargazers_count);
-            $('#fork-count').text(data.forks_count);
-            $('#watcher-count').text(data.subscribers_count); // it's actually subscribers, not watchers/watchers_count
-        } catch (error) {
-            console.error('Error fetching GitHub stats:', error);
         }
     }
 
@@ -330,14 +281,7 @@
 
     // Export functionality
     function exportSnippets() {
-        const data = {};
-
-        // Filter localStorage keys that start with "snippet-"
-        Object.keys(localStorage).forEach((key) => {
-            if (key.startsWith('snippet-')) {
-                data[key] = localStorage.getItem(key);
-            }
-        });
+        const data = createSnippetExport(localStorage);
 
         const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
         const filename = `LinkedIn-Composer-Data-${timestamp}.json`;
@@ -351,7 +295,6 @@
     function filterTable(filter) {
         let table = $('#snippets-table').DataTable();
         let lowerCaseFilter = filter.trim().toLowerCase();
-        console.log(lowerCaseFilter);
         table.column(0).search(lowerCaseFilter).draw(); // Search only the snippets title column
 
         updateSnippetsHeader();
@@ -374,44 +317,19 @@
 
             try {
                 const content = await file.text();
-                const importedData = JSON.parse(content);
-                let importedCount = 0;
+                const result = mergeSnippetImport(content, localStorage);
 
-                // Import data into localStorage
-                $.each(importedData, (key, value) => {
-                    const existingItem = localStorage.getItem(key);
-
-                    if (existingItem) {
-                        const existingData = JSON.parse(existingItem);
-                        value = JSON.parse(value);
-
-                        if (existingData.timestamp === value.timestamp) {
-                            console.warn(`Duplicate entry with key ${key}. Skipping.`);
-                            return;
-                        } else if (existingData.timestamp > value.timestamp) {
-                            console.warn(`Older entry with key ${key}. Skipping.`);
-                            return;
-                        }
-                    }
-
-                    // Parse nested JSON strings if necessary
-                    const parsedValue = typeof value === 'string' && value.startsWith('{')
-                        ? JSON.parse(value)
-                        : value;
-
-                    localStorage.setItem(key, JSON.stringify(parsedValue));
-                    importedCount++;
-                });
-
-                if (importedCount > 0) {
-                    toastr.success(`Successfully imported ${importedCount} snippet(s).`, 'Success');
+                if (result.imported > 0) {
+                    toastr.success(`Successfully imported ${result.imported} snippet(s).`, 'Success');
 
                     updateSnippetsList(); // Refresh the snippets list
                 } else {
                     toastr.info('No new snippets were imported. The data may already exist in localStorage.', 'Info');
                 }
-            } catch (error) {
-                console.error('Error importing data:', error);
+                if (result.invalid > 0) {
+                    toastr.warning(`${result.invalid} invalid import entr${result.invalid === 1 ? 'y was' : 'ies were'} skipped.`, 'Warning');
+                }
+            } catch {
                 toastr.error('Failed to import data. Please check the file format.', 'Error');
             }
         });
@@ -426,7 +344,11 @@
         const savedSnippet = localStorage.getItem(key);
 
         if (savedSnippet) {
-            const snippet = JSON.parse(savedSnippet);
+            const snippet = parseSnippet(savedSnippet);
+            if (!snippet) {
+                toastr.error('This snippet is invalid and could not be loaded.', 'Error');
+                return;
+            }
             const { delta } = snippet;
             quill.setContents(delta);
             hasUnsavedChanges = false;
@@ -452,12 +374,21 @@
 
             const isTemplate = snippet.isTemplate === true ? '✔' : '';
 
-            $snippetsTable.row.add([
-                `<span class="snippet-link" data-key="${title}">${title}</span>`,
-                `<span data-key="timestamp" data-value="${isoTimestamp}">${displayTimestamp}</span>`,
-                `<span data-key="template" data-value="${snippet.isTemplate}">${isTemplate}</span>`,
-                `<button class="delete-snippet" data-key="${title}">Delete</button>`
-            ]);
+            const row = $snippetsTable.row.add([title, displayTimestamp, isTemplate, title]);
+            const cells = $(row.node()).children('td');
+
+            cells.eq(0).empty().append(
+                $('<span>').addClass('snippet-link').text(title).data('key', title)
+            );
+            cells.eq(1).empty().append(
+                $('<span>').text(displayTimestamp).data('key', 'timestamp').data('value', isoTimestamp)
+            );
+            cells.eq(2).empty().append(
+                $('<span>').text(isTemplate).data('key', 'template').data('value', snippet.isTemplate)
+            );
+            cells.eq(3).empty().append(
+                $('<button>').attr('type', 'button').addClass('delete-snippet').text('Delete').data('key', title)
+            );
         });
 
         $snippetsTable.draw();
@@ -498,6 +429,7 @@
             searching: true,   // roll our own
             dom: '<"top"f>rt<"bottom"lp><"clear">',
             columnDefs: [
+                { targets: [0, 3], render: $.fn.dataTable.render.text() },
                 { orderable: false, targets: 3 }, // Disable sorting for the "Delete" column
             ],
             order: [[1, 'desc']], // Set the initial sort order for the "timestamp" column (index 1) to descending
@@ -569,131 +501,18 @@
 
     async function copyToClipboard() {
         const semanticHtml = quill.getSemanticHTML().trim();
-        console.log(`\n1/3) Semantic HTML input:\n\n${semanticHtml}`);
-
-        // 1) String-replace spaces, apostrophes, and quotes. We can't replace the ampersand here as DOMParser would reverse that.
-        let modifiedHtml = semanticHtml
-            .replaceAll('<p>&nbsp;</p>', '<p></p>')
-            .replaceAll('&nbsp;', ' ')
-            .replaceAll('&#39;', "'")
-            .replaceAll('&quot;', '"');
-
-        console.log(`\n2/3) Modified HTML input:\n\n${modifiedHtml}`);
-
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(modifiedHtml, 'text/html');
-
-        // 2) Modify Bold and italic text
-        Array.from(doc.body.childNodes).forEach(processNode);
-
-        // 3) Process unordered lists (<ul>) into plain text with bullet points
-        const unorderedLists = $(doc).find('ul');
-        unorderedLists.each((_, ul) => {
-            const $ul = $(ul);
-            const listItems = $ul.find('li').map((_, li) => {
-                const $paragraph = $('<p>').text(`   • ${$(li).text().trim()}`);
-                return $paragraph.get(0); // Return the DOM element for replaceWith
-            }).get();
-            $ul.replaceWith(...listItems); // Replace the <ul> with individual <p> elements
-        });
-
-        // 4) Process ordered lists (<ol>) into individual paragraphs
-        const orderedLists = $(doc).find('ol');
-        orderedLists.each((_, ol) => {
-            const $ol = $(ol);
-            const listItems = $ol.find('li').map((index, li) => {
-                const $paragraph = $('<p>').text(`   ${index + 1}. ${$(li).text().trim()}`);
-                return $paragraph.get(0); // Return the DOM element for replaceWith
-            }).get();
-            $ol.replaceWith(...listItems); // Replace the <ol> with individual <p> elements
-        });
-
-        // 5) Serialize the modified DOM back to a string and replace the special encoded ampersand character with the actual character.
-        modifiedHtml = doc.body.innerHTML.trim()
-            .replaceAll('&amp;', '&');
-
-        // 6) Remove <strong>, <b>, <em>, and <i> tags using regex
-        modifiedHtml = modifiedHtml.replace(/<\/?(strong|b|em|i)>/g, '');
-
-        // 7) Replace <p> and </p> with Unicode paragraphBreak and newLine
-        const newLine = '\n'; // Newline character
-        modifiedHtml = modifiedHtml.replace(/<p>/g, '').replace(/<\/p>/g, newLine);
-
-        // 8) Append link to Simple LinkedIn Composer
-        if (!modifiedHtml.includes("✒️")) {
-            modifiedHtml += `${newLine}${newLine}✒️ Post written in Simple LinkedIn Composer. Always free, never tracked. ✒️${newLine}https://linkedin-composer.simondoescloud.com`;
-        }
-
-        console.log(`\n3/3) Modified output:\n\n${modifiedHtml}`);
+        const clipboardText = convertSemanticHtmlToLinkedInText(semanticHtml);
 
         try {
             const clipboardItem = new ClipboardItem({
-                'text/plain': new Blob([modifiedHtml], { type: 'text/plain' }),
+                'text/plain': new Blob([clipboardText], { type: 'text/plain' }),
             });
 
             // Write the ClipboardItem to the clipboard
             await navigator.clipboard.write([clipboardItem]);
-        } catch (err) {
-            console.error('Failed to copy content: ', err);
+            toastr.success('Post copied to clipboard. Paste it into LinkedIn!', 'Success');
+        } catch {
             toastr.error('Failed to copy content. Please try again.', 'Error');
-        }
-
-        toastr.success('Post copied to clipboard. Paste it into LinkedIn!', 'Success');
-    }
-
-    // Function to get styled Unicode character
-    function getStyledUnicode(char, isBold, isItalic) {
-        // Check if the character is a Latin letter (A-Z or a-z)
-        if ((char >= 'A' && char <= 'Z') || (char >= 'a' && char <= 'z')) {
-            if (isBold && isItalic) {
-                return latinToMathBoldItalic[char] || char; // Bold Italic
-            } else if (isBold) {
-                return latinToMathBold[char] || char;       // Bold
-            } else if (isItalic) {
-                return latinToMathItalic[char] || char;     // Italic
-            } else {
-                return latinToMathSansSerif[char] || char;  // Sans-Serif
-            }
-        }
-
-        // Check if the character is a digit (0-9).
-        // There are no italic Mathematical variants, so we only check for bold and sans-serif.
-        if (char >= '0' && char <= '9') {
-            if (isBold) {
-                return digitsToMathBold[char] || char;      // Bold
-            } else {
-                return digitsToMathSansSerif[char] || char; // Sans-Serif
-            }
-        }
-
-        // Return the original character if it's not a Latin letter or digit
-        return char;
-    }
-
-    function processNode(node) {
-        if (node.nodeType === Node.TEXT_NODE) {
-            // For text nodes, determine the formatting of the parent element
-            const parent = node.parentElement;
-
-            // Skip processing if the parent is an anchor tag (<a>) or if the text contains a URL. Otherwise, URLs will be
-            // converted to Unicode characters and not be interpreted correctly as links.
-            if (parent && parent.tagName === 'A') {
-                return; // Skip processing links
-            }
-            if (node.textContent.match(/https?:\/\/[^\s]+/)) {
-                return; // Skip processing text nodes containing URLs
-            }
-
-            const isBold = parent && (parent.tagName === 'B' || parent.tagName === 'STRONG');
-            const isItalic = parent && (parent.tagName === 'I' || parent.tagName === 'EM');
-
-            // Transform the text content based on the formatting
-            node.textContent = Array.from(node.textContent)
-                .map((char) => getStyledUnicode(char, isBold, isItalic))
-                .join('');
-        } else if (node.nodeType === Node.ELEMENT_NODE) {
-            // Recursively process child nodes
-            Array.from(node.childNodes).forEach(processNode);
         }
     }
 
@@ -901,30 +720,6 @@
         quill.on('text-change', () => hasUnsavedChanges = true);
     }
 
-    // Generate Unicode translations for Latin characters
-    function generateDigitUnicodeMap(baseCodePoint) {
-        const map = {};
-
-        for (let i = 0; i < 10; i++) {
-            map[String.fromCharCode(48 + i)] = String.fromCodePoint(baseCodePoint + i);         // Digits 0-9
-        }
-
-        return map;
-    }
-
-    function generateUnicodeMap(baseCodePoint) {
-        const map = {};
-
-        for (let i = 0; i < 26; i++) {
-            map[String.fromCharCode(65 + i)] = String.fromCodePoint(baseCodePoint + i);         // Uppercase A-Z
-            map[String.fromCharCode(97 + i)] = String.fromCodePoint(baseCodePoint + 26 + i);    // Lowercase a-z
-        }
-
-        return map;
-    }
-
-
-
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // Startup
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -933,9 +728,6 @@
         snippetManager = new SnippetManager();
         hashtagManager = new HashtagManager();
         quill = initializeQuill();
-
-        // Fetch the stats on page load
-        fetchGitHubStats();
 
         // Call the function to load the LinkedIn user ID on page load
         loadLinkedInUserId();
