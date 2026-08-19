@@ -104,9 +104,14 @@ The application remains plain HTML, CSS, and JavaScript. Vite provides the local
 
 1. Install the Node.js version from `.nvmrc` and enable pnpm `11.21.0`.
 1. Run `pnpm install --frozen-lockfile`.
+1. Run `pnpm hooks:install` once per clone to configure the repository-managed Git hooks.
 1. Run `pnpm dev` for local development.
 
 Use `pnpm check` to run formatting, linting, tests, and the production build. The generated static site is written to `dist/`.
+
+The pre-commit hook normalizes only the staged `pnpm-lock.yaml` content to the public npm registry and preserves unstaged lockfile work.
+
+Corporate or Microsoft proxy registry routing belongs in untracked user or machine pnpm configuration. Do not add proxy URLs, credentials, tokens, or private feed settings to repository files.
 
 ## 🤝 Contributing
 
