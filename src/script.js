@@ -233,6 +233,8 @@ import {
         sortCountAsc = !sortCountAsc; // Toggle sorting order
         hashtagManager.hashtags = Object.fromEntries(sortedHashtags);
         hashtagManager.renderHashtagList();
+        $('#sort-count').attr('aria-pressed', 'true');
+        $('#sort-name').attr('aria-pressed', 'false');
     }
 
     function sortHashtagsByName() {
@@ -240,6 +242,8 @@ import {
         sortNameAsc = !sortNameAsc; // Toggle sorting order
         hashtagManager.hashtags = Object.fromEntries(sortedHashtags);
         hashtagManager.renderHashtagList();
+        $('#sort-name').attr('aria-pressed', 'true');
+        $('#sort-count').attr('aria-pressed', 'false');
     }
 
     // Function to update hashtag counts in local storage
@@ -327,6 +331,7 @@ import {
                     toastr.success(`Successfully imported ${result.imported} snippet(s).`, 'Success');
 
                     updateSnippetsList(); // Refresh the snippets list
+                    updateHashtagCounts();
                 } else {
                     toastr.info('No new snippets were imported. The data may already exist in localStorage.', 'Info');
                 }
@@ -431,6 +436,7 @@ import {
 
         snippetManager.saveSnippet(title, quill.getContents(), isTemplate);
         updateSnippetsList();
+        updateHashtagCounts();
     }
 
     // Initialize the DataTable with custom search functionality
@@ -538,8 +544,13 @@ import {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     function clearEditor() {
+        if (!confirmUnsavedChanges()) {
+            return;
+        }
+
         quill.setText('');
         hasUnsavedChanges = false; // Reset the flag since the editor is cleared intentionally
+        quill.focus();
     }
 
     // Function to check for unsaved changes and prompt for confirmation
@@ -556,7 +567,8 @@ import {
             !$(event.target).closest('.emoji-picker-container').length &&
             !$(event.target).closest('.ql-emoji').length
         ) {
-            $('.emoji-picker-container').hide();
+            $('.emoji-picker-container').hide().attr('aria-hidden', 'true');
+            $('.ql-emoji').attr('aria-expanded', 'false');
         }
     }
 
@@ -577,7 +589,8 @@ import {
         if (range) {
             quill.insertText(range.index, emoji);
         }
-        $('.emoji-picker-container').hide();
+        $('.emoji-picker-container').hide().attr('aria-hidden', 'true');
+        $('.ql-emoji').attr('aria-expanded', 'false').trigger('focus');
     }
 
     // Toggle the emoji picker visibility
@@ -591,7 +604,10 @@ import {
             left: editorOffset.left + 10,
         });
 
-        $emojiPicker.toggle(); // Toggle visibility
+        const isOpen = !$emojiPicker.is(':visible');
+        $emojiPicker.toggle(isOpen);
+        $emojiPicker.attr('aria-hidden', String(!isOpen));
+        $('.ql-emoji').attr('aria-expanded', String(isOpen));
     }
 
     // Initialize Quill
@@ -635,6 +651,8 @@ import {
                 $button.attr('title', 'Remove Formatting from selected content');
             } else if ($button.hasClass('ql-emoji')) {
                 $button.attr('title', 'Insert Emoji');
+                $button.attr('aria-controls', 'emoji-picker-panel');
+                $button.attr('aria-expanded', 'false');
             } else if ($button.hasClass('ql-clear')) {
                 $button.attr('title', 'Clear Editor');
             }
@@ -732,6 +750,12 @@ import {
         $(document).on('click', (e) => hideEmojiPicker(e));
         $('#editor-container').on('copy', async () => await copyToClipboard());
         quill.on('text-change', () => hasUnsavedChanges = true);
+        $(document).on('keydown', (event) => {
+            if (event.key === 'Escape' && $('.emoji-picker-container').is(':visible')) {
+                $('.emoji-picker-container').hide().attr('aria-hidden', 'true');
+                $('.ql-emoji').attr('aria-expanded', 'false').trigger('focus');
+            }
+        });
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////

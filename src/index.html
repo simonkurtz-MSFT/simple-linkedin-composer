@@ -103,7 +103,13 @@
 
           <div class="editor-shell">
             <section id="editor-container" aria-label="LinkedIn post editor"></section>
-            <div class="emoji-picker-container">
+            <div
+              id="emoji-picker-panel"
+              class="emoji-picker-container"
+              role="dialog"
+              aria-label="Choose an emoji"
+              aria-hidden="true"
+            >
               <emoji-picker></emoji-picker>
             </div>
           </div>
@@ -210,8 +216,8 @@
             </button>
             <div id="hashtags-content" class="accordion-content open">
               <div id="hashtag-controls" class="segmented-control" aria-label="Sort hashtags">
-                <button id="sort-name" type="button">Name</button>
-                <button id="sort-count" type="button">Frequency</button>
+                <button id="sort-name" type="button" aria-pressed="false">Name</button>
+                <button id="sort-count" type="button" aria-pressed="false">Frequency</button>
               </div>
               <div id="hashtag-list" class="hashtag-grid"></div>
             </div>
