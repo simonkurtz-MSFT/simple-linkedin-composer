@@ -95,7 +95,7 @@ describe("semantic post conversion", () => {
 
     expect(parsedHtml).toBe("<p>It's fine</p>");
     expect(result).toBe(
-      "𝖨𝗍'𝗌 𝖿𝗂𝗇𝖾\n\n\n✒️ Post written in Simple LinkedIn Composer. Always free, never tracked. ✒️\nhttps://linkedin-composer.simondoescloud.com",
+      "𝖨𝗍'𝗌 𝖿𝗂𝗇𝖾\n\n\n✒️ Post written in Simple LinkedIn Composer. ✒️\nhttps://linkedin-composer.simondoescloud.com",
     );
   });
 

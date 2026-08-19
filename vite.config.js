@@ -14,13 +14,9 @@ const copyStaticAssets = () => ({
       resolve(outputDirectory, "images"),
       { recursive: true },
     );
-    await Promise.all(
-      ["manifest.json", "robots.txt"].map((fileName) =>
-        copyFile(
-          resolve(sourceDirectory, fileName),
-          resolve(outputDirectory, fileName),
-        ),
-      ),
+    await copyFile(
+      resolve(sourceDirectory, "robots.txt"),
+      resolve(outputDirectory, "robots.txt"),
     );
   },
 });

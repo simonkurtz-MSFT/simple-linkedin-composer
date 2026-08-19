@@ -1,145 +1,115 @@
 # Simple LinkedIn Composer
 
-An enhanced rich-text editor for crafting better-formatted LinkedIn posts with emoji support and local snippet storage.
+A local-first rich-text workspace for drafting LinkedIn posts, preserving supported formatting, and reusing snippets and hashtags.
 
 Hosted at [https://linkedin-composer.simondoescloud.com](https://linkedin-composer.simondoescloud.com)
 
-![Banner Image](composer-linkedin-side-by-side-1.7.0.png)
+![Simple LinkedIn Composer desktop workspace](tests/browser/composer.spec.js-snapshots/home-desktop-chromium-win32.png)
 
-## Table of Contents
+## Features
 
-- [✨ Features](#-features)
-- [🚀 Quick Start](#-quick-start)
-- [📖 Detailed Usage Guide](#-detailed-usage-guide)
-- [💾 Snippet Management](#-snippet-management)
-- [🏷️ Hashtags](#%EF%B8%8F-hashtags)
-- [🔒 Privacy & Data](#-privacy--data)
-- [🌐 Browser Support](#-browser-support)
-- [🤝 Contributing](#-contributing)
-- [📜 License](#-license)
+- Compose posts with bold, italic, ordered-list, bullet-list, link, and emoji support.
+- Convert supported formatting into characters that survive pasting into LinkedIn.
+- Save reusable drafts and templates in browser local storage.
+- Search snippets and sort reusable hashtags by name or frequency.
+- Export and import snippets as validated JSON.
+- Use a responsive workspace tested at desktop and mobile Chromium viewports.
+- Keep composer content local with no cloud synchronization.
 
-## ✨ Features
+## Usage
 
-- _Rich text formatting_ (bold, italic, lists)
-- _Emoji picker_ with search functionality
-- _Local storage_ of post and template snippets
-- _Hashtag tracking_ and quick insertion
-- _Export/import_ snippets as JSON
-- _Local-first composer data_ with no cloud sync
-- _Anonymous, aggregate usage and performance analytics_
-- _Edge split-screen_ optimized
+1. Enter the final segment of your LinkedIn profile URL in **LinkedIn profile ID**.
+1. Compose a post or select **Load sample**.
+1. Apply supported formatting with the editor toolbar.
+1. Select **Copy post**.
+1. Select **Open LinkedIn**, paste the converted post, review it, and publish from LinkedIn.
 
-## 🚀 Quick Start
+Do not copy directly from the editor when you need formatting conversion; use **Copy post**.
 
-1. Enter your LinkedIn username.
-1. Compose or load a snippet. _Side-by-side is really nice in Edge!_
-1. Click "Create a new LinkedIn Post".
-1. Click "Copy to Clipboard." **Do not just copy content from the editor.**
-1. Paste into the LinkedIn post.
+## Snippet management
 
-## 📖 Detailed Usage Guide
-
-### Setting Up
-
-1. Get your LinkedIn username from your LinkedIn profile URL (e.g. [https://www.linkedin.com/in/simonkurtz/](https://www.linkedin.com/in/simonkurtz/))
-1. Enter it in the "LinkedIn user id" field (saves automatically)
-
-### Composing Posts
-
-If you are starting with your first post, you can load a sample via the button under the editor.
-
-Use the toolbar for formatting.
-
-### Saving Posts
-
-1. Click "Save snippet"
-1. Add a descriptive title (max 50 chars)
-1. Mark as template (optional) for frequent-use posts
-
-### Posting on LinkedIn
-
-1. Compose or load a snippet. _Side-by-side is really nice in Edge!_
-1. Click "Create a new LinkedIn Post".
-1. Click "Copy to Clipboard." **Do not just copy content from the editor.**
-1. Paste into the LinkedIn post.
-
-## 💾 Snippet Management
-
-| Action | How To                                                |
-| ------ | ----------------------------------------------------- |
-| Save   | Click "Save snippet" after writing                    |
-| Load   | Click snippet name in table                           |
-| Delete | Click "Delete" button next to snippet                 |
-| Export | Click "Export" to download all snippets               |
-| Import | Click "Import" to upload snippets (handles de-duping) |
+| Action | How to use it                                       |
+| ------ | --------------------------------------------------- |
+| Save   | Enter a title, optionally select Template, and save |
+| Load   | Select the snippet title in the library             |
+| Delete | Select the snippet's delete action                 |
+| Export | Download all saved snippets as JSON                |
+| Import | Select a compatible JSON export                    |
 
 Imports accept the existing exported JSON object format. Each key must be `snippet-` followed by a title of up to 50 characters. Each value may be the exported JSON string or its parsed object and must contain a Quill `delta`, a valid timestamp, and an optional Boolean template flag. Supported formatting is bold, italic, ordered or bullet lists, and HTTP(S) links. Unknown or malformed entries are skipped without deleting other valid local snippets.
 
-## 🏷️ Hashtags
+## Hashtags
 
-_Simple LinkedIn Composer_ automatically detects hashtags in your post and tallies them in the hashtag organizer.
-The number of occurrences in your post is counted to give you insight into your own usage. You can sort by name or frequency of use (count).
-Clicking ➕ inserts the hashtag at the cursor in the editor. Clicking the LinkedIn icon opens its context on LinkedIn.
+Hashtags in saved snippets are counted in the hashtag library. Sort them by name or frequency, then insert a hashtag at the editor cursor or open its LinkedIn context.
 
-## 🔒 Privacy & Data
+## Local data
+
+Use **Clear data** to remove saved snippets, profile settings, and preferences from the current browser. Export snippets first when you want a backup.
+
+## Privacy and analytics
 
 The application code does not send your composer content to an application server. Its scripts, styles, editor libraries, and emoji data ship with the static site.
 
-The hosted site uses Cloudflare Web Analytics for anonymous, aggregate usage and performance measurements. Hosting infrastructure also processes standard request metadata needed to deliver the site. These operational services help maintain the application and do not receive post content, snippets, hashtags, or profile settings from the application.
+The hosted site uses Cloudflare Web Analytics for anonymous, aggregate usage and performance measurements. Hosting infrastructure also processes standard request metadata needed to deliver the site. These operational services do not receive post content, snippets, hashtags, profile settings, or local-storage values from the application.
 
-**Post content, snippets, hashtags, and profile settings stay in your browser's local storage.** They are not included in analytics, and there is no cloud sync or advertising. External sites open only when you choose one of the displayed links.
+**Post content, snippets, hashtags, and profile settings remain in browser local storage.** They are not included in analytics, and there is no cloud sync or advertising. External sites open only when you select a displayed link.
 
-This tool is **entirely free to use**. Please see the very permissive [MIT license](LICENSE) for details.
+## Browser support
 
-Enjoy it!
+| Environment                  | Validation level                                  |
+| ---------------------------- | ------------------------------------------------- |
+| Chrome and Edge desktop      | Automated Chromium workflow and accessibility run |
+| Chromium-based mobile        | Automated Pixel 7 responsive workflow             |
+| Firefox and Safari           | Best effort; not in the automated browser matrix  |
+| Forced colors/reduced motion | Automated Chromium coverage                       |
 
-## 🌐 Browser Support
-
-| Browser   | Support Level | Notes               |
-| --------- | ------------- | ------------------- |
-| _Chrome_  | ✅ Full       |                     |
-| _Edge_    | ✅ Full       | Use split-screen    |
-| _Firefox_ | ✅ Full       |                     |
-| _Safari_  | ✅ Full       | MacOS/iOS 15+       |
-| _Mobile_  | ⚠️ Limited    | Use Desktop Version |
+The tracked browser suite also verifies 200% text resizing, keyboard interaction, focus restoration, responsive overflow, console errors, and failed requests.
 
 ## Development
 
 The application remains plain HTML, CSS, and JavaScript. Vite provides the local development server and creates the static production output.
+
+Prerequisites:
+
+- Node.js `26.7.0` from [.nvmrc](.nvmrc)
+- pnpm `11.21.0` from the `packageManager` field in [package.json](package.json)
 
 1. Install the Node.js version from `.nvmrc` and enable pnpm `11.21.0`.
 1. Run `pnpm install --frozen-lockfile`.
 1. Run `pnpm hooks:install` once per clone to configure the repository-managed Git hooks.
 1. Run `pnpm dev` for local development.
 
-Use `pnpm check` to run formatting, linting, tests, and the production build. The generated static site is written to `dist/`.
+| Command                    | Purpose                                              |
+| -------------------------- | ---------------------------------------------------- |
+| `pnpm check`               | Format check, lint, unit tests, and production build |
+| `pnpm test:browser`        | Chromium checks with local visual snapshots          |
+| `pnpm test:browser:ci`     | CI browser checks without Windows snapshot matching  |
+| `pnpm test:browser:update` | Review and refresh Windows visual baselines          |
+| `pnpm build`               | Generate the static site in `dist/`                  |
 
 The repository configures pnpm not to include tarball URLs. The pre-commit hook removes any `tarball` metadata preserved in the staged `pnpm-lock.yaml` and leaves unstaged lockfile work unchanged.
 
 Corporate or Microsoft proxy registry routing belongs in untracked user or machine pnpm configuration. Do not add proxy URLs, credentials, tokens, or private feed settings to repository files.
 
-## 🤝 Contributing
+## Architecture and deployment
+
+- `src/` contains the plain HTML, CSS, JavaScript, manifest, and static images.
+- Vite bundles reviewed pnpm dependencies and writes deployable output to `dist/`.
+- Composer state remains in browser local storage; there is no application backend.
+- GitHub Actions installs from the frozen lockfile, runs repository and browser checks, and uploads only `dist/` to GitHub Pages.
+- The Pages workflow intentionally runs on every push to `main`. It is the repository's only full CI and deployment gate, so path filters are not used.
+- The custom domain serves the generated GitHub Pages artifact at the hosted URL above.
+
+## Contributing
 
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
-We welcome:
+## Releases
 
-- Bug reports
-- Feature requests
-- Pull requests
+See [CHANGELOG.md](CHANGELOG.md) for release notes. The application and package metadata currently identify version `1.7.0`.
 
-### Thank You
+## License
 
-A big _THANK YOU!_ to the following contributors:
+Licensed under the [MIT License](LICENSE).
 
-- [Carolina-GomezM](https://github.com/Carolina-GomezM)
-
-## 📜 License
-
-MIT License - see [LICENSE](LICENSE) file for details.
-
----
-
-_Try it now:_ [https://linkedin-composer.simondoescloud.com](https://linkedin-composer.simondoescloud.com)
-
-_Have questions?_ Open an issue on [GitHub](https://github.com/simonkurtz-MSFT/simple-linkedin-composer/issues)
+Thanks to [Carolina-GomezM](https://github.com/Carolina-GomezM) and everyone who has contributed feedback or code.

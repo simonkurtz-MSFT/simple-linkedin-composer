@@ -13,16 +13,6 @@ This plan contains only open work. Each step requires explicit approval before i
 
 | Priority | Work                                                        | Impact | Effort | Step       |
 | -------- | ----------------------------------------------------------- | ------ | ------ | ---------- |
-| Orange   | Complete documentation, metadata, and release validation    | High   | Medium | 7          |
 | Green    | Complete offline behavior if justified by a separate review | Medium | Medium | 7 or later |
 
-## Step 7: CI, Deployment, And Documentation
-
-**Scope:** Make validated static output the only deployable artifact and refresh public documentation.
-
-- Decide whether path filters can be added without skipping deploy-relevant changes.
-- Refresh README setup, usage, architecture, browser support, screenshots, and contribution guidance.
-- Align manifest, version display, release notes, and documented hosting behavior.
-- Run the `release-validation` skill across dependency policy, workflow pins, static output, documentation, and browser checks; present residual risks before requesting deployment or release approval.
-
-**Approval gate:** Review the complete release-ready diff and validation report. Deployment, tagging, and release remain separately approval-gated.
+Deployment, tagging, and release remain separately approval-gated.
