@@ -23,6 +23,7 @@
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#dist\"",
     "test": "vitest run --root . --passWithNoTests",
     "test:browser": "playwright test",
+    "test:browser:ci": "playwright test --ignore-snapshots",
     "test:browser:update": "playwright test --update-snapshots",
     "check": "pnpm format:check && pnpm lint && pnpm test && pnpm build"
   },

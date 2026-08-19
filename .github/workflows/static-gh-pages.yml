@@ -41,6 +41,10 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Validate and build
         run: pnpm check
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Run browser checks
+        run: pnpm test:browser:ci
       - name: Setup Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - name: Upload artifact
