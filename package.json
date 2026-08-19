@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "datatables.net": "1.13.11",
-    "datatables.net-dt": "1.13.11",
+    "datatables.net-dt": "3.0.1",
     "emoji-picker-element": "1.29.1",
     "emoji-picker-element-data": "1.8.0",
     "jquery": "4.0.0",
