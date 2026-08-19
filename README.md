@@ -100,7 +100,13 @@ Enjoy it!
 
 ## Development
 
-I am keeping this intentionally simple: just markup, script, and style. Change what you want, refresh the browser, done. This could be done in TypeScript and Sass along with build tools, etc., but then it becomes more involved than I think it needs to be. That would make much more sense if this was a more complex web app.
+The application remains plain HTML, CSS, and JavaScript. Vite provides the local development server and creates the static production output.
+
+1. Install the Node.js version from `.nvmrc` and enable pnpm `11.21.0`.
+1. Run `pnpm install --frozen-lockfile`.
+1. Run `pnpm dev` for local development.
+
+Use `pnpm check` to run formatting, linting, tests, and the production build. The generated static site is written to `dist/`.
 
 ## 🤝 Contributing
 

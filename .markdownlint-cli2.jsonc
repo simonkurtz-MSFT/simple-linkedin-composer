@@ -1,0 +1,10 @@
+{
+  "config": {
+    "MD013": false,
+    "MD028": false,
+    "MD033": false,
+    "MD047": false,
+    "MD060": false
+  },
+  "ignores": ["docs/PLAN.md"]
+}
