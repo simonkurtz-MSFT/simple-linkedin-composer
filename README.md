@@ -25,7 +25,8 @@ Hosted at [https://linkedin-composer.simondoescloud.com](https://linkedin-compos
 - _Local storage_ of post and template snippets
 - _Hashtag tracking_ and quick insertion
 - _Export/import_ snippets as JSON
-- _Zero data collection_ (runs 100% in browser)
+- _Local-first composer data_ with no cloud sync
+- _Anonymous, aggregate usage and performance analytics_
 - _Edge split-screen_ optimized
 
 ## 🚀 Quick Start
@@ -82,9 +83,11 @@ Clicking ➕ inserts the hashtag at the cursor in the editor. Clicking the Linke
 
 ## 🔒 Privacy & Data
 
-The application makes **no background requests to third-party services**. Its scripts, styles, editor libraries, and emoji data ship with the static site. External sites open only when you choose one of the displayed links.
+The application code does not send your composer content to an application server. Its scripts, styles, editor libraries, and emoji data ship with the static site.
 
-**Post content, snippets, hashtags, and profile settings stay in your browser's local storage.** There is no cloud sync, tracking, cookie, or advertising service.
+The hosted site uses Cloudflare Web Analytics for anonymous, aggregate usage and performance measurements. Hosting infrastructure also processes standard request metadata needed to deliver the site. These operational services help maintain the application and do not receive post content, snippets, hashtags, or profile settings from the application.
+
+**Post content, snippets, hashtags, and profile settings stay in your browser's local storage.** They are not included in analytics, and there is no cloud sync or advertising. External sites open only when you choose one of the displayed links.
 
 This tool is **entirely free to use**. Please see the very permissive [MIT license](LICENSE) for details.
 
