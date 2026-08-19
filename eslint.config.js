@@ -3,7 +3,12 @@ import globals from "globals";
 
 export default [
   {
-    ignores: ["dist/**", "node_modules/**"],
+    ignores: [
+      "dist/**",
+      "node_modules/**",
+      "playwright-report/**",
+      "test-results/**",
+    ],
   },
   eslint.configs.recommended,
   {
