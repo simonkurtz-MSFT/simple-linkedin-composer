@@ -28,7 +28,7 @@
     "datatables.net": "1.13.11",
     "datatables.net-dt": "1.13.11",
     "emoji-picker-element": "1.29.1",
-    "jquery": "3.7.1",
+    "jquery": "4.0.0",
     "quill": "2.0.3",
     "toastr": "2.1.4"
   },
