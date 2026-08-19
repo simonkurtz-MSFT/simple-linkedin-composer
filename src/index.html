@@ -1,161 +1,307 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Simple LinkedIn Composer is a free, open-source tool to craft LinkedIn posts with rich text formatting and emojis. Easily save and load snippets, and copy to clipboard for easy pasting.">
-    <meta name="keywords" content="LinkedIn, LinkedIn post, post, LinkedIn formatter, LinkedIn post formatter, LinkedIn post formatting, editor, composer, rich text, emojis, free tool, open source">
-    <meta name="author" content="Simon Kurtz">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://linkedin-composer.simondoescloud.com/">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Simple LinkedIn Composer is a free, open-source tool to craft LinkedIn posts with rich text formatting and emojis. Easily save and load snippets, and copy to clipboard for easy pasting."
+    />
+    <meta
+      name="keywords"
+      content="LinkedIn, LinkedIn post, post, LinkedIn formatter, LinkedIn post formatter, LinkedIn post formatting, editor, composer, rich text, emojis, free tool, open source"
+    />
+    <meta name="author" content="Simon Kurtz" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://linkedin-composer.simondoescloud.com/" />
+    <link
+      rel="mask-icon"
+      href="images/simple-linkedin-composer-logo-192x192.png"
+      color="#0a66c2"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="images/simple-linkedin-composer-logo-192x192.png"
+    />
     <title>Simple LinkedIn Composer</title>
+  </head>
 
-    <!-- Favicon -->
-    <link rel="mask-icon" href="images/simple-linkedin-composer-logo-192x192.png" color="#000000">
-    <link rel="icon" type="image/png" href="images/simple-linkedin-composer-logo-192x192.png">
-
-</head>
-
-<body>
-    <header>
-        <h1><a href="https://linkedin-composer.simondoescloud.com">Simple LinkedIn Composer</a></h1>
-        <span id="github-stats">
-            <a id="github-link" href="https://github.com/simonkurtz-MSFT/simple-linkedin-composer" target="_blank" rel="noopener noreferrer" class="github-link" aria-label="GitHub Repository">
-                <img src="images/github-mark-white.png" alt="GitHub Logo" class="github-logo">
-            </a>
+  <body>
+    <header class="app-header">
+      <a
+        class="brand"
+        href="https://linkedin-composer.simondoescloud.com"
+        aria-label="Simple LinkedIn Composer home"
+      >
+        <img
+          src="images/simple-linkedin-composer-logo-192x192.png"
+          alt=""
+          width="46"
+          height="46"
+        />
+        <span>
+          <strong>Simple LinkedIn Composer</strong>
+          <small>Write with clarity. Publish with confidence.</small>
         </span>
+      </a>
+      <nav class="header-actions" aria-label="Project links">
+        <a
+          id="github-link"
+          class="icon-link"
+          href="https://github.com/simonkurtz-MSFT/simple-linkedin-composer"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="View the GitHub repository"
+          title="View the GitHub repository"
+        >
+          <img src="images/github-icon.svg" alt="" width="24" height="24" />
+        </a>
+      </nav>
     </header>
 
     <main>
-        <!-- Instructions -->
-        <section class="accordion">
-            <h2 class="accordion-header">Instructions</h2>
-            <div id="instructions" class="accordion-content">
-                <h3>Getting Started</h3>
-                <ol>
-                    <li>Enter your LinkedIn user id.</li>
-                    <li>Compose your snippet. Load a sample via the <span class="cta2">Load a Sample Snippet</span> button.</li>
-                    <li>Press <span class="cta">Save Snippet</span> to persist it locally.</li>
-                    <li>Press <span class="cta">Copy to Clipboard</span> to copy the post content.</li>
-                    <li>Press <span class="cta">Create a new LinkedIn Post</span> to open the LinkedIn post page.</li>
-                    <li>Paste into the LinkedIn textbox, check for accuracy, then post it.</li>
-                </ol>
-
-                <p><b>No data leaves your browser.</b> Everything is stored in your browser's local storage.</p>
+      <div class="workspace">
+        <section class="composer" aria-labelledby="composer-title">
+          <div class="section-heading composer-heading">
+            <div>
+              <p class="eyebrow">Draft workspace</p>
+              <h1 id="composer-title">Compose your post</h1>
             </div>
-        </section>
+            <button
+              id="load-sample-button"
+              class="button button-quiet"
+              type="button"
+              title="Replace the editor with a sample post"
+            >
+              <span class="button-icon" aria-hidden="true">↻</span>
+              <span class="button-label">Load sample</span>
+            </button>
+          </div>
 
-        <!-- LinkedIn User ID Input -->
-        <section class="linkedin-user-id">
-            <label for="linkedin-user-id">LinkedIn user id:</label>
-            <input type="text" id="linkedin-user-id" placeholder="Enter your LinkedIn user id">
-            <span id="linkedin-links">
-                <a id="linkedin-create-post" class="cta-button" href="#" target="_blank" rel="noopener noreferrer" aria-label="Create a new LinkedIn Post">Create a new LinkedIn Post</a>
-                <a id="linkedin-my-posts" class="action-button" href="#" target="_blank" rel="noopener noreferrer" aria-label="View My LinkedIn Posts">My LinkedIn Posts</a>
+          <div class="profile-row">
+            <label for="linkedin-user-id">LinkedIn profile ID</label>
+            <input
+              type="text"
+              id="linkedin-user-id"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="your-profile-id"
+            />
+            <span id="linkedin-links" class="profile-links">
+              <a
+                id="linkedin-my-posts"
+                class="button button-quiet"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                My posts
+              </a>
             </span>
-        </section>
+          </div>
 
-        <!-- Quill Editor -->
-        <section id="editor-container"></section>
+          <div class="editor-shell">
+            <section id="editor-container" aria-label="LinkedIn post editor"></section>
+            <div class="emoji-picker-container">
+              <emoji-picker></emoji-picker>
+            </div>
+          </div>
 
-        <!-- Emoji Picker -->
-        <div class="emoji-picker-container">
-            <emoji-picker></emoji-picker>
-        </div>
+          <div class="publish-bar">
+            <button id="copy-button" class="button button-primary" type="button">
+              <span aria-hidden="true">⧉</span>
+              Copy post
+            </button>
+            <span id="linkedin-publish-link">
+              <a
+                id="linkedin-create-post"
+                class="button button-linkedin"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span aria-hidden="true">↗</span>
+                Open LinkedIn
+              </a>
+            </span>
+            <p class="privacy-note">
+              <span aria-hidden="true">●</span>
+              Stored only in this browser
+            </p>
+          </div>
 
-        <!-- Checkbox for marking a snippet as a template -->
-        <section class="template-checkbox">
-            <label for="is-template">
+          <section class="save-workflow" aria-labelledby="save-title">
+            <div class="save-fields">
+              <label id="save-title" for="snippet-title">Save this draft</label>
+              <input
+                type="text"
+                id="snippet-title"
+                maxlength="50"
+                placeholder="Give this snippet a title"
+              />
+              <label class="checkbox-control" for="is-template">
                 <input type="checkbox" id="is-template" />
-                Mark as template
-            </label>
-        </section>
-
-        <!-- Buttons -->
-        <section class="action-buttons">
-            <button id="copy-button" class="cta-button">Copy to Clipboard</button>
-            <br />
-            <button id="export-data">Export Snippets</button>
-            <button id="import-data">Import Snippets</button>
-            <button id="load-sample-button">Load a Sample Snippet</button>
-        </section>
-
-        <!-- Hashtags -->
-        <section class="accordion">
-            <h2 class="accordion-header">Hashtags</h2>
-            <div class="accordion-content">
-                <div id="hashtag-controls">
-                    <button id="sort-name">Sort by Name</button>
-                    <button id="sort-count">Sort by Count</button>
-                </div>
-                <div id="hashtag-list" class="hashtag-grid">
-                    <!-- Hashtags will be dynamically added here -->
-                </div>
+                <span>Template</span>
+              </label>
             </div>
+            <button id="save-button" class="button button-secondary" type="button">
+              <span aria-hidden="true">＋</span>
+              Save snippet
+            </button>
+          </section>
         </section>
 
-        <!-- Saved Snippets -->
-        <section class="accordion">
-            <h2 id="snippets-header" class="accordion-header">Snippets</h2>
-            <div class="accordion-content open">  <!-- show open upon load -->
-                <section class="snippet-title">
-                    <label for="snippet-title">Snippet Title (max 45 characters):</label>
-                    <input type="text" id="snippet-title" maxlength="45" placeholder="Enter a custom snippet title">
-                </section>
-                <div id="snippet-controls">
-                    <button id="save-button" class="cta-button">Save Snippet</button>
-                    <button id="clear-button">Clear All Data</button>
-                </div>
+        <aside class="library" aria-label="Writing library">
+          <section class="library-section accordion snippets-section">
+            <button
+              id="snippets-header"
+              class="accordion-header"
+              type="button"
+              aria-expanded="true"
+              aria-controls="snippets-content"
+            >
+              <span>
+                <small>Library</small>
+                Snippets
+              </span>
+              <span class="accordion-icon" aria-hidden="true">⌄</span>
+            </button>
+            <div id="snippets-content" class="accordion-content open">
+              <div class="library-actions" aria-label="Snippet file actions">
+                <button id="import-data" class="button button-quiet" type="button">
+                  <span aria-hidden="true">⇧</span>
+                  Import
+                </button>
+                <button id="export-data" class="button button-quiet" type="button">
+                  <span aria-hidden="true">⇩</span>
+                  Export
+                </button>
+              </div>
+              <div class="table-scroll">
                 <table id="snippets-table">
-                    <thead>
-                        <tr>
-                            <th data-sort="snippet">Snippet</th>
-                            <th data-sort="timestamp">Timestamp</th>
-                            <th data-sort="template">Template</th>
-                            <th>Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Snippets will be dynamically added here -->
-                    </tbody>
+                  <thead>
+                    <tr>
+                      <th data-sort="snippet">Snippet</th>
+                      <th data-sort="timestamp">Updated</th>
+                      <th data-sort="template">Type</th>
+                      <th><span class="visually-hidden">Actions</span></th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
                 </table>
+              </div>
             </div>
+          </section>
+
+          <section class="library-section accordion hashtags-section">
+            <button
+              id="hashtags-header"
+              class="accordion-header"
+              type="button"
+              aria-expanded="true"
+              aria-controls="hashtags-content"
+            >
+              <span>
+                <small>Reuse</small>
+                Hashtags
+              </span>
+              <span class="accordion-icon" aria-hidden="true">⌄</span>
+            </button>
+            <div id="hashtags-content" class="accordion-content open">
+              <div id="hashtag-controls" class="segmented-control" aria-label="Sort hashtags">
+                <button id="sort-name" type="button">Name</button>
+                <button id="sort-count" type="button">Frequency</button>
+              </div>
+              <div id="hashtag-list" class="hashtag-grid"></div>
+            </div>
+          </section>
+
+          <section class="danger-zone" aria-labelledby="data-title">
+            <div>
+              <h2 id="data-title">Local data</h2>
+              <p>Remove snippets, profile settings, and saved preferences.</p>
+            </div>
+            <button id="clear-button" class="button button-danger" type="button">Clear data</button>
+          </section>
+        </aside>
+      </div>
+
+      <section class="support-band" aria-label="Help and background">
+        <section class="accordion support-section">
+          <button
+            class="accordion-header"
+            type="button"
+            aria-expanded="false"
+            aria-controls="instructions"
+          >
+            <span>
+              <small>Need a hand?</small>
+              How it works
+            </span>
+            <span class="accordion-icon" aria-hidden="true">⌄</span>
+          </button>
+          <div id="instructions" class="accordion-content">
+            <ol>
+              <li>Enter the final part of your LinkedIn profile URL.</li>
+              <li>Compose and format your post in the editor.</li>
+              <li>Save useful drafts as snippets for later reuse.</li>
+              <li>Copy the converted post, open LinkedIn, and paste it into the composer.</li>
+              <li>Review the final post on LinkedIn before publishing.</li>
+            </ol>
+            <p><strong>Your writing stays in this browser.</strong> There is no cloud sync.</p>
+          </div>
         </section>
 
-        <!-- Background -->
-        <section class="accordion">
-            <h2 class="accordion-header">Background</h2>
-            <div class="accordion-content">
-                <p>
-                    LinkedIn's post composer doesn't natively allow for rich text formatting, so this tool provides a
-                    simple way to compose posts with rich text and emojis.
-                    Tools that address custom formatting on LinkedIn are either not free or, if free, not feature-rich.
-                    This tool is completely free and open source.
-                </p>
-                <p>
-                    <b>No data leaves your browser.</b> Everything is stored in your browser's local storage.
-                </p>
-                <p>
-                    <b><a href="https://www.linkedin.com/posts/simonkurtz_linkedin-activity-7308537167436238848-mmOi/" target="_blank" rel="noopener noreferrer" class="link">🎉 Check out this tool's first announcement on LinkedIn! 🎉</a></b>
-                </p>
-            </div>
+        <section class="accordion support-section">
+          <button
+            class="accordion-header"
+            type="button"
+            aria-expanded="false"
+            aria-controls="background"
+          >
+            <span>
+              <small>About</small>
+              Why this exists
+            </span>
+            <span class="accordion-icon" aria-hidden="true">⌄</span>
+          </button>
+          <div id="background" class="accordion-content">
+            <p>
+              LinkedIn's composer does not natively support rich text. This free, open-source
+              tool converts a focused set of formatting into characters that survive pasting.
+            </p>
+            <p>
+              <a
+                href="https://www.linkedin.com/posts/simonkurtz_linkedin-activity-7308537167436238848-mmOi/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Read the original announcement on LinkedIn
+              </a>
+            </p>
+          </div>
         </section>
+      </section>
     </main>
 
-    <!-- Footer -->
     <footer>
-        <p>
-            <a href="https://linkedin-composer.simondoescloud.com" class="link">Simple LinkedIn Composer</a> is a free tool created by Simon Kurtz.
-            <br/>
-            <a href="https://github.com/simonkurtz-MSFT" target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile"><img src="images/github-icon.svg" alt="GitHub Icon"></a>
-            <a href="https://www.linkedin.com/in/simonkurtz" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile"><img src="images/linkedin-icon.svg" alt="LinkedIn Icon"></a>
-            <br />
-            <a href="https://github.com/simonkurtz-MSFT/simple-linkedin-composer/releases/tag/1.7.0" target="_blank" rel="noopener noreferrer" class="link">V1.7.0</a> - 04/15/2025
-        </p>
+      <p>
+        Built by
+        <a href="https://github.com/simonkurtz-MSFT" target="_blank" rel="noopener noreferrer">
+          Simon Kurtz
+        </a>
+        · Free and open source ·
+        <a
+          href="https://github.com/simonkurtz-MSFT/simple-linkedin-composer/releases/tag/1.7.0"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Version 1.7.0
+        </a>
+      </p>
     </footer>
 
     <script type="module" src="./main.js"></script>
-</body>
-
+  </body>
 </html>

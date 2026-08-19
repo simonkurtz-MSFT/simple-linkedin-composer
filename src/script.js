@@ -85,19 +85,23 @@ import {
             const $hashtagList = $('#hashtag-list');
             $hashtagList.empty();
 
+            if (Object.keys(this.hashtags).length === 0) {
+                $hashtagList.append(
+                    $('<p>').addClass('empty-state').text('Hashtags from saved snippets will appear here.')
+                );
+                return;
+            }
+
             $.each(this.hashtags, (tag, count) => {
                 const $hashtagItem = $('<div>').addClass('hashtag-item');
 
-                // Create the clickable ➕️ symbol
-                const $addButton = $('<a>')
-                    .text('➕️')
-                    .attr('href', '#')
+                const $addButton = $('<button>')
+                    .attr('type', 'button')
+                    .text('+')
                     .addClass('add-hashtag-button')
+                    .attr('aria-label', `Add ${tag} to the editor`)
                     .attr('title', 'Add this hashtag to the editor')
-                    .on('click', (event) => {
-                        event.preventDefault();
-                        this.insertHashtagIntoEditor(tag);
-                    });
+                    .on('click', () => this.insertHashtagIntoEditor(tag));
 
                 // Create the LinkedIn icon link
                 const $linkedinLink = $('<a>')
@@ -111,8 +115,8 @@ import {
                         .attr('alt', 'LinkedIn')
                         .addClass('linkedin-icon'));
 
-                // Add the ➕️ symbol, LinkedIn icon, and hashtag text to the item
-                $hashtagItem.append($addButton, $linkedinLink, `${tag} (${count})`);
+                const $label = $('<span>').text(`${tag} (${count})`);
+                $hashtagItem.append($addButton, $linkedinLink, $label);
                 $hashtagList.append($hashtagItem);
             });
         }
@@ -212,9 +216,9 @@ import {
             $('#linkedin-create-post').attr('href', `${LINKEDIN_USER_BASE_URL}overlay/create-post`); // Update the href
             $('#linkedin-my-posts').attr('href', `${LINKEDIN_USER_BASE_URL}recent-activity/all/`); // Update the href
 
-            $('#linkedin-links').show(); // Show the LinkedIn links section
+            $('#linkedin-links, #linkedin-publish-link').show();
         } else {
-            $('#linkedin-links').hide(); // Hide the LinkedIn links section
+            $('#linkedin-links, #linkedin-publish-link').hide();
         }
     }
 
@@ -378,7 +382,11 @@ import {
             const cells = $(row.node()).children('td');
 
             cells.eq(0).empty().append(
-                $('<span>').addClass('snippet-link').text(title).data('key', title)
+                $('<button>')
+                    .attr('type', 'button')
+                    .addClass('snippet-link')
+                    .text(title)
+                    .data('key', title)
             );
             cells.eq(1).empty().append(
                 $('<span>').text(displayTimestamp).data('key', 'timestamp').data('value', isoTimestamp)
@@ -387,7 +395,13 @@ import {
                 $('<span>').text(isTemplate).data('key', 'template').data('value', snippet.isTemplate)
             );
             cells.eq(3).empty().append(
-                $('<button>').attr('type', 'button').addClass('delete-snippet').text('Delete').data('key', title)
+                $('<button>')
+                    .attr('type', 'button')
+                    .attr('aria-label', `Delete ${title}`)
+                    .attr('title', `Delete ${title}`)
+                    .addClass('delete-snippet')
+                    .text('Delete')
+                    .data('key', title)
             );
         });
 
@@ -428,6 +442,10 @@ import {
             pageLength: 10,
             searching: true,   // roll our own
             dom: '<"top"f>rt<"bottom"lp><"clear">',
+            language: {
+                emptyTable: 'No snippets yet. Save the current draft to build your library.',
+                zeroRecords: 'No snippets match this search.',
+            },
             columnDefs: [
                 { targets: [0, 3], render: $.fn.dataTable.render.text() },
                 { orderable: false, targets: 3 }, // Disable sorting for the "Delete" column
@@ -459,11 +477,8 @@ import {
                 $('#snippets-table_filter input')
                     .addClass('form-control') // Add the same class as the snippets filter textbox
                     .attr('placeholder', 'Search snippets...') // Add a placeholder for better UX
-                    .css({
-                        fontSize: '1rem',
-                        width: '200px', // Make it full width
-                        margin: '0.5rem 0', // Add some spacing
-                    }).on('input', (e) => filterTable($(e.target).val()));
+                    .attr('aria-label', 'Search saved snippets')
+                    .on('input', (e) => filterTable($(e.target).val()));
 
                 // Remove the "Search:" label
                 $('#snippets-table_filter label').contents().filter((_, el) => el.nodeType === 3).remove();
@@ -598,7 +613,7 @@ import {
                     matchers: [], // Allow all content by default
                 },
             },
-            placeholder: 'Compose your post, then follow instructions below...',
+            placeholder: 'Write your LinkedIn post...',
             theme: 'snow',
         });
 
@@ -623,6 +638,8 @@ import {
             } else if ($button.hasClass('ql-clear')) {
                 $button.attr('title', 'Clear Editor');
             }
+
+            $button.attr('aria-label', $button.attr('title'));
         });
 
         return quill;
@@ -635,22 +652,19 @@ import {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     function accordionSetup() {
-        // Accordion functionality
         $('.accordion-header').on('click', function () {
-            const $content = $(this).siblings('.accordion-content'); // Find the sibling content
-
-            // Toggle the "open" class on the content
-            $content.toggleClass('open');
-
-            // Optionally, close other accordions (if needed)
-            // $('.accordion-content').not($content).removeClass('open');
+            const $header = $(this);
+            const $content = $header.siblings('.accordion-content');
+            const isOpen = $content.toggleClass('open').hasClass('open');
+            $header.attr('aria-expanded', String(isOpen));
         });
     }
 
     function checkFirstTimeUser() {
         const firstTimeUser = localStorage.getItem('firstTimeUser');
         if (!firstTimeUser) {
-            $('div#instructions').addClass('open');
+            const $instructions = $('div#instructions').addClass('open');
+            $instructions.siblings('.accordion-header').attr('aria-expanded', 'true');
             toastr.info('Welcome to Simple LinkedIn Composer! I hope you find this app useful. Please check the instructions to get started.', 'Info');
             localStorage.setItem('firstTimeUser', 'false');
         }
