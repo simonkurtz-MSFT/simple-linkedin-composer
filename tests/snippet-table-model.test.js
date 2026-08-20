@@ -84,6 +84,24 @@ describe("snippet table model", () => {
     expect(model.getCountLabel()).toBe("3");
   });
 
+  it("filters templates alongside title search and resets pagination", () => {
+    const model = buildModel({ pageSize: 1 });
+    model.setPage(2);
+    model.setTemplatesOnly(true);
+    expect(model.getTemplatesOnly()).toBe(true);
+    expect(model.getPage()).toBe(1);
+    expect(titles(model)).toEqual(["alpha draft"]);
+    expect(model.getCountLabel()).toBe("1/3");
+
+    model.setFilter("zebra");
+    expect(model.getVisibleCount()).toBe(0);
+    expect(model.getEmptyMessage()).toBe(
+      "No templates match the current filters.",
+    );
+    model.setTemplatesOnly(false);
+    expect(titles(model)).toEqual(["Zebra launch"]);
+  });
+
   it("describes the empty library", () => {
     const model = createSnippetTableModel();
     expect(model.getTotalCount()).toBe(0);

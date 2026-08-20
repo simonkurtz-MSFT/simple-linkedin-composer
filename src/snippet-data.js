@@ -144,7 +144,13 @@ export const importSnippets = (content, storage) => {
     throw new TypeError("The import file must contain a snippet object.");
   }
 
-  const result = { imported: 0, duplicate: 0, older: 0, invalid: 0 };
+  const result = {
+    imported: 0,
+    duplicate: 0,
+    older: 0,
+    protected: 0,
+    invalid: 0,
+  };
 
   Object.entries(importedData).forEach(([key, value]) => {
     const importedSnippet = isSnippetKey(key) ? parseSnippet(value) : null;
@@ -164,6 +170,10 @@ export const importSnippets = (content, storage) => {
       }
       if (existingTimestamp > importedTimestamp) {
         result.older += 1;
+        return;
+      }
+      if (existingSnippet.isTemplate) {
+        result.protected += 1;
         return;
       }
     }

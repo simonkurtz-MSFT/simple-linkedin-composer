@@ -29,6 +29,7 @@ const createElement = (document, tagName, { className, text, attrs } = {}) => {
 export const createSnippetTable = ({
   table,
   searchInput,
+  templateFilter,
   pager,
   pageSizeSelect,
   onLoad,
@@ -95,7 +96,7 @@ export const createSnippetTable = ({
 
       const deleteButton = createElement(document, "button", {
         className: "delete-snippet",
-        text: "Delete",
+        text: "🗑",
         attrs: {
           type: "button",
           "aria-label": `Delete ${snippet.title}`,
@@ -171,6 +172,11 @@ export const createSnippetTable = ({
 
   searchInput?.addEventListener("input", () => {
     model.setFilter(searchInput.value);
+    render();
+  });
+
+  templateFilter?.addEventListener("change", () => {
+    model.setTemplatesOnly(templateFilter.checked);
     render();
   });
 

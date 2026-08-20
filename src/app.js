@@ -21,6 +21,8 @@ import { createSnippetTable } from "./snippet-table.js";
 
 const LINKEDIN_USER_ID_KEY = "linkedin_id";
 const LINKEDIN_BASE_URL = "https://www.linkedin.com/in/";
+const GITHUB_REPOSITORY_API_URL =
+  "https://api.github.com/repos/simonkurtz-MSFT/simple-linkedin-composer";
 const HASHTAGS_KEY = "hashtags";
 const FIRST_TIME_USER_KEY = "firstTimeUser";
 
@@ -37,6 +39,34 @@ let hashtags = {};
 let sortNameAsc = true;
 let sortCountAsc = true;
 
+// GitHub statistics
+
+const updateGitHubStat = (name, count) => {
+  if (!Number.isSafeInteger(count) || count < 0) return;
+  const stat = byId(`github-${name}`);
+  const formattedCount = new Intl.NumberFormat(undefined, {
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format(count);
+  byId(`github-${name.slice(0, -1)}-count`).textContent = formattedCount;
+  stat.setAttribute("aria-label", `GitHub ${name}: ${count.toLocaleString()}`);
+};
+
+const loadGitHubStats = async () => {
+  try {
+    const response = await fetch(GITHUB_REPOSITORY_API_URL, {
+      headers: { Accept: "application/vnd.github+json" },
+    });
+    if (!response.ok) return;
+    const data = await response.json();
+    updateGitHubStat("stars", data.stargazers_count);
+    updateGitHubStat("forks", data.forks_count);
+    updateGitHubStat("watchers", data.subscribers_count);
+  } catch {
+    // Statistics are optional; keep the stable placeholders when GitHub is unavailable.
+  }
+};
+
 // LinkedIn profile
 
 const updateLinkedInLinks = (userId) => {
@@ -44,9 +74,7 @@ const updateLinkedInLinks = (userId) => {
   if (hasUser) {
     const profileUrl = `${LINKEDIN_BASE_URL}${encodeURIComponent(userId)}/`;
     byId("linkedin-create-post").href = `${profileUrl}overlay/create-post`;
-    byId("linkedin-my-posts").href = `${profileUrl}recent-activity/all/`;
   }
-  byId("linkedin-links").hidden = !hasUser;
   byId("linkedin-publish-link").hidden = !hasUser;
 };
 
@@ -54,6 +82,28 @@ const loadLinkedInUserId = () => {
   const storedUserId = localStorage.getItem(LINKEDIN_USER_ID_KEY) ?? "";
   byId("linkedin-user-id").value = storedUserId;
   updateLinkedInLinks(storedUserId);
+};
+
+const openSettings = () => {
+  const dialog = byId("settings-dialog");
+  if (!dialog.open) dialog.showModal();
+  byId("linkedin-user-id").focus();
+};
+
+const closeSettings = () => {
+  const dialog = byId("settings-dialog");
+  if (dialog.open) dialog.close();
+};
+
+const saveSettings = () => {
+  const userId = byId("linkedin-user-id").value.trim();
+  if (userId) {
+    localStorage.setItem(LINKEDIN_USER_ID_KEY, userId);
+  } else {
+    localStorage.removeItem(LINKEDIN_USER_ID_KEY);
+  }
+  updateLinkedInLinks(userId);
+  notifier.success("Settings saved.");
 };
 
 // Hashtags
@@ -86,12 +136,13 @@ const snippetsHeaderLabel = snippetsHeader.querySelector("[data-count-label]");
 const snippetTable = createSnippetTable({
   table: byId("snippets-table"),
   searchInput: byId("snippet-search"),
+  templateFilter: byId("template-filter"),
   pager: byId("snippet-pager"),
   pageSizeSelect: byId("snippet-page-size"),
   onLoad: (title) => loadSnippet(title),
   onDelete: (title) => deleteSnippet(title),
   onCountChange: (label) => {
-    snippetsHeaderLabel.textContent = `Snippets (${label})`;
+    snippetsHeaderLabel.textContent = `Saved snippets (${label})`;
   },
 });
 
@@ -118,13 +169,12 @@ const saveSnippet = () => {
     return;
   }
 
-  if (
-    snippets[title] &&
-    !confirm(
-      `A snippet with this title already exists. Do you want to overwrite it?\n\n${title}`,
-    )
-  ) {
-    return;
+  const existingSnippet = snippets[title];
+  if (existingSnippet) {
+    const overwriteMessage = existingSnippet.isTemplate
+      ? `This title belongs to a protected template. Overwriting it permanently replaces the reusable template. Continue only if you intend to update the template.\n\n${title}`
+      : `A snippet with this title already exists. Do you want to overwrite it?\n\n${title}`;
+    if (!confirm(overwriteMessage)) return;
   }
 
   localStorage.setItem(
@@ -154,8 +204,16 @@ function loadSnippet(title) {
     return;
   }
   editor.setContents(snippet.delta);
-  byId("is-template").checked = snippet.isTemplate === true;
-  byId("snippet-title").value = title;
+  if (snippet.isTemplate) {
+    byId("is-template").checked = false;
+    byId("snippet-title").value = "";
+    notifier.info(
+      `Template "${title}" loaded as a new draft. Give it a new title to save your changes.`,
+    );
+  } else {
+    byId("is-template").checked = false;
+    byId("snippet-title").value = title;
+  }
 }
 
 function deleteSnippet(title) {
@@ -210,6 +268,11 @@ const importSnippets = async () => {
         `${result.invalid} invalid import entr${result.invalid === 1 ? "y was" : "ies were"} skipped.`,
       );
     }
+    if (result.protected > 0) {
+      notifier.warning(
+        `${result.protected} existing template${result.protected === 1 ? " was" : "s were"} protected from replacement.`,
+      );
+    }
   } catch {
     notifier.error("Failed to import data. Please check the file format.");
   }
@@ -245,10 +308,12 @@ const checkFirstTimeUser = () => {
 };
 
 const setupEventListeners = () => {
-  byId("linkedin-user-id").addEventListener("input", (event) => {
-    const userId = event.target.value.trim();
-    localStorage.setItem(LINKEDIN_USER_ID_KEY, userId);
-    updateLinkedInLinks(userId);
+  byId("settings-button").addEventListener("click", openSettings);
+  byId("settings-close-button").addEventListener("click", closeSettings);
+  byId("settings-cancel-button").addEventListener("click", closeSettings);
+  byId("settings-form").addEventListener("submit", saveSettings);
+  byId("settings-dialog").addEventListener("close", () => {
+    byId("settings-button").focus();
   });
   byId("sort-name").addEventListener("click", () => {
     applyHashtagSort(
@@ -276,12 +341,16 @@ const setupEventListeners = () => {
   });
 
   byId("copy-button").addEventListener("click", copyToClipboard);
-  byId("editor-container").addEventListener("copy", copyToClipboard);
 };
 
 loadLinkedInUserId();
+loadGitHubStats();
 setupAccordions();
 refreshLibrary();
 setupEventListeners();
 checkFirstTimeUser();
-editor.quill.focus();
+if (localStorage.getItem(LINKEDIN_USER_ID_KEY)) {
+  editor.quill.focus();
+} else {
+  openSettings();
+}

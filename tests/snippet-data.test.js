@@ -103,6 +103,10 @@ describe("snippet import deduplication", () => {
       "snippet-older": JSON.stringify(
         snippet("2026-08-19T10:00:00.000Z", "keep"),
       ),
+      "snippet-template": JSON.stringify({
+        ...snippet("2026-08-19T10:00:00.000Z", "protected"),
+        isTemplate: true,
+      }),
       "snippet-corrupt": "{not json",
     });
     const importedNewer = snippet("2026-08-20T10:00:00.000Z", "new");
@@ -111,6 +115,9 @@ describe("snippet import deduplication", () => {
       "snippet-newer": JSON.stringify(importedNewer),
       "snippet-duplicate": JSON.stringify(snippet("2026-08-19T10:00:00.000Z")),
       "snippet-older": JSON.stringify(snippet("2026-08-18T10:00:00.000Z")),
+      "snippet-template": JSON.stringify(
+        snippet("2026-08-20T10:00:00.000Z", "replacement"),
+      ),
       "snippet-corrupt": JSON.stringify(snippet("2026-08-19T12:00:00.000Z")),
       settings: { theme: "remote" },
     };
@@ -119,10 +126,12 @@ describe("snippet import deduplication", () => {
       imported: 3,
       duplicate: 1,
       older: 1,
+      protected: 1,
       invalid: 1,
     });
     expect(JSON.parse(storage.getItem("snippet-newer"))).toEqual(importedNewer);
     expect(storage.getItem("snippet-older")).toContain("keep");
+    expect(storage.getItem("snippet-template")).toContain("protected");
     expect(storage.getItem("settings")).toBeNull();
   });
 

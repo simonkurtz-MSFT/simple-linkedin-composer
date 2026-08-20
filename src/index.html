@@ -49,6 +49,42 @@
       </a>
       <nav class="header-actions" aria-label="Project links">
         <a
+          id="github-stars"
+          class="github-stat"
+          href="https://github.com/simonkurtz-MSFT/simple-linkedin-composer/stargazers"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="GitHub stars: loading"
+          title="View GitHub stargazers"
+        >
+          <span aria-hidden="true">☆</span>
+          <span id="github-star-count" aria-hidden="true">--</span>
+        </a>
+        <a
+          id="github-forks"
+          class="github-stat"
+          href="https://github.com/simonkurtz-MSFT/simple-linkedin-composer/forks"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="GitHub forks: loading"
+          title="View GitHub forks"
+        >
+          <span aria-hidden="true">⑂</span>
+          <span id="github-fork-count" aria-hidden="true">--</span>
+        </a>
+        <a
+          id="github-watchers"
+          class="github-stat"
+          href="https://github.com/simonkurtz-MSFT/simple-linkedin-composer/watchers"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="GitHub watchers: loading"
+          title="View GitHub watchers"
+        >
+          <span aria-hidden="true">◉</span>
+          <span id="github-watcher-count" aria-hidden="true">--</span>
+        </a>
+        <a
           id="github-link"
           class="icon-link"
           href="https://github.com/simonkurtz-MSFT/simple-linkedin-composer"
@@ -59,107 +95,20 @@
         >
           <img src="images/github-icon.svg" alt="" width="24" height="24" />
         </a>
+        <button
+          id="settings-button"
+          class="icon-link"
+          type="button"
+          aria-label="Open settings"
+          title="Settings"
+        >
+          <span class="settings-icon" aria-hidden="true">⚙</span>
+        </button>
       </nav>
     </header>
 
     <main>
       <div class="workspace">
-        <section class="composer" aria-labelledby="composer-title">
-          <div class="section-heading composer-heading">
-            <div>
-              <p class="eyebrow">Draft workspace</p>
-              <h1 id="composer-title">Compose your post</h1>
-            </div>
-            <button
-              id="load-sample-button"
-              class="button button-quiet"
-              type="button"
-              title="Replace the editor with a sample post"
-            >
-              <span class="button-icon" aria-hidden="true">↻</span>
-              <span class="button-label">Load sample</span>
-            </button>
-          </div>
-
-          <div class="profile-row">
-            <label for="linkedin-user-id">LinkedIn profile ID</label>
-            <input
-              type="text"
-              id="linkedin-user-id"
-              autocomplete="off"
-              spellcheck="false"
-              placeholder="your-profile-id"
-            />
-            <span id="linkedin-links" class="profile-links">
-              <a
-                id="linkedin-my-posts"
-                class="button button-quiet"
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                My posts
-              </a>
-            </span>
-          </div>
-
-          <div class="editor-shell">
-            <section id="editor-container" aria-label="LinkedIn post editor"></section>
-            <div
-              id="emoji-picker-panel"
-              class="emoji-picker-container"
-              role="dialog"
-              aria-label="Choose an emoji"
-              aria-hidden="true"
-            >
-              <emoji-picker></emoji-picker>
-            </div>
-          </div>
-
-          <div class="publish-bar">
-            <button id="copy-button" class="button button-primary" type="button">
-              <span aria-hidden="true">⧉</span>
-              Copy post
-            </button>
-            <span id="linkedin-publish-link">
-              <a
-                id="linkedin-create-post"
-                class="button button-linkedin"
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span aria-hidden="true">↗</span>
-                Open LinkedIn
-              </a>
-            </span>
-            <p class="privacy-note">
-              <span aria-hidden="true">●</span>
-              Stored only in this browser
-            </p>
-          </div>
-
-          <section class="save-workflow" aria-labelledby="save-title">
-            <div class="save-fields">
-              <label id="save-title" for="snippet-title">Save this draft</label>
-              <input
-                type="text"
-                id="snippet-title"
-                maxlength="50"
-                placeholder="Give this snippet a title"
-              />
-              <label class="checkbox-control" for="is-template">
-                <input type="checkbox" id="is-template" />
-                <span>Template</span>
-              </label>
-            </div>
-            <button id="save-button" class="button button-secondary" type="button">
-              <span aria-hidden="true">＋</span>
-              Save snippet
-            </button>
-          </section>
-        </section>
-
         <aside class="library" aria-label="Writing library">
           <section class="library-section accordion snippets-section">
             <button
@@ -170,23 +119,30 @@
               aria-controls="snippets-content"
             >
               <span>
-                <small>Library</small>
-                <span data-count-label>Snippets (0)</span>
+                <small class="workflow-marker">1 · Start</small>
+                <span data-count-label>Saved snippets (0)</span>
               </span>
-              <span class="accordion-icon" aria-hidden="true">⌄</span>
+              <span class="accordion-icon" aria-hidden="true"></span>
             </button>
             <div id="snippets-content" class="accordion-content open">
-              <div class="library-actions" aria-label="Snippet file actions">
-                <button id="import-data" class="button button-quiet" type="button">
-                  <span aria-hidden="true">⇧</span>
-                  Import
-                </button>
-                <button id="export-data" class="button button-quiet" type="button">
-                  <span aria-hidden="true">⇩</span>
-                  Export
+              <div class="library-actions" aria-label="Snippet starter actions">
+                <button
+                  id="load-sample-button"
+                  class="button button-sample"
+                  type="button"
+                  title="Replace the editor with a sample post"
+                >
+                  <span aria-hidden="true">↻</span>
+                  Load sample
                 </button>
               </div>
-              <label class="snippet-search-label" for="snippet-search">Search snippets</label>
+              <div class="snippet-filters">
+                <label class="snippet-search-label" for="snippet-search">Search snippets</label>
+                <label class="template-filter" for="template-filter">
+                  <input id="template-filter" type="checkbox" />
+                  <span>Templates only</span>
+                </label>
+              </div>
               <input
                 id="snippet-search"
                 type="search"
@@ -204,7 +160,7 @@
                         <button type="button" class="sort-button">Updated</button>
                       </th>
                       <th scope="col" data-sort="template">
-                        <button type="button" class="sort-button">Type</button>
+                        <button type="button" class="sort-button">Template</button>
                       </th>
                       <th scope="col"><span class="visually-hidden">Actions</span></th>
                     </tr>
@@ -234,7 +190,7 @@
                 <small>Reuse</small>
                 Hashtags
               </span>
-              <span class="accordion-icon" aria-hidden="true">⌄</span>
+              <span class="accordion-icon" aria-hidden="true"></span>
             </button>
             <div id="hashtags-content" class="accordion-content open">
               <div id="hashtag-controls" class="segmented-control" aria-label="Sort hashtags">
@@ -244,15 +200,70 @@
               <div id="hashtag-list" class="hashtag-grid"></div>
             </div>
           </section>
-
-          <section class="danger-zone" aria-labelledby="data-title">
-            <div>
-              <h2 id="data-title">Local data</h2>
-              <p>Remove snippets, profile settings, and saved preferences.</p>
-            </div>
-            <button id="clear-button" class="button button-danger" type="button">Clear data</button>
-          </section>
         </aside>
+
+        <section class="composer" aria-labelledby="composer-title">
+          <div class="section-heading composer-heading">
+            <div>
+              <p class="eyebrow">2 · Edit</p>
+              <h1 id="composer-title">Compose your post</h1>
+            </div>
+          </div>
+
+          <div class="editor-shell">
+            <section id="editor-container" aria-label="LinkedIn post editor"></section>
+            <div
+              id="emoji-picker-panel"
+              class="emoji-picker-container"
+              role="dialog"
+              aria-label="Choose an emoji"
+              aria-hidden="true"
+            >
+              <emoji-picker></emoji-picker>
+            </div>
+          </div>
+
+          <div class="publish-bar">
+            <p class="workflow-step">3 · Publish</p>
+            <button id="copy-button" class="button button-primary" type="button">
+              <span aria-hidden="true">⧉</span>
+              Copy for LinkedIn
+            </button>
+            <span id="linkedin-publish-link">
+              <a
+                id="linkedin-create-post"
+                class="button button-linkedin"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span aria-hidden="true">↗</span>
+                Open LinkedIn
+              </a>
+            </span>
+          </div>
+
+          <section class="save-workflow" aria-labelledby="save-title">
+            <p class="workflow-step">4 · Save</p>
+            <div class="save-fields">
+              <label id="save-title" for="snippet-title">Save this draft</label>
+              <input
+                type="text"
+                id="snippet-title"
+                maxlength="50"
+                placeholder="Give this snippet a title"
+              />
+              <label class="checkbox-control" for="is-template">
+                <input type="checkbox" id="is-template" />
+                <span>Template</span>
+              </label>
+            </div>
+            <button id="save-button" class="button button-secondary" type="button">
+              <span aria-hidden="true">＋</span>
+              Save snippet
+            </button>
+          </section>
+        </section>
       </div>
 
       <section class="support-band" aria-label="Help and background">
@@ -267,17 +278,20 @@
               <small>Need a hand?</small>
               How it works
             </span>
-            <span class="accordion-icon" aria-hidden="true">⌄</span>
+            <span class="accordion-icon" aria-hidden="true"></span>
           </button>
           <div id="instructions" class="accordion-content">
             <ol>
-              <li>Enter the final part of your LinkedIn profile URL.</li>
+              <li>Open settings and enter the final part of your LinkedIn profile URL.</li>
               <li>Compose and format your post in the editor.</li>
               <li>Save useful drafts as snippets for later reuse.</li>
               <li>Copy the converted post, open LinkedIn, and paste it into the composer.</li>
               <li>Review the final post on LinkedIn before publishing.</li>
             </ol>
-            <p><strong>Your writing stays in this browser.</strong> There is no cloud sync.</p>
+            <p>
+              <strong>Your posts, snippets, and settings are stored only in this browser.</strong>
+              There is no cloud sync.
+            </p>
             <p>
               The hosted site may collect anonymous, aggregate usage and performance metrics;
               composer content is not included.
@@ -296,7 +310,7 @@
               <small>About</small>
               Why this exists
             </span>
-            <span class="accordion-icon" aria-hidden="true">⌄</span>
+            <span class="accordion-icon" aria-hidden="true"></span>
           </button>
           <div id="background" class="accordion-content">
             <p>
@@ -317,20 +331,87 @@
       </section>
     </main>
 
+    <dialog id="settings-dialog" aria-labelledby="settings-title">
+      <form id="settings-form" method="dialog">
+        <div class="dialog-heading">
+          <div>
+            <h2 id="settings-title">Settings</h2>
+          </div>
+          <button
+            id="settings-close-button"
+            class="dialog-close"
+            type="button"
+            aria-label="Close settings"
+            title="Close settings"
+          >
+            ×
+          </button>
+        </div>
+        <section class="settings-section" aria-labelledby="profile-settings-title">
+          <label id="profile-settings-title" class="settings-section-title" for="linkedin-user-id">
+            LinkedIn profile ID
+          </label>
+          <p id="linkedin-user-id-help" class="field-help">
+            Enter the final part of your LinkedIn profile URL.
+          </p>
+          <input
+            type="text"
+            id="linkedin-user-id"
+            maxlength="100"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="your-profile-id"
+            aria-describedby="linkedin-user-id-help"
+          />
+        </section>
+        <section class="settings-section" aria-labelledby="snippet-data-title">
+          <div class="settings-section-heading">
+            <div>
+              <h3 id="snippet-data-title">Snippet data</h3>
+              <p>Move your saved snippets between browsers.</p>
+            </div>
+            <div class="settings-management-actions">
+              <button id="import-data" class="button button-quiet" type="button">
+                <span aria-hidden="true">⇧</span>
+                Import
+              </button>
+              <button id="export-data" class="button button-quiet" type="button">
+                <span aria-hidden="true">⇩</span>
+                Export
+              </button>
+            </div>
+          </div>
+        </section>
+        <section class="settings-section settings-danger" aria-labelledby="data-title">
+          <div class="settings-section-heading">
+            <div>
+              <h3 id="data-title">Local data</h3>
+              <p>Remove snippets, profile settings, and saved preferences.</p>
+            </div>
+            <button id="clear-button" class="button button-danger" type="button">
+              Clear data
+            </button>
+          </div>
+        </section>
+        <div class="dialog-actions">
+          <button id="settings-cancel-button" class="button button-quiet" type="button">
+            Cancel
+          </button>
+          <button class="button button-primary" type="submit">Save settings</button>
+        </div>
+      </form>
+    </dialog>
+
     <footer>
       <p>
         Built by
-        <a href="https://github.com/simonkurtz-MSFT" target="_blank" rel="noopener noreferrer">
-          Simon Kurtz
-        </a>
+        <a href="https://github.com/simonkurtz-MSFT" target="_blank" rel="noopener noreferrer">Simon Kurtz</a>
         · Free and open source ·
         <a
           href="https://github.com/simonkurtz-MSFT/simple-linkedin-composer/releases/tag/1.7.0"
           target="_blank"
           rel="noopener noreferrer"
-        >
-          Version 1.7.0
-        </a>
+        >Version 1.7.0</a>
       </p>
     </footer>
 

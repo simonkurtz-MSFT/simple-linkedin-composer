@@ -18,25 +18,27 @@ Hosted at [https://linkedin-composer.simondoescloud.com](https://linkedin-compos
 
 ## Usage
 
-1. Enter the final segment of your LinkedIn profile URL in **LinkedIn profile ID**.
-1. Compose a post or select **Load sample**.
-1. Apply supported formatting with the editor toolbar.
-1. Select **Copy post**.
+1. Open **Settings** and enter the final segment of your LinkedIn profile URL.
+1. Load a saved snippet, import snippets, or start with an empty post.
+1. Edit the post and apply supported formatting with the editor toolbar.
+1. Select **Copy for LinkedIn**.
 1. Select **Open LinkedIn**, paste the converted post, review it, and publish from LinkedIn.
 
-Do not copy directly from the editor when you need formatting conversion; use **Copy post**.
+Regular copy commands preserve the selected editor text. Use **Copy for LinkedIn** when you need formatting conversion.
 
 ## Snippet management
 
 | Action | How to use it                                       |
 | ------ | --------------------------------------------------- |
 | Save   | Enter a title, optionally select Template, and save |
-| Load   | Select the snippet title in the library             |
+| Load   | Select a title; templates open as untitled drafts   |
 | Delete | Select the snippet's delete action                 |
 | Export | Download all saved snippets as JSON                |
 | Import | Select a compatible JSON export                    |
 
 Imports accept the existing exported JSON object format. Each key must be `snippet-` followed by a title of up to 50 characters. Each value may be the exported JSON string or its parsed object and must contain a Quill `delta`, a valid timestamp, and an optional Boolean template flag. Supported formatting is bold, italic, ordered or bullet lists, and HTTP(S) links. Unknown or malformed entries are skipped without deleting other valid local snippets.
+
+Templates are protected from routine replacement. Loading one creates an untitled, non-template draft, and imports never replace an existing template. To update a template manually, enter its exact title and confirm the template-specific overwrite warning.
 
 ## Hashtags
 
@@ -49,6 +51,8 @@ Use **Clear data** to remove saved snippets, profile settings, and preferences f
 ## Privacy and analytics
 
 The application code does not send your composer content to an application server. Its scripts, styles, editor libraries, and emoji data ship with the static site.
+
+The header requests public repository statistics from `api.github.com` on page load. This request contains no post, snippet, hashtag, profile, or local-storage content.
 
 The hosted site uses Cloudflare Web Analytics for anonymous, aggregate usage and performance measurements. Hosting infrastructure also processes standard request metadata needed to deliver the site. These operational services do not receive post content, snippets, hashtags, profile settings, or local-storage values from the application.
 

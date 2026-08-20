@@ -11,11 +11,12 @@ const makeSnippet = (timestamp, isTemplate = false) => ({
 const setup = ({ pageSize = 10 } = {}) => {
   document.body.innerHTML = `
     <input id="search" />
+    <input id="templates" type="checkbox" />
     <table>
       <thead><tr>
         <th data-sort="title"><button type="button">Snippet</button></th>
         <th data-sort="timestamp"><button type="button">Updated</button></th>
-        <th data-sort="template"><button type="button">Type</button></th>
+        <th data-sort="template"><button type="button">Template</button></th>
         <th>Actions</th>
       </tr></thead>
       <tbody></tbody>
@@ -29,6 +30,7 @@ const setup = ({ pageSize = 10 } = {}) => {
   const table = createSnippetTable({
     table: document.querySelector("table"),
     searchInput: document.querySelector("#search"),
+    templateFilter: document.querySelector("#templates"),
     pageSizeSelect: document.querySelector("#size"),
     pager: document.querySelector("#pager"),
     onLoad,
@@ -77,10 +79,38 @@ describe("createSnippetTable", () => {
     expect(document.querySelector("img")).toBeNull();
     expect(document.querySelector(".snippet-link").textContent).toBe(title);
     expect(document.querySelector("[aria-label='Template']")).not.toBeNull();
+    expect(document.querySelector(".delete-snippet").textContent).toBe("🗑");
     document.querySelector(".snippet-link").click();
     document.querySelector(".delete-snippet").click();
     expect(onLoad).toHaveBeenCalledWith(title);
     expect(onDelete).toHaveBeenCalledWith(title);
+  });
+
+  it("filters to templates and composes with title search", () => {
+    const { table, onCountChange } = setup();
+    table.setSnippets({
+      "Alpha template": makeSnippet("2025-01-01T00:00:00.000Z", true),
+      "Beta draft": makeSnippet("2025-02-01T00:00:00.000Z"),
+    });
+
+    const templateFilter = document.querySelector("#templates");
+    templateFilter.checked = true;
+    templateFilter.dispatchEvent(new Event("change"));
+    expect(document.querySelectorAll(".snippet-link")).toHaveLength(1);
+    expect(document.querySelector(".snippet-link").textContent).toBe(
+      "Alpha template",
+    );
+    expect(onCountChange).toHaveBeenLastCalledWith("1/2", {
+      visible: 1,
+      total: 2,
+    });
+
+    const search = document.querySelector("#search");
+    search.value = "beta";
+    search.dispatchEvent(new Event("input"));
+    expect(document.querySelector(".empty-state").textContent).toBe(
+      "No templates match the current filters.",
+    );
   });
 
   it("sorts, searches titles, and reports visible counts", () => {

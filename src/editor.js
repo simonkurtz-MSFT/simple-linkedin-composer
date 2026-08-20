@@ -10,6 +10,11 @@ const TOOLBAR_LABELS = [
   [".ql-clear", "Clear Editor"],
 ];
 
+const CUSTOM_TOOLBAR_ICONS = [
+  [".ql-emoji", "☺"],
+  [".ql-clear", "🗑"],
+];
+
 export const createEditor = ({
   container,
   emojiPanel,
@@ -21,6 +26,7 @@ export const createEditor = ({
   const document = container.ownerDocument;
   let hasUnsavedChanges = false;
   let emojiButton;
+  let lastSelection = { index: 0, length: 0 };
 
   const setEmojiPickerOpen = (isOpen) => {
     emojiPanel.style.display = isOpen ? "block" : "none";
@@ -76,6 +82,10 @@ export const createEditor = ({
     button.title = label;
     button.setAttribute("aria-label", label);
   });
+  CUSTOM_TOOLBAR_ICONS.forEach(([selector, icon]) => {
+    const button = toolbar.querySelector(selector);
+    if (button) button.textContent = icon;
+  });
   emojiButton = toolbar.querySelector(".ql-emoji");
   emojiButton?.setAttribute("aria-controls", emojiPanel.id);
   emojiButton?.setAttribute("aria-expanded", "false");
@@ -84,11 +94,19 @@ export const createEditor = ({
     hasUnsavedChanges = true;
   });
 
+  quill.on("selection-change", (range) => {
+    if (range) lastSelection = range;
+  });
+
   emojiPanel
     .querySelector("emoji-picker")
     ?.addEventListener("emoji-click", (event) => {
-      const range = quill.getSelection();
-      if (range) quill.insertText(range.index, event.detail.unicode);
+      const emoji = event.detail?.unicode;
+      if (typeof emoji !== "string" || !emoji) return;
+      const range = quill.getSelection() ?? lastSelection;
+      const insertionIndex = Math.min(range.index, quill.getLength() - 1);
+      quill.insertText(insertionIndex, emoji);
+      quill.setSelection(insertionIndex + emoji.length, 0);
       closeEmojiPicker({ restoreFocus: true });
     });
 

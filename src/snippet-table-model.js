@@ -26,6 +26,7 @@ export const toSnippetRows = (snippets) =>
 export const createSnippetTableModel = ({ pageSize = 10 } = {}) => {
   let rows = [];
   let filter = "";
+  let templatesOnly = false;
   let sortColumn = "timestamp";
   let sortDirection = "desc";
   let page = 1;
@@ -34,9 +35,12 @@ export const createSnippetTableModel = ({ pageSize = 10 } = {}) => {
 
   const visibleRows = () => {
     const normalizedFilter = filter.trim().toLowerCase();
-    const matching = normalizedFilter
+    const matchingTitles = normalizedFilter
       ? rows.filter((row) => row.title.toLowerCase().includes(normalizedFilter))
       : [...rows];
+    const matching = templatesOnly
+      ? matchingTitles.filter((row) => row.isTemplate)
+      : matchingTitles;
     const compare = comparators[sortColumn];
     matching.sort((left, right) =>
       sortDirection === "asc" ? compare(left, right) : compare(right, left),
@@ -62,6 +66,11 @@ export const createSnippetTableModel = ({ pageSize = 10 } = {}) => {
       page = 1;
     },
     getFilter: () => filter,
+    setTemplatesOnly(nextTemplatesOnly) {
+      templatesOnly = nextTemplatesOnly === true;
+      page = 1;
+    },
+    getTemplatesOnly: () => templatesOnly,
     toggleSort(column) {
       if (!comparators[column]) return;
       if (column === sortColumn) {
@@ -108,7 +117,9 @@ export const createSnippetTableModel = ({ pageSize = 10 } = {}) => {
         return "No snippets yet. Save the current draft to build your library.";
       }
       if (visibleRows().length === 0) {
-        return "No snippets match this search.";
+        return templatesOnly
+          ? "No templates match the current filters."
+          : "No snippets match this search.";
       }
       return "";
     },
