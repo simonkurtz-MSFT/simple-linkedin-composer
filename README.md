@@ -112,7 +112,7 @@ Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## Releases
 
-See [CHANGELOG.md](CHANGELOG.md) for release notes. The application and package metadata currently identify version `1.7.0`.
+See [CHANGELOG.md](CHANGELOG.md) for release notes. The application and package metadata currently identify version `2.0.0`.
 
 ## License
 

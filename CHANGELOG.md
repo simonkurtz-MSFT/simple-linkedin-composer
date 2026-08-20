@@ -4,6 +4,8 @@ Notable changes to Simple LinkedIn Composer are documented here.
 
 ## Unreleased
 
+## 2.0.0 - 2026-08-20
+
 ### Runtime modernization
 
 - Replaced jQuery, DataTables, and Toastr with standards-based modules for snippet tables, notifications, editor behavior, hashtags, accordions, and file transfer.
