@@ -11,6 +11,4 @@ This plan contains only open work. Each step requires explicit approval before i
 
 ## Priorities
 
-| Priority | Work                                                          | Impact | Effort | Step       |
-| -------- | ------------------------------------------------------------- | ------ | ------ | ---------- |
-| Green    | Complete offline behavior if justified by a separate review   | Medium | Medium | 9 or later |
+No open modernization work remains. The existing PWA behavior is sufficient; complete offline behavior is out of scope.
