@@ -11,8 +11,6 @@ This plan contains only open work. Each step requires explicit approval before i
 
 ## Priorities
 
-| Priority | Work                                                        | Impact | Effort | Step       |
-| -------- | ----------------------------------------------------------- | ------ | ------ | ---------- |
-| Green    | Complete offline behavior if justified by a separate review | Medium | Medium | 7 or later |
-
-Deployment, tagging, and release remain separately approval-gated.
+| Priority | Work                                                          | Impact | Effort | Step       |
+| -------- | ------------------------------------------------------------- | ------ | ------ | ---------- |
+| Green    | Complete offline behavior if justified by a separate review   | Medium | Medium | 9 or later |

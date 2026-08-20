@@ -29,6 +29,10 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 html {
   min-width: 320px;
   background: var(--canvas);
@@ -545,39 +549,28 @@ emoji-picker {
   overflow-x: auto;
 }
 
-#snippets-table_wrapper {
+.snippet-search-label {
+  display: block;
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+#snippet-search {
   width: 100%;
-}
-
-#snippets-table_filter {
-  float: none;
-  text-align: left;
-}
-
-#snippets-table_filter label,
-#snippets-table_filter input.form-control {
-  width: 100%;
-}
-
-#snippets-table_filter input.form-control {
   min-height: 40px;
   margin: 8px 0 12px;
   font-size: 0.9rem;
 }
 
 #snippets-table {
-  width: 100% !important;
+  width: 100%;
   border-collapse: collapse;
   font-size: 0.79rem;
 }
 
-/* stylelint-disable selector-class-pattern -- DataTables owns these class names. */
-#snippets-table.dataTable.no-footer {
-  border-bottom-color: var(--line);
-}
-
 #snippets-table thead th {
-  padding: 9px 7px;
+  padding: 0;
   border-bottom: 1px solid var(--line-strong);
   color: var(--ink-soft);
   font-size: 0.68rem;
@@ -599,6 +592,32 @@ emoji-picker {
 #snippets-table tbody td:nth-child(3),
 #snippets-table thead th:nth-child(3) {
   text-align: center;
+}
+
+.sort-button {
+  width: 100%;
+  padding: 9px 7px;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  text-transform: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+
+#snippets-table thead th:nth-child(3) .sort-button {
+  text-align: center;
+}
+
+.sort-button.is-active::after {
+  margin-left: 4px;
+  content: "↓";
+}
+
+th[aria-sort="ascending"] .sort-button.is-active::after {
+  content: "↑";
 }
 
 .snippet-link {
@@ -629,35 +648,48 @@ emoji-picker {
   color: #742219;
 }
 
-.dataTables_wrapper .dataTables_length,
-.dataTables_wrapper .dataTables_paginate {
-  float: none;
+.snippet-table-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   margin-top: 12px;
   color: var(--ink-soft);
   font-size: 0.75rem;
-  text-align: left;
 }
 
-.dataTables_wrapper .dataTables_length select {
+.snippet-table-footer select {
   min-height: 32px;
   border-color: var(--line-strong);
   background: var(--surface);
 }
 
-.dataTables_wrapper .dataTables_paginate .paginate_button {
-  min-width: 32px;
-  margin: 0 2px;
-  padding: 5px 8px;
-  border-radius: 4px;
+.snippet-pager {
+  display: flex;
+  gap: 4px;
 }
 
-.dataTables_wrapper .dataTables_paginate .paginate_button.current,
-.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+.pager-button {
+  min-width: 32px;
+  padding: 5px 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  color: var(--ink);
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.pager-button[aria-current="page"] {
   border-color: var(--linkedin);
-  color: #fff !important;
+  color: #fff;
   background: var(--linkedin);
 }
-/* stylelint-enable selector-class-pattern */
+
+.pager-button:disabled:not([aria-current="page"]) {
+  cursor: default;
+  opacity: 0.45;
+}
 
 .segmented-control {
   display: inline-grid;
@@ -815,26 +847,60 @@ footer p {
   border: 0 !important;
 }
 
-#toast-container > div {
-  border-radius: var(--radius);
-  box-shadow: 0 10px 26px rgb(23 33 43 / 22%);
-  opacity: 1;
+#toast-container {
+  position: fixed;
+  z-index: 1200;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  width: min(360px, calc(100vw - 32px));
+  gap: 10px;
 }
 
-#toast-container > .toast-success {
+.toast {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  color: #fff;
+  box-shadow: 0 10px 26px rgb(23 33 43 / 22%);
+}
+
+.toast-success {
   background-color: #087f6d;
 }
 
-#toast-container > .toast-info {
+.toast-info {
   background-color: #0a66c2;
 }
 
-#toast-container > .toast-warning {
+.toast-warning {
   background-color: #8a5a00;
 }
 
-#toast-container > .toast-error {
+.toast-error {
   background-color: #9b3529;
+}
+
+.toast-title,
+.toast-message {
+  display: block;
+}
+
+.toast-title {
+  margin-bottom: 3px;
+}
+
+.toast-close {
+  padding: 0;
+  border: 0;
+  color: inherit;
+  font-size: 1.4rem;
+  line-height: 1;
+  background: transparent;
+  cursor: pointer;
 }
 
 @media (width <= 1080px) {
@@ -1008,7 +1074,7 @@ footer p {
     width: auto;
   }
 
-  #toast-container > div {
+  .toast {
     width: 100%;
   }
 }

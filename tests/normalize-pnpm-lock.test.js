@@ -1,11 +1,14 @@
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import {
+  isWorkingLockfileNormalized,
   normalizeLockfile,
   normalizeStagedLockfile,
+  normalizeWorkingLockfile,
 } from "../scripts/normalize-pnpm-lock.mjs";
 
 const publicTarball = "https://registry.npmjs.org/example/-/example-1.0.0.tgz";
@@ -21,6 +24,9 @@ const proxyRegistryPath = [
 ].join("/");
 const proxyTarball = `https://${visualStudioProxyHost}/${proxyRegistryPath}/example/-/example-1.0.0.tgz`;
 const temporaryRepositories = [];
+const normalizerPath = fileURLToPath(
+  new URL("../scripts/normalize-pnpm-lock.mjs", import.meta.url),
+);
 
 const git = (directory, ...arguments_) =>
   execFileSync("git", arguments_, { cwd: directory, encoding: "utf8" });
@@ -79,6 +85,66 @@ describe("lockfile tarball removal", () => {
     expect(normalizeLockfile(content)).toBe(
       "    resolution: {integrity: sha512-test}\n",
     );
+  });
+});
+
+describe("working lockfile normalization", () => {
+  it("removes registry tarballs from the working lockfile", () => {
+    const directory = createRepository();
+    const path = join(directory, "pnpm-lock.yaml");
+    writeFileSync(path, lockfile(proxyTarball));
+
+    expect(isWorkingLockfileNormalized({ cwd: directory })).toBe(false);
+    expect(normalizeWorkingLockfile({ cwd: directory })).toBe(true);
+    expect(readFileSync(path, "utf8")).toBe(lockfileWithoutTarball());
+    expect(isWorkingLockfileNormalized({ cwd: directory })).toBe(true);
+    expect(normalizeWorkingLockfile({ cwd: directory })).toBe(false);
+  });
+
+  it("rejects registry tarballs in check mode without changing the file", () => {
+    const directory = createRepository();
+    const path = join(directory, "pnpm-lock.yaml");
+    const proxy = lockfile(proxyTarball);
+    writeFileSync(path, proxy);
+
+    const rejected = spawnSync(process.execPath, [normalizerPath, "--check"], {
+      cwd: directory,
+      encoding: "utf8",
+    });
+    expect(rejected.status).toBe(1);
+    expect(rejected.stderr).toContain("pnpm lockfile:normalize");
+    expect(readFileSync(path, "utf8")).toBe(proxy);
+
+    const normalized = spawnSync(process.execPath, [normalizerPath], {
+      cwd: directory,
+      encoding: "utf8",
+    });
+    const accepted = spawnSync(process.execPath, [normalizerPath, "--check"], {
+      cwd: directory,
+      encoding: "utf8",
+    });
+    expect(normalized.status).toBe(0);
+    expect(accepted.status).toBe(0);
+    expect(readFileSync(path, "utf8")).toBe(lockfileWithoutTarball());
+  });
+
+  it("does not alter a separately staged lockfile version", () => {
+    const directory = createRepository();
+    const path = join(directory, "pnpm-lock.yaml");
+    const staged = lockfile(proxyTarball);
+    const workingTree = lockfile(
+      publicTarball,
+      "# unrelated unstaged change\n",
+    );
+    writeFileSync(path, staged);
+    git(directory, "add", "pnpm-lock.yaml");
+    writeFileSync(path, workingTree);
+
+    expect(normalizeWorkingLockfile({ cwd: directory })).toBe(true);
+    expect(readFileSync(path, "utf8")).toBe(
+      lockfileWithoutTarball("# unrelated unstaged change\n"),
+    );
+    expect(git(directory, "show", ":pnpm-lock.yaml")).toBe(staged);
   });
 });
 

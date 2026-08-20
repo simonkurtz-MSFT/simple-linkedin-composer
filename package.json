@@ -14,8 +14,9 @@
     "preview": "vite preview",
     "hooks:install": "node scripts/install-hooks.mjs",
     "lockfile:normalize": "node scripts/normalize-pnpm-lock.mjs",
-    "format": "prettier --write package.json pnpm-workspace.yaml *.config.js .github/dependabot.yml src/main.js src/hashtag-data.js src/post-conversion.js src/snippet-data.js scripts/**/*.mjs tests/**/*.js",
-    "format:check": "prettier --check package.json pnpm-workspace.yaml *.config.js .github/dependabot.yml src/main.js src/hashtag-data.js src/post-conversion.js src/snippet-data.js scripts/**/*.mjs tests/**/*.js",
+    "lockfile:check": "node scripts/normalize-pnpm-lock.mjs --check",
+    "format": "prettier --write package.json pnpm-workspace.yaml *.config.js .github/dependabot.yml src/**/*.js scripts/**/*.mjs tests/**/*.js",
+    "format:check": "prettier --check package.json pnpm-workspace.yaml *.config.js .github/dependabot.yml src/**/*.js scripts/**/*.mjs tests/**/*.js",
     "lint": "pnpm lint:js && pnpm lint:css && pnpm lint:html && pnpm lint:md",
     "lint:js": "eslint .",
     "lint:css": "stylelint \"src/**/*.css\"",
@@ -25,16 +26,12 @@
     "test:browser": "playwright test",
     "test:browser:ci": "playwright test --ignore-snapshots",
     "test:browser:update": "playwright test --update-snapshots",
-    "check": "pnpm format:check && pnpm lint && pnpm test && pnpm build"
+    "check": "pnpm lockfile:check && pnpm format:check && pnpm lint && pnpm test && pnpm build"
   },
   "dependencies": {
-    "datatables.net": "1.13.11",
-    "datatables.net-dt": "1.13.11",
     "emoji-picker-element": "1.29.1",
     "emoji-picker-element-data": "1.8.0",
-    "jquery": "4.0.0",
-    "quill": "2.0.3",
-    "toastr": "2.1.4"
+    "quill": "2.0.3"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
@@ -43,6 +40,7 @@
     "eslint": "10.8.1",
     "globals": "17.11.0",
     "htmlhint": "1.9.2",
+    "jsdom": "30.0.1",
     "markdownlint-cli2": "0.23.2",
     "prettier": "3.9.6",
     "stylelint": "17.14.1",

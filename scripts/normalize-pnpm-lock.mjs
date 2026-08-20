@@ -1,4 +1,5 @@
 import { spawnSync } from "node:child_process";
+import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
 
@@ -16,6 +17,23 @@ const runGit = (arguments_, { cwd = process.cwd(), input } = {}) =>
 
 export const normalizeLockfile = (content) =>
   content.replace(inlineTarballPattern, "").replace(blockTarballPattern, "");
+
+export const normalizeWorkingLockfile = ({ cwd = process.cwd() } = {}) => {
+  const path = resolve(cwd, lockfilePath);
+  const content = readFileSync(path, "utf8");
+  const normalized = normalizeLockfile(content);
+  if (normalized === content) {
+    return false;
+  }
+
+  writeFileSync(path, normalized);
+  return true;
+};
+
+export const isWorkingLockfileNormalized = ({ cwd = process.cwd() } = {}) => {
+  const content = readFileSync(resolve(cwd, lockfilePath), "utf8");
+  return normalizeLockfile(content) === content;
+};
 
 export const normalizeStagedLockfile = ({ cwd = process.cwd() } = {}) => {
   const stagedDiff = runGit(
@@ -75,8 +93,32 @@ const isDirectRun =
 
 if (isDirectRun) {
   try {
-    if (normalizeStagedLockfile()) {
-      console.log("Removed tarball metadata from the staged pnpm lockfile.");
+    const arguments_ = process.argv.slice(2);
+    const supportedArguments = new Set(["--check", "--staged"]);
+    if (
+      arguments_.some((argument) => !supportedArguments.has(argument)) ||
+      arguments_.length > 1
+    ) {
+      throw new Error("Usage: normalize-pnpm-lock.mjs [--check|--staged]");
+    }
+
+    if (arguments_.includes("--check")) {
+      if (!isWorkingLockfileNormalized()) {
+        throw new Error(
+          "pnpm-lock.yaml contains registry tarball metadata. Run pnpm lockfile:normalize.",
+        );
+      }
+      process.exit(0);
+    }
+
+    const stagedOnly = arguments_.includes("--staged");
+    const changed = stagedOnly
+      ? normalizeStagedLockfile()
+      : normalizeWorkingLockfile();
+    if (changed) {
+      console.log(
+        `Removed registry tarball metadata from the ${stagedOnly ? "staged" : "working"} pnpm lockfile.`,
+      );
     }
   } catch (error) {
     console.error(

@@ -8,7 +8,6 @@ const ignoredDevelopmentRequest = (request) =>
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
-    localStorage.clear();
     localStorage.setItem("firstTimeUser", "false");
   });
 });
@@ -31,6 +30,8 @@ test("meets automated accessibility and responsive layout checks", async ({
   await expect(
     page.getByRole("heading", { name: "Compose your post" }),
   ).toBeVisible();
+  await expect(page.locator("#linkedin-my-posts")).toBeHidden();
+  await expect(page.locator("#linkedin-publish-link")).toBeHidden();
 
   const accessibilityResults = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
@@ -120,6 +121,58 @@ test("supports the primary composer, snippet, hashtag, and file workflows", asyn
     "aria-live",
     "assertive",
   );
+});
+
+test("sorts, searches, and paginates the snippet library", async ({ page }) => {
+  await page.goto("/");
+  await page.evaluate(() => {
+    for (let index = 1; index <= 11; index += 1) {
+      const title = `Item ${String(index).padStart(2, "0")}`;
+      localStorage.setItem(
+        `snippet-${title}`,
+        JSON.stringify({
+          delta: { ops: [{ insert: `Body-only-${index}\n` }] },
+          timestamp: new Date(Date.UTC(2026, 0, index)).toISOString(),
+          isTemplate: index === 3,
+        }),
+      );
+    }
+  });
+  await page.reload();
+
+  const rows = page.locator("#snippets-table tbody tr");
+  await expect(rows).toHaveCount(10);
+  await expect(rows.first()).toContainText("Item 11");
+  await expect(page.locator("th[data-sort='timestamp']")).toHaveAttribute(
+    "aria-sort",
+    "descending",
+  );
+
+  await page.getByRole("button", { name: "Snippet", exact: true }).click();
+  await expect(rows.first()).toContainText("Item 01");
+  await expect(page.locator("th[data-sort='title']")).toHaveAttribute(
+    "aria-sort",
+    "ascending",
+  );
+
+  await page.getByRole("button", { name: "Type", exact: true }).click();
+  await expect(rows.first()).toContainText("Item 03");
+
+  const search = page.getByRole("searchbox", { name: "Search snippets" });
+  await search.fill("item 01");
+  await expect(rows).toHaveCount(1);
+  await expect(page.getByText("Snippets (1/11)")).toBeVisible();
+  await expect(page.locator("#snippet-pager")).toBeHidden();
+
+  await search.fill("Body-only-1");
+  await expect(page.getByText("No snippets match this search.")).toBeVisible();
+
+  await search.fill("");
+  await page.getByRole("button", { name: "Page 2" }).click();
+  await expect(rows).toHaveCount(1);
+  await page.getByLabel("Snippets per page").selectOption("25");
+  await expect(rows).toHaveCount(11);
+  await expect(page.locator("#snippet-pager")).toBeHidden();
 });
 
 test("confirms destructive editor clearing and exposes popup state", async ({

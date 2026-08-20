@@ -82,12 +82,14 @@ Prerequisites:
 | Command                    | Purpose                                              |
 | -------------------------- | ---------------------------------------------------- |
 | `pnpm check`               | Format check, lint, unit tests, and production build |
+| `pnpm lockfile:check`      | Reject registry tarball metadata in the lockfile     |
+| `pnpm lockfile:normalize`  | Remove registry tarball metadata after installs      |
 | `pnpm test:browser`        | Chromium checks with local visual snapshots          |
 | `pnpm test:browser:ci`     | CI browser checks without Windows snapshot matching  |
 | `pnpm test:browser:update` | Review and refresh Windows visual baselines          |
 | `pnpm build`               | Generate the static site in `dist/`                  |
 
-The repository configures pnpm not to include tarball URLs. The pre-commit hook removes any `tarball` metadata preserved in the staged `pnpm-lock.yaml` and leaves unstaged lockfile work unchanged.
+The repository configures pnpm not to include tarball URLs. Because machine registry configuration can still add them, run `pnpm lockfile:normalize` after an install changes `pnpm-lock.yaml`. The repository check rejects remaining metadata, while the pre-commit hook cleans only the staged lockfile and leaves unstaged lockfile work unchanged.
 
 Corporate or Microsoft proxy registry routing belongs in untracked user or machine pnpm configuration. Do not add proxy URLs, credentials, tokens, or private feed settings to repository files.
 

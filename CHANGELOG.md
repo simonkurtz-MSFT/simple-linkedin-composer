@@ -2,6 +2,18 @@
 
 Notable changes to Simple LinkedIn Composer are documented here.
 
+## Unreleased
+
+### Runtime modernization
+
+- Replaced jQuery, DataTables, and Toastr with standards-based modules for snippet tables, notifications, editor behavior, hashtags, accordions, and file transfer.
+- Reduced the production dependency set to Quill and the emoji picker packages.
+- Added working-tree normalization and CI enforcement to keep machine registry URLs out of `pnpm-lock.yaml`.
+
+### Validation
+
+- Added unit and desktop/mobile browser coverage for notification semantics and snippet sorting, title search, paging, counts, and empty states.
+
 ## 1.7.0 - 2026-08-19
 
 ### Added

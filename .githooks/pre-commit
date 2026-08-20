@@ -1,4 +1,4 @@
 #!/bin/sh
 
 repository_root=$(git rev-parse --show-toplevel) || exit 1
-exec node "$repository_root/scripts/normalize-pnpm-lock.mjs"
+exec node "$repository_root/scripts/normalize-pnpm-lock.mjs" --staged

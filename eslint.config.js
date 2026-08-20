@@ -14,18 +14,16 @@ export default [
   {
     files: ["src/**/*.js"],
     languageOptions: {
-      globals: {
-        ...globals.browser,
-        $: "readonly",
-        Quill: "readonly",
-        toastr: "readonly",
-      },
+      globals: globals.browser,
     },
   },
   {
     files: ["*.config.js", "scripts/**/*.mjs", "tests/**/*.js"],
     languageOptions: {
-      globals: globals.node,
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
     },
   },
 ];

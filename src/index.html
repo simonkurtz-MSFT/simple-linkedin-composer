@@ -171,7 +171,7 @@
             >
               <span>
                 <small>Library</small>
-                Snippets
+                <span data-count-label>Snippets (0)</span>
               </span>
               <span class="accordion-icon" aria-hidden="true">⌄</span>
             </button>
@@ -186,18 +186,38 @@
                   Export
                 </button>
               </div>
+              <label class="snippet-search-label" for="snippet-search">Search snippets</label>
+              <input
+                id="snippet-search"
+                type="search"
+                placeholder="Search snippets..."
+                autocomplete="off"
+              />
               <div class="table-scroll">
                 <table id="snippets-table">
                   <thead>
                     <tr>
-                      <th data-sort="snippet">Snippet</th>
-                      <th data-sort="timestamp">Updated</th>
-                      <th data-sort="template">Type</th>
-                      <th><span class="visually-hidden">Actions</span></th>
+                      <th scope="col" data-sort="title">
+                        <button type="button" class="sort-button">Snippet</button>
+                      </th>
+                      <th scope="col" data-sort="timestamp">
+                        <button type="button" class="sort-button">Updated</button>
+                      </th>
+                      <th scope="col" data-sort="template">
+                        <button type="button" class="sort-button">Type</button>
+                      </th>
+                      <th scope="col"><span class="visually-hidden">Actions</span></th>
                     </tr>
                   </thead>
                   <tbody></tbody>
                 </table>
+              </div>
+              <div class="snippet-table-footer">
+                <label for="snippet-page-size">
+                  Show
+                  <select id="snippet-page-size" aria-label="Snippets per page"></select>
+                </label>
+                <nav id="snippet-pager" class="snippet-pager" aria-label="Snippet pages"></nav>
               </div>
             </div>
           </section>
