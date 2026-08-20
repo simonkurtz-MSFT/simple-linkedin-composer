@@ -89,7 +89,7 @@ Prerequisites:
 | `pnpm test:browser:update` | Review and refresh Windows visual baselines          |
 | `pnpm build`               | Generate the static site in `dist/`                  |
 
-The repository configures pnpm not to include tarball URLs. Because machine registry configuration can still add them, run `pnpm lockfile:normalize` after an install changes `pnpm-lock.yaml`. The repository check rejects remaining metadata, while the pre-commit hook cleans only the staged lockfile and leaves unstaged lockfile work unchanged.
+The repository configures pnpm not to include tarball URLs. Because machine registry configuration can still add them, the post-install lifecycle automatically runs `pnpm lockfile:normalize` after pnpm writes `pnpm-lock.yaml`. The repository check rejects remaining metadata, while the pre-commit hook cleans only the staged lockfile and leaves unstaged lockfile work unchanged.
 
 Corporate or Microsoft proxy registry routing belongs in untracked user or machine pnpm configuration. Do not add proxy URLs, credentials, tokens, or private feed settings to repository files.
 

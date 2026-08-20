@@ -27,6 +27,12 @@ const temporaryRepositories = [];
 const normalizerPath = fileURLToPath(
   new URL("../scripts/normalize-pnpm-lock.mjs", import.meta.url),
 );
+const packageManifestPath = fileURLToPath(
+  new URL("../package.json", import.meta.url),
+);
+const workspaceConfigPath = fileURLToPath(
+  new URL("../pnpm-workspace.yaml", import.meta.url),
+);
 
 const git = (directory, ...arguments_) =>
   execFileSync("git", arguments_, { cwd: directory, encoding: "utf8" });
@@ -85,6 +91,20 @@ describe("lockfile tarball removal", () => {
     expect(normalizeLockfile(content)).toBe(
       "    resolution: {integrity: sha512-test}\n",
     );
+  });
+});
+
+describe("install normalization policy", () => {
+  it("normalizes after every install, including repeat installs", () => {
+    const packageManifest = JSON.parse(
+      readFileSync(packageManifestPath, "utf8"),
+    );
+    const workspaceConfig = readFileSync(workspaceConfigPath, "utf8");
+
+    expect(packageManifest.scripts.postinstall).toBe(
+      "node scripts/normalize-pnpm-lock.mjs",
+    );
+    expect(workspaceConfig).toMatch(/^optimisticRepeatInstall: false$/m);
   });
 });
 

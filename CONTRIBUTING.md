@@ -16,7 +16,7 @@ The application source is in `src/`. Vite serves it locally and writes productio
 
 Do not commit registry credentials, private feed URLs, machine-specific pnpm settings, generated `dist/` output, Playwright reports, or test results. Keep corporate registry routing in untracked user or machine configuration.
 
-When an install changes `pnpm-lock.yaml`, run `pnpm lockfile:normalize` before validation. `pnpm check` rejects registry tarball metadata that remains in the lockfile.
+The post-install lifecycle automatically normalizes `pnpm-lock.yaml`. Run `pnpm lockfile:normalize` manually if lifecycle scripts were disabled; `pnpm check` rejects registry tarball metadata that remains in the lockfile.
 
 ## Validation
 

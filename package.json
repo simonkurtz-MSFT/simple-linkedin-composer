@@ -12,6 +12,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "postinstall": "node scripts/normalize-pnpm-lock.mjs",
     "hooks:install": "node scripts/install-hooks.mjs",
     "lockfile:normalize": "node scripts/normalize-pnpm-lock.mjs",
     "lockfile:check": "node scripts/normalize-pnpm-lock.mjs --check",
