@@ -15,8 +15,8 @@ importers:
         specifier: 1.8.0
         version: 1.8.0
       quill:
-        specifier: 2.0.3
-        version: 2.0.3
+        specifier: 2.0.2
+        version: 2.0.2
     devDependencies:
       '@axe-core/playwright':
         specifier: 4.13.0
@@ -1281,8 +1281,8 @@ packages:
     resolution: {integrity: sha1-HEvAj3yOXMS9yIoVoacMHMctK0g=}
     engines: {node: '>= 12.0.0'}
 
-  quill@2.0.3:
-    resolution: {integrity: sha1-dSdlox1aU1zcVxfcSdTlAJk2XrE=}
+  quill@2.0.2:
+    resolution: {integrity: sha1-Wya8EKdOn3/c/bUVazEzo+vwqBQ=}
     engines: {npm: '>=8.2.3'}
 
   require-from-string@2.0.2:
@@ -2806,7 +2806,7 @@ snapshots:
       lodash.clonedeep: 4.5.0
       lodash.isequal: 4.5.0
 
-  quill@2.0.3:
+  quill@2.0.2:
     dependencies:
       eventemitter3: 5.0.4
       lodash-es: 4.18.1

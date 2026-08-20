@@ -14,6 +14,10 @@ Notable changes to Simple LinkedIn Composer are documented here.
 
 - Added unit and desktop/mobile browser coverage for notification semantics and snippet sorting, title search, paging, counts, and empty states.
 
+### Security remediation
+
+- Pinned Quill to `2.0.2` to avoid CVE-2025-15056 in the `2.0.3` HTML export path.
+
 ## 1.7.0 - 2026-08-19
 
 ### Added
