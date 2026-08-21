@@ -125,17 +125,6 @@
               <span class="accordion-icon" aria-hidden="true"></span>
             </button>
             <div id="snippets-content" class="accordion-content open">
-              <div class="library-actions" aria-label="Snippet starter actions">
-                <button
-                  id="load-sample-button"
-                  class="button button-sample"
-                  type="button"
-                  title="Replace the editor with a sample post"
-                >
-                  <span aria-hidden="true">↻</span>
-                  Load sample
-                </button>
-              </div>
               <div class="snippet-filters">
                 <label class="snippet-search-label" for="snippet-search">Search snippets</label>
                 <label class="template-filter" for="template-filter">
@@ -151,6 +140,12 @@
               />
               <div class="table-scroll">
                 <table id="snippets-table">
+                  <colgroup>
+                    <col class="snippet-column" />
+                    <col class="updated-column" />
+                    <col class="template-column" />
+                    <col class="delete-column" />
+                  </colgroup>
                   <thead>
                     <tr>
                       <th scope="col" data-sort="title">
@@ -208,6 +203,15 @@
               <p class="eyebrow">2 · Edit</p>
               <h1 id="composer-title">Compose your post</h1>
             </div>
+            <button
+              id="load-sample-button"
+              class="button button-sample"
+              type="button"
+              title="Replace the editor with a sample post"
+            >
+              <span aria-hidden="true">↻</span>
+              Load sample
+            </button>
           </div>
 
           <div class="editor-shell">

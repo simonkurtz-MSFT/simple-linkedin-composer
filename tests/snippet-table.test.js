@@ -79,7 +79,7 @@ describe("createSnippetTable", () => {
     expect(document.querySelector("img")).toBeNull();
     expect(document.querySelector(".snippet-link").textContent).toBe(title);
     expect(document.querySelector("[aria-label='Template']")).not.toBeNull();
-    expect(document.querySelector(".delete-snippet").textContent).toBe("🗑");
+    expect(document.querySelector(".delete-snippet").textContent).toBe("🗑️");
     document.querySelector(".snippet-link").click();
     document.querySelector(".delete-snippet").click();
     expect(onLoad).toHaveBeenCalledWith(title);

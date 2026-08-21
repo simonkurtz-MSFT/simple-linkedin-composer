@@ -340,6 +340,10 @@ footer {
   margin-bottom: 18px;
 }
 
+.composer-heading {
+  flex-wrap: wrap;
+}
+
 .eyebrow {
   margin: 0 0 4px;
   color: var(--teal);
@@ -720,22 +724,10 @@ emoji-picker {
   display: block;
 }
 
-.library-actions {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  margin-bottom: 4px;
-}
-
-.library-actions .button {
-  min-height: 34px;
-  padding: 6px 10px;
-  font-size: 0.78rem;
-}
-
 .table-scroll {
   width: 100%;
   overflow-x: auto;
+  contain: inline-size paint;
 }
 
 .snippet-search-label {
@@ -778,8 +770,22 @@ emoji-picker {
 
 #snippets-table {
   width: 100%;
+  min-width: 30rem;
   border-collapse: collapse;
   font-size: 0.79rem;
+  table-layout: fixed;
+}
+
+#snippets-table .updated-column {
+  width: 9.75rem;
+}
+
+#snippets-table .template-column {
+  width: 5.5rem;
+}
+
+#snippets-table .delete-column {
+  width: 2.75rem;
 }
 
 #snippets-table thead th {
@@ -797,20 +803,17 @@ emoji-picker {
 }
 
 #snippets-table tbody td:nth-child(2) {
-  min-width: 10.75rem;
   color: var(--ink-soft);
   font-size: 0.72rem;
   white-space: nowrap;
 }
 
 #snippets-table tbody td:nth-child(3) {
-  width: 5.5rem;
   text-align: center;
 }
 
 #snippets-table tbody td:last-child,
 #snippets-table thead th:last-child {
-  width: 2.5rem;
   text-align: center;
 }
 
@@ -848,10 +851,12 @@ th[aria-sort="ascending"] .sort-button.is-active::after {
 }
 
 .snippet-link {
+  max-width: 100%;
   padding: 0;
   border: 0;
   color: var(--linkedin);
   font-weight: 750;
+  overflow-wrap: anywhere;
   text-align: left;
   background: transparent;
   cursor: pointer;
@@ -1024,15 +1029,14 @@ th[aria-sort="ascending"] .sort-button.is-active::after {
 .support-band {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1px;
+  gap: 12px;
   margin-top: 24px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  overflow: hidden;
-  background: var(--line);
 }
 
 .support-section {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   background: var(--surface);
 }
 

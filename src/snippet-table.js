@@ -96,7 +96,7 @@ export const createSnippetTable = ({
 
       const deleteButton = createElement(document, "button", {
         className: "delete-snippet",
-        text: "🗑",
+        text: "🗑️",
         attrs: {
           type: "button",
           "aria-label": `Delete ${snippet.title}`,

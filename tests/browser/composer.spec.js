@@ -146,6 +146,12 @@ test("meets automated accessibility and responsive layout checks", async ({
   await expect(
     page.getByRole("heading", { name: "Compose your post" }),
   ).toBeVisible();
+  await expect(
+    page.locator(".composer").getByRole("button", { name: "Load sample" }),
+  ).toBeVisible();
+  await expect(
+    page.locator(".library").getByRole("button", { name: "Load sample" }),
+  ).toHaveCount(0);
   await expect(page.getByText("1 · Start", { exact: true })).toBeVisible();
   await expect(page.getByText("2 · Edit", { exact: true })).toBeVisible();
   await expect(page.getByText("3 · Publish", { exact: true })).toBeVisible();
@@ -441,10 +447,22 @@ test("sorts, searches, and paginates the snippet library", async ({ page }) => {
     "white-space",
     "nowrap",
   );
+  expect(
+    await rows
+      .first()
+      .locator("td")
+      .nth(1)
+      .evaluate((cell) => cell.scrollWidth <= cell.clientWidth),
+  ).toBe(true);
   await expect(page.locator("th[data-sort='template'] .sort-button")).toHaveCSS(
     "text-align",
     "right",
   );
+  expect(
+    await page
+      .locator("th[data-sort='template'] .sort-button")
+      .evaluate((button) => button.scrollWidth <= button.clientWidth),
+  ).toBe(true);
 
   await page.getByRole("button", { name: "Snippet", exact: true }).click();
   await expect(rows.first()).toContainText("Item 01");
@@ -460,14 +478,17 @@ test("sorts, searches, and paginates the snippet library", async ({ page }) => {
     templateSortButton.evaluate((button) => {
       const labelRange = document.createRange();
       labelRange.selectNode(button.firstChild);
-      return labelRange.getBoundingClientRect().x;
+      return (
+        labelRange.getBoundingClientRect().x -
+        button.parentElement.getBoundingClientRect().x
+      );
     });
   const templateLabelPosition = await getTemplateLabelPosition();
   await templateSortButton.click();
   expect(await getTemplateLabelPosition()).toBe(templateLabelPosition);
   await expect(rows.first()).toContainText("Item 03");
   const deleteButton = page.getByRole("button", { name: "Delete Item 03" });
-  await expect(deleteButton).toHaveText("🗑");
+  await expect(deleteButton).toHaveText("🗑️");
   await expect(deleteButton).toHaveCSS("width", "30px");
   await expect(deleteButton).toHaveCSS("height", "30px");
   await expect(deleteButton).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
@@ -478,10 +499,22 @@ test("sorts, searches, and paginates the snippet library", async ({ page }) => {
   const templateFilter = page.getByRole("checkbox", {
     name: "Templates only",
   });
+  const columnWidths = await page
+    .locator("#snippets-table thead th")
+    .evaluateAll((headers) =>
+      headers.map((header) => header.getBoundingClientRect().width),
+    );
   await templateFilter.check();
   await expect(rows).toHaveCount(1);
   await expect(rows.first()).toContainText("Item 03");
   await expect(page.getByText("Saved snippets (1/11)")).toBeVisible();
+  expect(
+    await page
+      .locator("#snippets-table thead th")
+      .evaluateAll((headers) =>
+        headers.map((header) => header.getBoundingClientRect().width),
+      ),
+  ).toEqual(columnWidths);
   await templateFilter.uncheck();
 
   const search = page.getByRole("searchbox", { name: "Search snippets" });
