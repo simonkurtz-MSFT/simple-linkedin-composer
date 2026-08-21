@@ -6,7 +6,7 @@ const ignoredDevelopmentRequest = (request) =>
   request.url().includes("emoji-picker-element-data") &&
   request.failure()?.errorText === "net::ERR_ABORTED";
 
-test.beforeEach(async ({ page }, testInfo) => {
+test.beforeEach(async ({ page }) => {
   await page.route(
     "https://api.github.com/repos/simonkurtz-MSFT/simple-linkedin-composer",
     (route) =>
@@ -18,23 +18,34 @@ test.beforeEach(async ({ page }, testInfo) => {
         },
       }),
   );
-  const seedProfile = !testInfo.title.includes("prompts for LinkedIn settings");
-  await page.addInitScript((shouldSeedProfile) => {
+  await page.addInitScript(() => {
     localStorage.setItem("firstTimeUser", "false");
-    if (shouldSeedProfile) {
-      localStorage.setItem("linkedin_id", "existing-profile");
-    }
-  }, seedProfile);
+  });
 });
 
-test("prompts for LinkedIn settings on first load and persists them", async ({
+test("opens LinkedIn's post composer without profile setup", async ({
   page,
 }) => {
+  await page.addInitScript(() => {
+    localStorage.removeItem("firstTimeUser");
+  });
   await page.goto("/");
+
+  await expect(page.locator("#linkedin-create-post")).toHaveAttribute(
+    "href",
+    "https://www.linkedin.com/preload/sharebox",
+  );
+  await expect(page.locator(".ql-editor")).toBeFocused();
 
   const settingsDialog = page.getByRole("dialog", {
     name: "Settings",
   });
+  await expect(settingsDialog).toBeHidden();
+  await expect(
+    page.getByRole("button", { name: /How it works/ }),
+  ).toHaveAttribute("aria-expanded", "true");
+
+  await page.getByRole("button", { name: "Open settings" }).click();
   await expect(settingsDialog).toBeVisible();
   await expect(
     settingsDialog.getByText("Preferences", { exact: true }),
@@ -43,27 +54,19 @@ test("prompts for LinkedIn settings on first load and persists them", async ({
     animations: "disabled",
     fullPage: true,
   });
-  const profileId = page.getByRole("textbox", {
-    name: "LinkedIn profile ID",
-  });
-  await expect(profileId).toBeFocused();
-  await profileId.fill("new-profile");
+  await expect(
+    page.getByRole("textbox", { name: "LinkedIn profile ID" }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("combobox", { name: "Appearance" }),
+  ).toBeFocused();
   await page.getByRole("button", { name: "Save settings" }).click();
 
   await expect(settingsDialog).toBeHidden();
   await expect(
     page.getByRole("button", { name: "Open settings" }),
   ).toBeFocused();
-  await expect(page.locator("#linkedin-create-post")).toHaveAttribute(
-    "href",
-    "https://www.linkedin.com/in/new-profile/overlay/create-post",
-  );
-  expect(await page.evaluate(() => localStorage.getItem("linkedin_id"))).toBe(
-    "new-profile",
-  );
-
   await page.getByRole("button", { name: "Open settings" }).click();
-  await expect(profileId).toHaveValue("new-profile");
   await expect(
     settingsDialog.getByRole("button", { name: "Import", exact: true }),
   ).toBeVisible();

@@ -20,8 +20,6 @@ import {
 import { createSnippetTable } from "./snippet-table.js";
 import { applyTheme, loadTheme, saveTheme } from "./theme.js";
 
-const LINKEDIN_USER_ID_KEY = "linkedin_id";
-const LINKEDIN_BASE_URL = "https://www.linkedin.com/in/";
 const GITHUB_REPOSITORY_API_URL =
   "https://api.github.com/repos/simonkurtz-MSFT/simple-linkedin-composer";
 const HASHTAGS_KEY = "hashtags";
@@ -70,23 +68,6 @@ const loadGitHubStats = async () => {
   }
 };
 
-// LinkedIn profile
-
-const updateLinkedInLinks = (userId) => {
-  const hasUser = Boolean(userId);
-  if (hasUser) {
-    const profileUrl = `${LINKEDIN_BASE_URL}${encodeURIComponent(userId)}/`;
-    byId("linkedin-create-post").href = `${profileUrl}overlay/create-post`;
-  }
-  byId("linkedin-publish-link").hidden = !hasUser;
-};
-
-const loadLinkedInUserId = () => {
-  const storedUserId = localStorage.getItem(LINKEDIN_USER_ID_KEY) ?? "";
-  byId("linkedin-user-id").value = storedUserId;
-  updateLinkedInLinks(storedUserId);
-};
-
 const loadThemePreference = () => {
   byId("theme-preference").value = loadTheme(localStorage);
 };
@@ -95,7 +76,7 @@ const openSettings = () => {
   const dialog = byId("settings-dialog");
   loadThemePreference();
   if (!dialog.open) dialog.showModal();
-  byId("linkedin-user-id").focus();
+  byId("theme-preference").focus();
 };
 
 const closeSettings = () => {
@@ -104,14 +85,7 @@ const closeSettings = () => {
 };
 
 const saveSettings = () => {
-  const userId = byId("linkedin-user-id").value.trim();
-  if (userId) {
-    localStorage.setItem(LINKEDIN_USER_ID_KEY, userId);
-  } else {
-    localStorage.removeItem(LINKEDIN_USER_ID_KEY);
-  }
   applyTheme(saveTheme(byId("theme-preference").value, localStorage));
-  updateLinkedInLinks(userId);
   notifier.success("Settings saved.");
 };
 
@@ -244,7 +218,6 @@ const clearAllData = () => {
   }
   localStorage.clear();
   refreshLibrary();
-  loadLinkedInUserId();
   loadThemePreference();
   applyTheme("system");
   notifier.success("All localStorage data has been cleared.");
@@ -354,14 +327,9 @@ const setupEventListeners = () => {
   byId("copy-button").addEventListener("click", copyToClipboard);
 };
 
-loadLinkedInUserId();
 loadGitHubStats();
 setupAccordions();
 refreshLibrary();
 setupEventListeners();
 checkFirstTimeUser();
-if (localStorage.getItem(LINKEDIN_USER_ID_KEY)) {
-  editor.quill.focus();
-} else {
-  openSettings();
-}
+editor.quill.focus();

@@ -18,7 +18,6 @@ Hosted at [https://linkedin-composer.simondoescloud.com](https://linkedin-compos
 
 ## Usage
 
-1. Open **Settings** and enter the final segment of your LinkedIn profile URL.
 1. Load a saved snippet, import snippets, or start with an empty post.
 1. Edit the post and apply supported formatting with the editor toolbar.
 1. Select **Copy for LinkedIn**.
@@ -46,17 +45,17 @@ Hashtags in saved snippets are counted in the hashtag library. Sort them by name
 
 ## Local data
 
-Use **Clear data** to remove saved snippets, profile settings, and preferences from the current browser. Export snippets first when you want a backup.
+Use **Clear data** to remove saved snippets and preferences from the current browser. Export snippets first when you want a backup.
 
 ## Privacy and analytics
 
 The application code does not send your composer content to an application server. Its scripts, styles, editor libraries, and emoji data ship with the static site.
 
-The header requests public repository statistics from `api.github.com` on page load. This request contains no post, snippet, hashtag, profile, or local-storage content.
+The header requests public repository statistics from `api.github.com` on page load. This request contains no post, snippet, hashtag, or local-storage content.
 
-The hosted site uses Cloudflare Web Analytics for anonymous, aggregate usage and performance measurements. Hosting infrastructure also processes standard request metadata needed to deliver the site. These operational services do not receive post content, snippets, hashtags, profile settings, or local-storage values from the application.
+The hosted site uses Cloudflare Web Analytics for anonymous, aggregate usage and performance measurements. Hosting infrastructure also processes standard request metadata needed to deliver the site. These operational services do not receive post content, snippets, hashtags, or local-storage values from the application.
 
-**Post content, snippets, hashtags, and profile settings remain in browser local storage.** They are not included in analytics, and there is no cloud sync or advertising. External sites open only when you select a displayed link.
+**Post content, snippets, hashtags, and preferences remain in browser local storage.** They are not included in analytics, and there is no cloud sync or advertising. External sites open only when you select a displayed link.
 
 ## Browser support
 

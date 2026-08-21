@@ -11,7 +11,7 @@
 - Keep the application a static, client-side LinkedIn post composer deployable to GitHub Pages.
 - Use pnpm and Vite for reproducible development, testing, bundling, and static production output. Do not introduce a runtime UI framework without measured need and explicit approval.
 - Preserve local-first snippet storage and export/import compatibility unless an approved migration includes backward-compatibility tests.
-- Never transmit post, snippet, profile, or local-storage content. Document every intentional runtime network request accurately.
+- Never transmit post, snippet, preference, or local-storage content. Document every intentional runtime network request accurately.
 - Treat imported files, local storage, URL-derived values, and remote responses as untrusted data. Validate structured data and render user-controlled values as text.
 
 ## Engineering Practices
