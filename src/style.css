@@ -10,11 +10,30 @@
   --line-strong: #a9b6c0;
   --linkedin: #0a66c2;
   --linkedin-hover: #004182;
+  --linkedin-control: #0a66c2;
+  --linkedin-control-hover: #004182;
   --teal: #087f6d;
   --teal-hover: #056153;
+  --teal-control: #087f6d;
+  --teal-control-hover: #056153;
   --coral: #b54738;
   --coral-soft: #fff1ee;
   --focus: #f0a202;
+  --placeholder: #687682;
+  --control-hover: #748491;
+  --settings-ink: #243746;
+  --settings-hover: #dce8ee;
+  --secondary: #354b5e;
+  --secondary-hover: #243746;
+  --danger-border: #d98f84;
+  --danger-ink: #8e2f23;
+  --editor-icon: #444;
+  --hashtag-border: #a9cbc5;
+  --hashtag-ink: #20584f;
+  --hashtag-surface: #edf8f6;
+  --hashtag-hover: #d0ebe6;
+  --pattern-line: rgb(23 33 43 / 2%);
+  --github-icon-filter: none;
   --shadow: 0 16px 40px rgb(23 33 43 / 10%);
   --radius: 8px;
   --content-width: 1680px;
@@ -25,6 +44,86 @@
   line-height: 1.5;
   color: var(--ink);
   background: var(--canvas);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --ink: #f1f5f7;
+  --ink-soft: #b7c4cc;
+  --canvas: #10161c;
+  --surface: #182129;
+  --surface-muted: #222e37;
+  --line: #3b4b57;
+  --line-strong: #607482;
+  --linkedin: #6cb6ff;
+  --linkedin-hover: #a8d4ff;
+  --linkedin-control: #0a66c2;
+  --linkedin-control-hover: #004182;
+  --teal: #58cfb8;
+  --teal-hover: #8ee6d5;
+  --teal-control: #087f6d;
+  --teal-control-hover: #056153;
+  --coral: #d65f51;
+  --coral-soft: #3a2020;
+  --focus: #ffd166;
+  --placeholder: #aab7c0;
+  --control-hover: #91a6b4;
+  --settings-ink: #e3edf2;
+  --settings-hover: #30414d;
+  --secondary: #40596d;
+  --secondary-hover: #4c687e;
+  --danger-border: #a9584e;
+  --danger-ink: #ffb4aa;
+  --editor-icon: #d9e3e8;
+  --hashtag-border: #477b72;
+  --hashtag-ink: #b7eadf;
+  --hashtag-surface: #18342f;
+  --hashtag-hover: #285148;
+  --pattern-line: rgb(241 245 247 / 3%);
+  --github-icon-filter: invert(1);
+  --shadow: 0 16px 40px rgb(0 0 0 / 35%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+
+    --ink: #f1f5f7;
+    --ink-soft: #b7c4cc;
+    --canvas: #10161c;
+    --surface: #182129;
+    --surface-muted: #222e37;
+    --line: #3b4b57;
+    --line-strong: #607482;
+    --linkedin: #6cb6ff;
+    --linkedin-hover: #a8d4ff;
+    --linkedin-control: #0a66c2;
+    --linkedin-control-hover: #004182;
+    --teal: #58cfb8;
+    --teal-hover: #8ee6d5;
+    --teal-control: #087f6d;
+    --teal-control-hover: #056153;
+    --coral: #d65f51;
+    --coral-soft: #3a2020;
+    --focus: #ffd166;
+    --placeholder: #aab7c0;
+    --control-hover: #91a6b4;
+    --settings-ink: #e3edf2;
+    --settings-hover: #30414d;
+    --secondary: #40596d;
+    --secondary-hover: #4c687e;
+    --danger-border: #a9584e;
+    --danger-ink: #ffb4aa;
+    --editor-icon: #d9e3e8;
+    --hashtag-border: #477b72;
+    --hashtag-ink: #b7eadf;
+    --hashtag-surface: #18342f;
+    --hashtag-hover: #285148;
+    --pattern-line: rgb(241 245 247 / 3%);
+    --github-icon-filter: invert(1);
+    --shadow: 0 16px 40px rgb(0 0 0 / 35%);
+  }
 }
 
 * {
@@ -47,18 +146,20 @@ body {
   margin: 0;
   background:
     linear-gradient(135deg, rgb(10 102 194 / 6%) 0, transparent 30rem),
-    repeating-linear-gradient(90deg, transparent 0 79px, rgb(23 33 43 / 2%) 80px),
+    repeating-linear-gradient(90deg, transparent 0 79px, var(--pattern-line) 80px),
     var(--canvas);
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
 button,
 a,
-input {
+input,
+select {
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -79,6 +180,7 @@ a:hover {
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
+select:focus-visible,
 [contenteditable="true"]:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 3px;
@@ -188,16 +290,20 @@ footer {
   transform: translateY(-1px);
 }
 
+#github-link img {
+  filter: var(--github-icon-filter);
+}
+
 #settings-button {
   border-color: var(--line-strong);
-  color: #243746;
+  color: var(--settings-ink);
   background: var(--surface-muted);
 }
 
 #settings-button:hover {
   border-color: var(--teal);
   color: var(--teal-hover);
-  background: #dce8ee;
+  background: var(--settings-hover);
 }
 
 .settings-icon {
@@ -210,7 +316,7 @@ footer {
   display: grid;
   grid-template-columns: minmax(420px, 1fr) minmax(0, 1.35fr);
   gap: 24px;
-  align-items: start;
+  align-items: stretch;
 }
 
 .composer,
@@ -269,7 +375,8 @@ h2 {
   font-weight: 750;
 }
 
-input[type="text"] {
+input[type="text"],
+select {
   width: 100%;
   min-height: 42px;
   padding: 9px 12px;
@@ -280,11 +387,12 @@ input[type="text"] {
 }
 
 input[type="text"]::placeholder {
-  color: #687682;
+  color: var(--placeholder);
 }
 
-input[type="text"]:hover {
-  border-color: #748491;
+input[type="text"]:hover,
+select:hover {
+  border-color: var(--control-hover);
 }
 
 .button {
@@ -317,32 +425,32 @@ input[type="text"]:hover {
 
 .button-primary {
   color: #fff;
-  background: var(--teal);
+  background: var(--teal-control);
 }
 
 .button-primary:hover {
   color: #fff;
-  background: var(--teal-hover);
+  background: var(--teal-control-hover);
 }
 
 .button-linkedin {
   color: #fff;
-  background: var(--linkedin);
+  background: var(--linkedin-control);
 }
 
 .button-linkedin:hover {
   color: #fff;
-  background: var(--linkedin-hover);
+  background: var(--linkedin-control-hover);
 }
 
 .button-secondary {
   color: #fff;
-  background: #354b5e;
+  background: var(--secondary);
 }
 
 .button-secondary:hover {
   color: #fff;
-  background: #243746;
+  background: var(--secondary-hover);
 }
 
 .button-quiet {
@@ -370,8 +478,8 @@ input[type="text"]:hover {
 }
 
 .button-danger {
-  border-color: #d98f84;
-  color: #8e2f23;
+  border-color: var(--danger-border);
+  color: var(--danger-ink);
   background: var(--coral-soft);
 }
 
@@ -409,7 +517,7 @@ input[type="text"]:hover {
 
 .ql-snow.ql-toolbar .ql-emoji,
 .ql-snow.ql-toolbar .ql-clear {
-  color: #444;
+  color: var(--editor-icon);
   font-family: "Segoe UI Symbol", sans-serif;
   font-size: 1.25rem;
   line-height: 1;
@@ -417,7 +525,15 @@ input[type="text"]:hover {
 
 .ql-snow.ql-toolbar button:hover,
 .ql-snow.ql-toolbar button.ql-active {
-  background: #dce8ee;
+  background: var(--settings-hover);
+}
+
+.ql-snow .ql-stroke {
+  stroke: var(--editor-icon);
+}
+
+.ql-snow .ql-fill {
+  fill: var(--editor-icon);
 }
 
 #editor-container.ql-container {
@@ -439,7 +555,7 @@ input[type="text"]:hover {
 
 #editor-container .ql-editor.ql-blank::before {
   left: 22px;
-  color: #687682;
+  color: var(--placeholder);
   font-style: normal;
 }
 
@@ -754,7 +870,7 @@ th[aria-sort="ascending"] .sort-button.is-active::after {
   place-items: center;
   border: 1px solid transparent;
   border-radius: 6px;
-  color: #8e2f23;
+  color: var(--danger-ink);
   font-family: "Segoe UI Symbol", sans-serif;
   font-size: 1.05rem;
   line-height: 1;
@@ -768,8 +884,8 @@ th[aria-sort="ascending"] .sort-button.is-active::after {
 }
 
 .delete-snippet:hover {
-  border-color: #d98f84;
-  color: #8e2f23;
+  border-color: var(--danger-border);
+  color: var(--danger-ink);
   background: var(--coral-soft);
   transform: translateY(-1px);
 }
@@ -839,11 +955,11 @@ th[aria-sort="ascending"] .sort-button.is-active::after {
   align-items: center;
   gap: 5px;
   padding: 5px 9px 5px 5px;
-  border: 1px solid #a9cbc5;
+  border: 1px solid var(--hashtag-border);
   border-radius: 6px;
-  color: #20584f;
+  color: var(--hashtag-ink);
   font-size: 0.8rem;
-  background: #edf8f6;
+  background: var(--hashtag-surface);
 }
 
 .add-hashtag-button,
@@ -858,7 +974,7 @@ th[aria-sort="ascending"] .sort-button.is-active::after {
 
 .add-hashtag-button {
   border: 0;
-  color: #20584f;
+  color: var(--hashtag-ink);
   font-size: 1rem;
   font-weight: 800;
   background: transparent;
@@ -867,7 +983,7 @@ th[aria-sort="ascending"] .sort-button.is-active::after {
 
 .add-hashtag-button:hover,
 .linkedin-icon-link:hover {
-  background: #d0ebe6;
+  background: var(--hashtag-hover);
 }
 
 .linkedin-icon {
@@ -1141,6 +1257,7 @@ footer p {
 
   .workspace {
     grid-template-columns: 1fr;
+    align-items: start;
   }
 
   .library {

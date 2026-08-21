@@ -183,7 +183,7 @@
               id="hashtags-header"
               class="accordion-header"
               type="button"
-              aria-expanded="true"
+              aria-expanded="false"
               aria-controls="hashtags-content"
             >
               <span>
@@ -192,7 +192,7 @@
               </span>
               <span class="accordion-icon" aria-hidden="true"></span>
             </button>
-            <div id="hashtags-content" class="accordion-content open">
+            <div id="hashtags-content" class="accordion-content">
               <div id="hashtag-controls" class="segmented-control" aria-label="Sort hashtags">
                 <button id="sort-name" type="button" aria-pressed="false">Name</button>
                 <button id="sort-count" type="button" aria-pressed="false">Frequency</button>
@@ -363,6 +363,23 @@
             placeholder="your-profile-id"
             aria-describedby="linkedin-user-id-help"
           />
+        </section>
+        <section class="settings-section" aria-labelledby="appearance-settings-title">
+          <label
+            id="appearance-settings-title"
+            class="settings-section-title"
+            for="theme-preference"
+          >
+            Appearance
+          </label>
+          <p id="theme-preference-help" class="field-help">
+            Follow your device theme or choose a fixed mode.
+          </p>
+          <select id="theme-preference" aria-describedby="theme-preference-help">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
         </section>
         <section class="settings-section" aria-labelledby="snippet-data-title">
           <div class="settings-section-heading">

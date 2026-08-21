@@ -80,6 +80,54 @@ test("prompts for LinkedIn settings on first load and persists them", async ({
   ).toHaveCount(0);
 });
 
+test("follows the system theme and persists appearance overrides", async ({
+  page,
+}) => {
+  await page.emulateMedia({ colorScheme: "dark" });
+  await page.goto("/");
+
+  const root = page.locator("html");
+  await expect(root).not.toHaveAttribute("data-theme");
+  await expect(root).toHaveCSS("color-scheme", "dark");
+  await expect(page.locator("body")).toHaveCSS(
+    "background-color",
+    "rgb(16, 22, 28)",
+  );
+
+  await page.getByRole("button", { name: "Open settings" }).click();
+  const themePreference = page.getByRole("combobox", { name: "Appearance" });
+  await expect(themePreference).toHaveValue("system");
+  await themePreference.selectOption("light");
+  await page.getByRole("button", { name: "Save settings" }).click();
+  await expect(root).toHaveAttribute("data-theme", "light");
+  await expect(root).toHaveCSS("color-scheme", "light");
+  expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe(
+    "light",
+  );
+
+  await page.getByRole("button", { name: "Open settings" }).click();
+  await themePreference.selectOption("dark");
+  await page.getByRole("button", { name: "Save settings" }).click();
+  await page.reload();
+  await expect(root).toHaveAttribute("data-theme", "dark");
+  await expect(root).toHaveCSS("color-scheme", "dark");
+  await expect(page).toHaveScreenshot("dark.png", {
+    animations: "disabled",
+    fullPage: true,
+  });
+
+  const accessibilityResults = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+    .analyze();
+  expect(accessibilityResults.violations).toEqual([]);
+
+  await page.getByRole("button", { name: "Open settings" }).click();
+  await themePreference.selectOption("system");
+  await page.getByRole("button", { name: "Save settings" }).click();
+  await expect(root).not.toHaveAttribute("data-theme");
+  expect(await page.evaluate(() => localStorage.getItem("theme"))).toBeNull();
+});
+
 test("meets automated accessibility and responsive layout checks", async ({
   page,
 }) => {
@@ -108,6 +156,15 @@ test("meets automated accessibility and responsive layout checks", async ({
     "scrollbar-gutter",
     "stable",
   );
+  const libraryBox = await page.locator(".library").boundingBox();
+  const composerBox = await page.locator(".composer").boundingBox();
+  if (page.viewportSize().width > 820) {
+    expect(
+      Math.abs(libraryBox.height - composerBox.height),
+    ).toBeLessThanOrEqual(1);
+  } else {
+    expect(libraryBox.height).toBeLessThan(composerBox.height);
+  }
   await expect(
     page
       .getByRole("button", {
@@ -166,6 +223,14 @@ test("supports the primary composer, snippet, hashtag, and file workflows", asyn
     );
   });
   await page.goto("/");
+
+  const hashtagsHeader = page.getByRole("button", { name: /Hashtags/ });
+  await expect(hashtagsHeader).toHaveAttribute("aria-expanded", "false");
+  await expect(page.locator("#hashtags-content")).toBeHidden();
+  await hashtagsHeader.focus();
+  await hashtagsHeader.press("Enter");
+  await expect(hashtagsHeader).toHaveAttribute("aria-expanded", "true");
+  await expect(page.locator("#hashtags-content")).toBeVisible();
 
   await page
     .getByRole("button", { name: "Browser workflow", exact: true })

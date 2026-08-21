@@ -18,6 +18,7 @@ import {
   SNIPPET_KEY_PREFIX,
 } from "./snippet-data.js";
 import { createSnippetTable } from "./snippet-table.js";
+import { applyTheme, loadTheme, saveTheme } from "./theme.js";
 
 const LINKEDIN_USER_ID_KEY = "linkedin_id";
 const LINKEDIN_BASE_URL = "https://www.linkedin.com/in/";
@@ -27,6 +28,8 @@ const HASHTAGS_KEY = "hashtags";
 const FIRST_TIME_USER_KEY = "firstTimeUser";
 
 const byId = (id) => document.getElementById(id);
+
+applyTheme(loadTheme(localStorage));
 
 const notifier = createNotifier();
 const editor = createEditor({
@@ -84,8 +87,13 @@ const loadLinkedInUserId = () => {
   updateLinkedInLinks(storedUserId);
 };
 
+const loadThemePreference = () => {
+  byId("theme-preference").value = loadTheme(localStorage);
+};
+
 const openSettings = () => {
   const dialog = byId("settings-dialog");
+  loadThemePreference();
   if (!dialog.open) dialog.showModal();
   byId("linkedin-user-id").focus();
 };
@@ -102,6 +110,7 @@ const saveSettings = () => {
   } else {
     localStorage.removeItem(LINKEDIN_USER_ID_KEY);
   }
+  applyTheme(saveTheme(byId("theme-preference").value, localStorage));
   updateLinkedInLinks(userId);
   notifier.success("Settings saved.");
 };
@@ -236,6 +245,8 @@ const clearAllData = () => {
   localStorage.clear();
   refreshLibrary();
   loadLinkedInUserId();
+  loadThemePreference();
+  applyTheme("system");
   notifier.success("All localStorage data has been cleared.");
 };
 
