@@ -4,6 +4,18 @@ Notable changes to Simple LinkedIn Composer are documented here.
 
 ## Unreleased
 
+## 2.1.0 - 2026-08-21
+
+### Appearance
+
+- Added system, light, and dark appearance settings with local persistence.
+- Updated the responsive composer palette and controls for accessible light, dark, high-contrast, and reduced-motion states.
+- Collapsed the hashtag panel by default to keep the composer workspace balanced across desktop and mobile layouts.
+
+### Theme coverage
+
+- Added unit and desktop/mobile browser coverage for theme normalization, system preferences, appearance overrides, and accessibility.
+
 ## 2.0.0 - 2026-08-20
 
 ### Runtime modernization
