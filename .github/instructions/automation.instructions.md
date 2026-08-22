@@ -14,5 +14,6 @@ applyTo: "package.json, pnpm-workspace.yaml, pnpm-lock.yaml, .npmrc, .githooks/*
 - Keep Microsoft proxy registry settings in untracked user or machine configuration. Never write credentials or private registry URLs to tracked files or logs.
 - Install repository hooks through a pnpm script that configures `core.hooksPath`; keep hooks fast, deterministic, cross-platform where practical, and covered by focused tests.
 - Pin every external GitHub Action to a full commit SHA with a trailing release-tag comment. Add explicit job timeouts and least-privilege permissions.
+- Run repository validation for same-repository branch pushes with read-only permissions. Do not trigger workflows for fork pull requests; scope Pages write and OIDC permissions, deployment environments, and deployment concurrency to trusted main-branch or manual deployment jobs.
 - Build and validate the Vite output before GitHub Pages deployment and publish only the generated static output directory.
 - Run the narrowest policy check first, then the repository check command. Use `release-validation` before calling automation or dependency work complete.
