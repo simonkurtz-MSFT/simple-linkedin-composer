@@ -2,7 +2,6 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 const ignoredDevelopmentRequest = (request) =>
-  request.method() === "HEAD" &&
   request.url().includes("emoji-picker-element-data") &&
   request.failure()?.errorText === "net::ERR_ABORTED";
 
@@ -21,6 +20,48 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem("firstTimeUser", "false");
   });
+});
+
+test("publishes search metadata and crawler discovery files", async ({
+  page,
+  request,
+}) => {
+  await page.goto("/");
+
+  await expect(page).toHaveTitle(
+    "LinkedIn Post Formatter | Simple LinkedIn Composer",
+  );
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+    "content",
+    "Format and draft LinkedIn posts in your browser with rich text, emojis, reusable snippets, and one-click copying. Free, open source, and local-first.",
+  );
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    "https://linkedin-composer.simondoescloud.com/",
+  );
+
+  const structuredData = JSON.parse(
+    await page.locator('script[type="application/ld+json"]').textContent(),
+  );
+  expect(structuredData).toMatchObject({
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "Simple LinkedIn Composer",
+    isAccessibleForFree: true,
+  });
+
+  const [robotsResponse, sitemapResponse] = await Promise.all([
+    request.get("/robots.txt"),
+    request.get("/sitemap.xml"),
+  ]);
+  expect(robotsResponse.ok()).toBe(true);
+  expect(await robotsResponse.text()).toContain(
+    "Sitemap: https://linkedin-composer.simondoescloud.com/sitemap.xml",
+  );
+  expect(sitemapResponse.ok()).toBe(true);
+  expect(await sitemapResponse.text()).toContain(
+    "<loc>https://linkedin-composer.simondoescloud.com/</loc>",
+  );
 });
 
 test("opens LinkedIn's post composer without profile setup", async ({
@@ -182,10 +223,10 @@ test("meets automated accessibility and responsive layout checks", async ({
       .locator("svg"),
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Insert Emoji" })).toHaveText(
-    "☺",
+    "😊",
   );
   await expect(page.getByRole("button", { name: "Clear Editor" })).toHaveText(
-    "🗑",
+    "🗑️",
   );
   await expect(page.locator("#linkedin-publish-link")).toBeVisible();
   await expect(page.locator("#settings-button")).toHaveCSS(
@@ -360,6 +401,22 @@ test("keeps editor copy native and converts only from the explicit action", asyn
   await expect(page.locator(".toast-success")).toContainText(
     "Post copied to clipboard",
   );
+
+  await editor.fill("Italic");
+  await editor.press("Control+A");
+  await page.getByRole("button", { name: "Italic (Ctrl+I)" }).click();
+  const italicText = editor.locator("em");
+  await expect(italicText).toHaveText("Italic");
+  await expect(italicText).toHaveCSS("font-style", "italic");
+  await expect(italicText).toHaveCSS("font-synthesis", "style");
+
+  await page.getByRole("button", { name: "Copy for LinkedIn" }).click();
+  await expect(page.locator(".toast-success")).toContainText(
+    "Post copied to clipboard",
+  );
+  await expect
+    .poll(() => page.evaluate(() => navigator.clipboard.readText()))
+    .toContain("𝐼𝑡𝑎𝑙𝑖𝑐");
 });
 
 test("protects templates when reusing and deliberately overwriting them", async ({

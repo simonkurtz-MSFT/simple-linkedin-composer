@@ -11,8 +11,8 @@ const TOOLBAR_LABELS = [
 ];
 
 const CUSTOM_TOOLBAR_ICONS = [
-  [".ql-emoji", "☺"],
-  [".ql-clear", "🗑"],
+  [".ql-emoji", "😊"],
+  [".ql-clear", "🗑️"],
 ];
 
 export const createEditor = ({

@@ -18,6 +18,10 @@ const copyStaticAssets = () => ({
       resolve(sourceDirectory, "robots.txt"),
       resolve(outputDirectory, "robots.txt"),
     );
+    await copyFile(
+      resolve(sourceDirectory, "sitemap.xml"),
+      resolve(outputDirectory, "sitemap.xml"),
+    );
   },
 });
 

@@ -63,7 +63,7 @@ export const styleText = (text, isBold = false, isItalic = false) =>
     .join("");
 
 const attribution =
-  "✒️ Post written in Simple LinkedIn Composer. ✒️\n" +
+  "✒️ Post written in Simple LinkedIn Composer.\n" +
   "https://linkedin-composer.simondoescloud.com";
 
 const renderTextNode = (node, formatting) => {

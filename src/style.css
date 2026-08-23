@@ -557,6 +557,10 @@ select:hover {
   padding: 22px;
 }
 
+#editor-container .ql-editor em {
+  font-synthesis: style;
+}
+
 #editor-container .ql-editor.ql-blank::before {
   left: 22px;
   color: var(--placeholder);
