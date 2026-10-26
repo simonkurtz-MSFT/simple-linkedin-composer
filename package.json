@@ -35,18 +35,18 @@
     "quill": "2.0.2"
   },
   "devDependencies": {
-    "@axe-core/playwright": "4.13.0",
+    "@axe-core/playwright": "4.14.0",
     "@eslint/js": "10.0.1",
-    "@playwright/test": "1.64.0",
-    "eslint": "10.12.0",
+    "@playwright/test": "1.64.1",
+    "eslint": "10.13.0",
     "globals": "17.13.0",
     "htmlhint": "1.9.2",
-    "jsdom": "30.1.2",
+    "jsdom": "30.1.3",
     "markdownlint-cli2": "0.23.3",
     "prettier": "3.9.10",
     "stylelint": "17.16.0",
     "stylelint-config-standard": "40.0.0",
     "vite": "8.3.4",
-    "vitest": "5.0.3"
+    "vitest": "5.0.5"
   }
 }
