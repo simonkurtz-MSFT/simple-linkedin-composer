@@ -3,7 +3,7 @@ packages:
 
 lockfileIncludeTarballUrl: false
 optimisticRepeatInstall: false
-minimumReleaseAge: 10080
+minimumReleaseAge: 11520
 minimumReleaseAgeIgnoreMissingTime: false
 minimumReleaseAgeStrict: true
 trustPolicy: no-downgrade

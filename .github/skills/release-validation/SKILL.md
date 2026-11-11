@@ -1,6 +1,6 @@
 ---
 name: release-validation
-description: "Validate Simple LinkedIn Composer dependencies, seven-day cooldown, registry cleanliness, git hooks, workflow pins, static build output, GitHub Pages deployment, documentation, and release readiness."
+description: "Validate Simple LinkedIn Composer dependencies, eight-day cooldown, registry cleanliness, git hooks, workflow pins, static build output, GitHub Pages deployment, documentation, and release readiness."
 argument-hint: "Describe the dependency, automation, or release change"
 ---
 
@@ -11,8 +11,8 @@ Use this workflow after dependency, package-policy, hook, CI, deployment, docume
 ## Procedure
 
 1. Read `docs/PLAN.md`, the automation instructions, and the changed manifests, lockfiles, hooks, scripts, workflows, and documentation.
-2. Confirm exact dependency and package-manager pins and verify each selected release has completed the seven-day cooldown, or document an explicit security exception.
-3. Verify pnpm minimum-release-age enforcement and seven-day Dependabot cooldowns for npm and GitHub Actions.
+2. Confirm exact dependency and package-manager pins and verify each selected release has completed the eight-day cooldown, or document an explicit security exception.
+3. Verify pnpm minimum-release-age enforcement and eight-day Dependabot cooldowns for npm and GitHub Actions.
 4. Verify the committed lockfile contains no `tarball` metadata; scan tracked files for proxy URLs, credentials, tokens, and local registry configuration.
 5. Test working-tree normalization and the pre-commit scrubber against absent, public, Microsoft-proxy-style, inline, block-style, staged-only, and mixed staged/unstaged tarball cases. Run a plain `pnpm install` and confirm its post-install lifecycle leaves the lockfile clean, including on a repeat install. Confirm the repository check rejects unnormalized metadata.
 6. Verify external Actions use full 40-character SHAs with release comments, jobs have explicit timeouts, permissions are least privilege, and deployment publishes only built static output.

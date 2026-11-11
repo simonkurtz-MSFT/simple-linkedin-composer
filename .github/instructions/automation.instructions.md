@@ -7,8 +7,8 @@ applyTo: "package.json, pnpm-workspace.yaml, pnpm-lock.yaml, .npmrc, .githooks/*
 # Automation And Dependency Guidelines
 
 - Use the installed pnpm version and update every repository pnpm-version reference together when the declared version differs.
-- Configure `minimumReleaseAge: 10080` and reject packages whose publication age cannot be established unless an explicit reviewed exception exists.
-- Give npm and GitHub Actions Dependabot updates a seven-day cooldown and group compatible development updates.
+- Configure `minimumReleaseAge: 11520` and reject packages whose publication age cannot be established unless an explicit reviewed exception exists.
+- Give npm and GitHub Actions Dependabot updates an eight-day cooldown and group compatible development updates.
 - Configure pnpm not to include tarball URLs and remove any `tarball` metadata that package metadata or machine configuration preserves in the committed lockfile. Preserve unrelated staged and unstaged lockfile edits when the hook removes that metadata.
 - Run the working-tree lockfile normalizer automatically after installs and enforce registry cleanliness through the repository check command; keep pre-commit normalization staged-only.
 - Keep Microsoft proxy registry settings in untracked user or machine configuration. Never write credentials or private registry URLs to tracked files or logs.

@@ -24,7 +24,7 @@
 
 ## Supply Chain
 
-- Pin packages, package managers, development tools, and GitHub Actions to exact reviewed versions that have completed the seven-day release cooldown.
+- Pin packages, package managers, development tools, and GitHub Actions to exact reviewed versions that have completed the eight-day release cooldown.
 - Enforce the cooldown through pnpm minimum-release-age settings and Dependabot cooldowns. Security updates may bypass the waiting period when explicitly reviewed.
 - Keep committed pnpm lockfiles free of `tarball` registry metadata. Microsoft proxy registries are allowed only through untracked user or machine configuration; never commit proxy credentials, tokens, or private feed URLs.
 - Pin external GitHub Actions to full 40-character commit SHAs and retain the release tag in a trailing comment.
