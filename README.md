@@ -85,6 +85,7 @@ Prerequisites:
 | Command                    | Purpose                                              |
 | -------------------------- | ---------------------------------------------------- |
 | `pnpm check`               | Format check, lint, unit tests, and production build |
+| `pnpm deps:update`         | Update dependency pins and normalize the lockfile   |
 | `pnpm lockfile:check`      | Reject registry tarball metadata in the lockfile     |
 | `pnpm lockfile:normalize`  | Remove registry tarball metadata after installs      |
 | `pnpm test:browser`        | Chromium checks with local visual snapshots          |
@@ -93,6 +94,8 @@ Prerequisites:
 | `pnpm build`               | Generate the static site in `dist/`                  |
 
 The repository configures pnpm not to include tarball URLs. Because machine registry configuration can still add them, the post-install lifecycle automatically runs `pnpm lockfile:normalize` after pnpm writes `pnpm-lock.yaml`. The repository check rejects remaining metadata, while the pre-commit hook cleans only the staged lockfile and leaves unstaged lockfile work unchanged.
+
+`pnpm deps:update` automatically updates production and development dependencies to the newest eligible versions selected by `--latest`, preserves exact version pins, and normalizes the lockfile. It respects the eight-day minimum release age, but can include major upgrades or prereleases when a package's `latest` tag points to one. Review the manifest and lockfile changes, then run `pnpm check`, `pnpm test:browser`, and `pnpm audit` before accepting updates. Node.js, pnpm, and GitHub Actions pins are maintained separately.
 
 Corporate or Microsoft proxy registry routing belongs in untracked user or machine pnpm configuration. Do not add proxy URLs, credentials, tokens, or private feed settings to repository files.
 

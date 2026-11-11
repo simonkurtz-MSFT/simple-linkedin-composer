@@ -18,6 +18,14 @@ Do not commit registry credentials, private feed URLs, machine-specific pnpm set
 
 The post-install lifecycle automatically normalizes `pnpm-lock.yaml`. Run `pnpm lockfile:normalize` manually if lifecycle scripts were disabled; `pnpm check` rejects registry tarball metadata that remains in the lockfile.
 
+## Dependency updates
+
+Run `pnpm deps:update` to automatically update production and development dependencies while preserving exact pins and the eight-day release cooldown. The command normalizes the lockfile after updating.
+
+Updates use `--latest`, so they can include breaking major versions or prereleases if a package's `latest` tag points to one. Review all manifest and lockfile changes and run `pnpm check`, `pnpm test:browser`, and `pnpm audit` before accepting them. Keep Node.js, pnpm, and GitHub Actions pin updates separate.
+
+If dependency resolution fails with `ERR_PNPM_TRUST_DOWNGRADE`, keep `trustPolicy: no-downgrade` enabled and investigate the release's trust metadata. For development with the existing dependency graph, use `pnpm install --frozen-lockfile`; a successful frozen install does not resolve or validate the rejected update. Do not delete the lockfile or add a trust exception merely to unblock installation.
+
 ## Validation
 
 Run the narrowest relevant check while developing, then run the affected broader checks before requesting review.
